@@ -1,0 +1,62 @@
+<div *ngIf="registers && registers.length > 0; else noRegister" class="container">
+
+<div class="container">
+    <h2>Lịch sử đăng ký</h2>  
+    <div *ngIf="registers.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Phòng</th>
+            <th>Tòa</th>
+            <th>Ngày bắt đầu</th>
+            <th>Ngày kết thúc</th>
+            <th>Ngày thực hiện</th>
+            <th>Tổng tiền</th>
+            <th>Thanh toán</th>
+            <th>Trạng thái</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let register of registers; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ register.roomName }}</td>
+            <td>{{ register.buildingName }}</td>
+            <td>{{ register.startDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ register.endDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ register.actionDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ register.total | currency: 'VND' }}</td>
+            <td [ngClass]="{
+              'payment-status': true,
+              'paid': register.paymentStatus === 0,
+              'unpaid': register.paymentStatus === 1,
+              'payment-status-huy': register.paymentStatus === 2
+        }">
+            {{ register.paymentStatus === 0 ? 'Đã thanh toán' :
+            register.paymentStatus === 1 ? 'Chưa thanh toán' :
+            register.paymentStatus === 2 ? 'Hủy' : 'Không xác định' }}
+        </td>
+        
+        <td [ngClass]="{
+              'status-active': register.status === 0,
+              'status-inactive': register.status === 1,
+              'status-blocked': register.status === 2,
+              'status-pending': register.status === 3
+        }">
+            {{ register.status === 0 ? 'Hoạt động' :
+            register.status === 1 ? 'Ngưng hoạt động' :
+            register.status === 2 ? 'Blocked' :
+            register.status === 3 ? 'Đợi thanh toán' : 'Hết hạn' }}
+        </td>
+        
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
+</div>
+<ng-template #noRegister>
+  <div class="alert alert-warning text-center">
+    <strong>Bạn chưa đăng ký phòng. Vui lòng liên hệ quản lý để được hỗ trợ!</strong>
+  </div>
+</ng-template>

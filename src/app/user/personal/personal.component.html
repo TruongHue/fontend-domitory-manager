@@ -1,0 +1,25 @@
+<div class="profile-container">
+    <div class="profile-content">
+        <!-- Khu vực ảnh đại diện + họ tên -->
+        <div class="avatar-section">
+            <img [src]="profile.picture" alt="Ảnh đại diện" class="avatar">
+            <h2 class="user-name">{{ profile.fullName }}</h2>
+        </div>
+
+        <!-- Khu vực thông tin -->
+        <div class="info-section">
+            <div class="info-item"><strong>Giới tính:</strong> {{ profile.gender === 0 ? 'Nam' : 'Nữ' }}</div>
+            <div class="info-item"><strong>Email:</strong> {{ profile.email }}</div>
+            <div class="info-item"><strong>Số điện thoại:</strong> {{ profile.phone }}</div>
+            <div class="info-item"><strong>Địa chỉ:</strong> {{ profile.address }}</div>
+            <div class="info-item"><strong>Phụ huynh:</strong> {{ profile.parentName }}</div>
+            <div class="info-item"><strong>SĐT phụ huynh:</strong> {{ profile.parentPhone }}</div>
+        </div>
+    </div>
+
+    <!-- Khu vực nút bấm -->
+    <div class="edit-btn-container">
+        <button class="edit-btn">Chỉnh sửa</button>
+        <button class="edit-btn">Đổi mật khẩu</button>
+    </div>
+</div>

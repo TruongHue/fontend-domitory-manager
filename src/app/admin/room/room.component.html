@@ -1,0 +1,11 @@
+<div class="container">
+    <nav class="horizontal-nav">
+        <button (click)="changeTab('room')" [class.active]="activeTab === 'room'">Quản lý phòng</button>
+        <button (click)="changeTab('area')" [class.active]="activeTab === 'area'">Quản lý tòa nhà</button>
+    </nav>
+
+    <div class="content">
+        <app-manager-room *ngIf="activeTab === 'room'"></app-manager-room>
+        <app-manager-building *ngIf="activeTab === 'area'"></app-manager-building>
+    </div>
+</div>

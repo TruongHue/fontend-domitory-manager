@@ -1,0 +1,93 @@
+<div class="room-management">
+    <h2>Quản lý Phòng</h2>
+    <div class="toolbar">
+        <input type="text" placeholder="Tìm kiếm phòng..." [(ngModel)]="searchText" (input)="filterRooms()" />
+        
+        <select [(ngModel)]="selectedBuilding" (change)="filterRooms()">
+            <option value="">Tất cả tòa nhà</option>
+            <option *ngFor="let building of buildings" [value]="building.IdBuilding">
+                {{ building.NameBuilding }}
+            </option>
+        </select>
+    
+        <button (click)="isAddModalOpen = true">➕ Thêm phòng</button>
+    </div>
+    
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th (click)="sortRoomsById()">
+                        Mã phòng <span *ngIf="sortAscending">▲ ▼</span><span *ngIf="!sortAscending">▲ ▼</span>
+                    </th>
+                    <th>Tên phòng</th>
+                    <th>Tòa nhà</th>
+                    <th>Số giường</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let room of paginatedRooms">
+                    <td>{{ room.IdRoom }}</td>
+                    <td>{{ room.RoomName }}</td>
+                    <td>{{ room.Building.NameBuilding }}</td>
+                    <td>{{ room.NumberOfBed }}</td>
+                    <td>
+                        <div class="toggle-switch" [class.active]="room.Status === 0" (click)="toggleRoomStatus(room)">
+                            <div class="toggle-button"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <button (click)="isEditModalOpen = true" style="margin-right: 5px;">✏️ Sửa</button>
+                        <button style="margin-right: 5px;">🗑️ Xóa</button>
+                        <button (click)="isDetailModalOpen = true">Chi tiết</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <button class="pagination-btn" (click)="prevPage()" [disabled]="currentPage === 1"><<</button>
+    <span class="pagination-info">{{ currentPage }} / {{ totalPages }}</span>
+    <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage >= totalPages">>></button>
+
+    <p>Tổng số phòng: {{ totalRooms }}</p>
+</div>
+
+<!-- Form Thêm Phòng hiển thị trên nền -->
+<div class="register-form" *ngIf="isAddModalOpen">
+    <h3>➕ Thêm Phòng</h3>
+
+    <label for="roomName">Tên phòng:</label>
+    <input id="roomName" type="text" [(ngModel)]="newRoom.roomName" placeholder="Nhập tên phòng">
+
+    <div class="flex-row">
+        <div>
+            <label for="idBuilding">Tòa nhà:</label>
+            <select id="idBuilding" [(ngModel)]="newRoom.idBuilding">
+                <option *ngFor="let building of filteredBuildingsList" [value]="building.IdBuilding">
+                    {{ building.NameBuilding }}
+                </option>
+            </select>
+        </div>
+
+        <div class="small-input">
+            <label for="numberOfBed">Số giường:</label>
+            <input id="numberOfBed" type="number" [(ngModel)]="newRoom.numberOfBed" min="1">
+        </div>
+
+        <div>
+            <label for="status">Trạng thái:</label>
+            <select id="status" [(ngModel)]="newRoom.status">
+                <option [value]="0">✅ On</option>
+                <option [value]="1">❌ Off</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="modal-actions">
+        <button (click)="isAddModalOpen = false">❌ Hủy</button>
+        <button (click)="addRoom()">✔️ Hoàn tất</button>
+    </div>
+</div>

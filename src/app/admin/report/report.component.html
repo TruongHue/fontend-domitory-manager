@@ -1,0 +1,46 @@
+<div class="container">
+  <h2>Báo cáo thống kê</h2>
+
+  <!-- Thống kê phòng -->
+  <div class="summary">
+    <div class="card">
+      <p>Tổng số phòng</p>
+      <h3 class="highlight">{{ totalRooms }}</h3>
+    </div>
+    <div class="card available">
+      <p>Phòng trống</p>
+      <h3 class="highlight">{{ availableRooms }}</h3>
+    </div>
+    <div class="card occupied">
+      <p>Phòng đang sử dụng</p>
+      <h3 class="highlight">{{ occupiedRooms }}</h3>
+    </div>
+  </div>
+
+  <!-- Thống kê sinh viên đăng ký -->
+  <div class="summary">
+    <div class="card">
+      <p>Tổng sinh viên</p>
+      <h3 class="highlight">{{ totalStudents }}</h3>
+    </div>
+    <div class="card">
+      <p>Sinh viên đã đăng ký</p>
+      <h3 class="highlight">{{ registeredStudents }}</h3>
+    </div>
+    <div class="card not-registered">
+      <p>Sinh viên chưa đăng ký</p>
+      <h3 class="highlight">{{ unregisteredStudents }}</h3>
+    </div>
+  </div>
+
+  <!-- Biểu đồ số lượng đăng ký theo kỳ -->
+  <div class="chart-container">
+    <h3>Thống kê số lượng đăng ký theo kỳ</h3>
+    <canvas baseChart 
+    [data]="registerPeriodChartData"
+    [options]="barChartOptions"
+    chartType="bar">
+  </canvas>
+  
+  </div>
+</div>

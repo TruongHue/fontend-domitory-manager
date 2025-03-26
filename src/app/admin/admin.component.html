@@ -1,0 +1,73 @@
+<div class="dashboard-container">
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>Admin</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-title">📌 Quản lý chung</li>
+            <li>
+                <a routerLink="/admin/register-room" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <i class="fas fa-door-open"></i> Đăng ký phòng
+                </a>
+            </li>
+            <li>
+                <a routerLink="/admin/students" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <i class="fas fa-user-graduate"></i> Sinh viên
+                </a>
+            </li>
+            <li>
+                <a routerLink="/admin/staffs" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <i class="fas fa-users-cog"></i> Nhân viên
+                </a>
+            </li>
+            <li>
+                <a routerLink="/admin/account" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <i class="fas fa-user-cog"></i> Quản lý tài khoản
+                </a>
+            </li>
+
+            <hr> <!-- Phân cách -->
+
+            <li class="menu-title">💰 Quản lý tài chính</li>
+            <li>
+                <a routerLink="/admin/bills" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <i class="fas fa-file-invoice"></i> Hóa đơn
+                </a>
+            </li>
+
+            <hr> <!-- Phân cách -->
+
+            <li class="menu-title">🏠 Quản lý phòng</li>
+            <li>
+                <a routerLink="/admin/rooms" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <i class="fas fa-bed"></i> Phòng
+                </a>
+            </li>
+
+            <hr> <!-- Phân cách -->
+
+            <li class="menu-title">🔧 Hệ thống</li>
+            <li>
+                <a routerLink="/admin/helps" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <i class="fas fa-life-ring"></i> Hỗ trợ
+                </a>
+            </li>
+            <li>
+                <a routerLink="/admin/reports" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <i class="fas fa-chart-bar"></i> Báo cáo
+                </a>
+            </li>
+        </ul>
+
+        <div class="logout">
+            <button class="logout-btn" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </button>
+        </div>
+    </nav>
+
+    <!-- Nội dung chính -->
+    <main class="content">
+        <router-outlet></router-outlet>
+    </main>
+</div>

@@ -1,0 +1,98 @@
+/* ----- Tổng thể navbar ----- */
+.navbar {
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: rgba(30, 30, 30, 0.6); /* Đen trong suốt */
+  backdrop-filter: blur(10px); /* Làm mờ */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+/* ----- Logo ----- */
+.logo img {
+  height: 40px;
+}
+
+/* ----- Menu ngang ----- */
+.nav-menu ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-menu ul li {
+  margin: 0 20px;
+}
+
+.nav-menu ul li a {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.8); /* Trắng trong suốt */
+  font-size: 1rem;
+  padding: 10px;
+  transition: 0.3s;
+  font-weight: bold;
+}
+
+/* Hiệu ứng khi hover */
+.nav-menu ul li a:hover,
+.nav-menu ul li a.active {
+  color: rgba(255, 165, 0, 0.9); /* Cam trong suốt */
+  border-bottom: 2px solid rgba(255, 165, 0, 0.9);
+}
+
+/* ----- Logout + Tìm kiếm ----- */
+.nav-icons {
+  display: flex;
+  align-items: center;
+}
+
+/* Nút logout */
+.logout-btn {
+  background: rgba(255, 140, 0, 0.7); /* Cam trong suốt */
+  color: white;
+  border-radius: 8px;
+  border: none;
+  padding: 8px 15px;
+  font-size: 14px;
+  transition: 0.3s;
+  margin-right: 15px;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 140, 0, 0.9);
+}
+
+/* ----- Căn chỉnh chính nội dung ----- */
+.main-content {
+  margin-top: 80px; /* Tránh bị navbar che */
+  padding: 20px;
+  min-height: calc(100vh - 80px);
+  
+  /* Đặt nền trong thẻ giả lập */
+  position: relative;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Đảm bảo lớp phủ không tràn ra ngoài */
+}
+
+/* Lớp phủ nền mờ, nhưng không ảnh hưởng nội dung */
+.main-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/assets/background_home.jpg') center/cover no-repeat;
+  filter: blur(8px); /* Làm mờ hình nền */
+  z-index: -1; /* Đưa nền ra sau nội dung */
+}
+
+

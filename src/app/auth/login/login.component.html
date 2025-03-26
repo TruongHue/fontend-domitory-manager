@@ -1,0 +1,28 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<div class="login-container">
+    <div class="login-box">
+        <h2>Đăng Nhập</h2>
+
+        <!-- Hiển thị lỗi từ API -->
+        <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+        <form #addForm="ngForm" (submit)="onLogin()">
+            <input type="text" [(ngModel)]="userCode" name="userCode" 
+                   placeholder="Mã sinh viên" required 
+                   [ngClass]="{'input-error': invalidLogin}" />
+
+                   <div class="password-group">
+                    <input [type]="showPassword ? 'text' : 'password'"
+                           [(ngModel)]="password" name="password" 
+                           placeholder="Mật khẩu" required 
+                           [ngClass]="{'input-error': invalidLogin}" />
+                    <i class="fa" [ngClass]="showPassword ? 'fa-eye' : 'fa-eye-slash'" 
+                       (click)="togglePassword()"></i>
+                </div>
+
+            <button type="submit">Đăng Nhập</button>
+        </form>
+        <p>Chưa có tài khoản? <a routerLink="/register">Đăng ký ngay</a></p>
+    </div>
+</div>

@@ -1,0 +1,125 @@
+<div class="tab-container">
+    <!-- Tabs chọn tòa nhà -->
+    <div class="tab-header">
+      <button *ngFor="let dormitory of dormitories; let i = index" 
+              (click)="selectedTab = i"
+              [class.active]="selectedTab === i">
+        KTX {{ dormitory.name }}
+      </button>
+    </div>
+  
+    <div class="container mt-4">
+      <div class="tab-content">
+        <div *ngFor="let dormitory of dormitories; let i = index" [hidden]="selectedTab !== i">
+          <div class="building">
+            <div *ngFor="let floor of [1, 2, 3]" class="floor">
+              <h4 class="text-primary">Tầng {{ floor }}</h4> 
+              <div class="row g-3">
+                <div *ngFor="let room of getRoomsByFloor(dormitory.rooms, floor)" class="col-lg-2 col-md-4 col-sm-6">
+                  
+                  <!-- Nút xem chi tiết hóa đơn -->
+                  <div class="card p-3 room-card shadow-lg text-center"
+                  [ngClass]="{ 
+                    'bg-danger text-white': room.statusBill === 1, 
+                    'bg-warning text-dark': room.notAvailableSlots === room.totalSlots && room.statusBill !== 1,
+                    'bg-secondary text-white': room.status === 1 
+                  }"
+                       (click)="openBillForm(room.id)">
+                    
+                    <div class="card-body">
+                      <h3 class="card-title">{{ room.name }}</h3>
+                      <span class="badge bg-primary" *ngIf="room.gender === 0">Nam</span>
+                      <span class="badge bg-danger" *ngIf="room.gender === 1">Nữ</span>
+                      <p class="mt-2">
+                        <strong>{{ room.notAvailableSlots }} / {{ room.totalSlots }}</strong> chỗ đã đăng ký
+                      </p>
+                      <button class="btn btn-light mt-2">Xem chi tiết hóa đơn</button>
+                    </div>
+                  </div>
+    
+                </div>
+              </div> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+  <!-- Modal hóa đơn điện nước -->
+<!-- Modal hóa đơn điện nước -->
+<div class="modal-overlay" *ngIf="selectedRoomBills">
+    <div class="modal1">
+      <h3>Hóa đơn điện nước - Phòng {{ selectedRoomBills.idRoom }}</h3>
+  
+      <!-- Hóa đơn điện -->
+      <h4>Hóa đơn điện</h4>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Kỳ hạn</th>
+            <th>Số cũ</th>
+            <th>Số mới</th>
+            <th>Giá</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bill of electricBills">
+            <td>{{ getBillingPeriod(bill.DateOfRecord) }}</td>
+            <td>{{ bill.BeforeIndex }}</td>
+            <td>{{ bill.AfterIndex }}</td>
+            <td>{{ bill.Price | currency:'VND' }}</td>
+            <td>{{ bill.Total | currency:'VND' }}</td>
+            <td>
+                <button *ngIf="bill.Status === 1" (click)="payElectricBill(bill.IdElectricity)" class="btn btn-primary">Thanh toán</button>
+                <button *ngIf="bill.Status === 0" class="btn btn-success" disabled>Đã thanh toán</button>
+            </td>
+            <td>
+                <button *ngIf="bill.Status === 0" class="btn btn-success" disabled>Không thể xóa</button>
+                <button *ngIf="bill.Status === 1" class="btn btn-danger" (click)="deleteElectricBill(bill.IdElectricity)">Xóa</button>
+              </td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <!-- Hóa đơn nước -->
+      <h4>Hóa đơn nước</h4>
+      <table border="1">
+        <thead> 
+          <tr>
+            <th>Kỳ hạn</th>
+            <th>Số cũ</th>
+            <th>Số mới</th>
+            <th>Giá (0-{{bill.IndexLimit }})</th>
+            <th>Giá(>{{bill.IndexLimit }})</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bill of waterBills">
+            <td>{{ getBillingPeriod(bill.DateOfRecord) }}</td>
+            <td>{{ bill.BeforeIndex }}</td>
+            <td>{{ bill.AfterIndex }}</td>
+            <td>{{ bill.Price | currency:'VND' }}</td>
+            <td>{{ bill.PriceLimit | currency:'VND' }}</td>
+            <td>{{ bill.Total | currency:'VND' }}</td>
+            <td>
+                <button *ngIf="bill.Status === 1" (click)="payWaterBill(bill.IdWater)" class="btn btn-primary">Thanh toán</button>
+                <button *ngIf="bill.Status === 0" class="btn btn-success" disabled>Đã thanh toán</button>
+            </td>
+            <td>
+                <button *ngIf="bill.Status === 0" class="btn btn-success" disabled>Không thể xóa</button>
+                <button *ngIf="bill.Status === 1" class="btn btn-danger" (click)="deleteWaterBill(bill.IdWater)">Xóa</button>
+              </td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <button (click)="closeBillForm()">Đóng</button>
+    </div>
+</div>

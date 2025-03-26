@@ -1,0 +1,82 @@
+<div class="container">
+    <h2>Danh sách kỳ đăng ký</h2>
+    <button class="btn btn-primary" (click)="openAddModal()">➕ Thêm mới</button>
+    <div class="filter-container">
+        <label for="statusFilter">Lọc theo trạng thái:</label>
+        <select id="statusFilter" class="form-control" [(ngModel)]="selectedStatus" (change)="filterByStatus()">
+          <option value="">Tất cả</option>
+          <option value="0">Đang mở</option>
+          <option value="1">Đã đóng</option>
+        </select>
+      </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Ngày bắt đầu</th>
+          <th>Ngày kết thúc</th>
+          <th>Ngày thực hiện</th>
+          <th>Trạng thái</th>
+          <th>Học kỳ</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredList | paginate: { itemsPerPage: itemsPerPage, currentPage: page }">
+            <td>{{ item.IdRegistrationPeriod }}</td>
+          <td>{{ item.StartDate | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ item.EndDate | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ item.ActionDate | date: 'dd/MM/yyyy' }}</td>
+          <td [class.open]="item.Status === 0" [class.closed]="item.Status === 1">
+            {{ getStatusText(item.Status) }}
+          </td>
+          <td>{{ getSemesterText(item.SemesterStatus) }}</td>
+          <td>
+            <button class="btn btn-warning" (click)="openEditModal(item)">✏️ Sửa</button>
+            <button class="btn btn-danger" (click)="openDeleteConfirm(item)">🗑 Xóa</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <pagination-controls (pageChange)="page = $event"></pagination-controls>
+  </div>
+  
+  <!-- Modal Thêm/Sửa -->
+  <div class="modal" [class.show]="showModal">
+    <div class="modal-content">
+      <h3>{{ isEditing ? 'Sửa Kỳ Đăng Ký' : 'Thêm Kỳ Đăng Ký' }}</h3>
+      <label>Ngày bắt đầu:</label>
+      <input type="date" [(ngModel)]="selectedPeriod.StartDate">
+      <label>Ngày kết thúc:</label>
+      <input type="date" [(ngModel)]="selectedPeriod.EndDate">
+      <label>Học kỳ:</label>
+      <select [(ngModel)]="selectedPeriod.SemesterStatus">
+        <option [value]="0">Trong năm</option>
+        <option [value]="1">Nghỉ hè</option>
+      </select>
+      <label>Trạng thái:</label>
+      <select [(ngModel)]="selectedPeriod.Status">
+        <option [value]="0">Đang mở</option>
+        <option [value]="1">Đã đóng</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn btn-success" (click)="saveRegistrationPeriod()">
+          {{ isEditing ? 'Cập nhật' : 'Thêm mới' }}
+        </button>
+        <button class="btn btn-secondary" (click)="closeModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Xác Nhận Xóa -->
+  <div class="modal" [class.show]="showDeleteConfirm">
+    <div class="modal-content">
+      <h3>Xác nhận xóa</h3>
+      <p>Bạn có chắc muốn xóa kỳ đăng ký ID: {{ selectedPeriod.IdRegistrationPeriod }}?</p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" (click)="deleteRegistrationPeriod(selectedPeriod.IdRegistrationPeriod)">🗑 Xóa</button>
+        <button class="btn btn-secondary" (click)="closeDeleteConfirm()">Hủy</button>
+      </div>
+    </div>
+  </div>
+  

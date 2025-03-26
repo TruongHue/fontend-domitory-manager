@@ -1,0 +1,179 @@
+.building-management, .room-management {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.building-management h2, .room-management h2 {
+    color: #2c3e50;
+}
+.toggle-switch {
+    width: 50px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+}
+
+.toggle-switch.active {
+    background-color: #4caf50;
+}
+
+.toggle-button {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    transition: transform 0.3s ease-in-out;
+    left: 2px;
+}
+
+.toggle-switch.active .toggle-button {
+    transform: translateX(26px);
+}
+
+button {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    box-shadow: 0px 4px 15px rgba(38, 152, 255, 0.3);
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.toolbar input {
+    padding: 10px;
+    width: 250px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+table th {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+}
+
+span.active {
+    color: green;
+    font-weight: bold;
+}
+
+/* Modal overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+  
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+  }
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+    
+  .modal.show {
+    display: flex;
+  }
+  
+  .modal input, .modal textarea{
+    width:  90%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    transition: 0.3s;
+  }
+  .modal select {
+    width:  20%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    transition: 0.3s;
+  }
+  
+  .modal input:focus, .modal textarea:focus, .modal select:focus {
+    border-color: #6a11cb;
+    box-shadow: 0px 4px 10px rgba(106, 17, 203, 0.3);
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .modal-actions button {
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  
+  .modal-actions button:first-child {
+    background: #ff4757;
+    color: white;
+  }
+  
+  .modal-actions button:first-child:hover {
+    background: #e84118;
+  }
+  
+  .modal-actions button:last-child {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+  }
+  
+  .modal-actions button:last-child:hover {
+    box-shadow: 0px 4px 15px rgba(38, 152, 255, 0.3);
+  }
+
+body.modal-open {
+    overflow: hidden;
+}

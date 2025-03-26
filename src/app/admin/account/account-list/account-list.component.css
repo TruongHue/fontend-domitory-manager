@@ -1,0 +1,101 @@
+/* Ô tìm kiếm */
+/* Ô tìm kiếm */
+.search-input {
+    width: 300px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    display: block;
+  }
+  
+  
+  .search-container input {
+    width: 40%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  /* Bảng danh sách */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    white-space: nowrap;
+  }
+  
+  th {
+    background-color: #f4f4f4;
+  }
+  
+  /* Ảnh avatar */
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: auto;
+  }
+  
+  /* Nút chặn */
+  .btn-block {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+  }
+  
+  .btn-block:hover {
+    background-color: #c82333;
+  }
+  
+  /* Phân trang */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  
+  .pagination button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin: 2px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .pagination button:hover {
+    background: #0056b3;
+  }
+  
+  .pagination button.active {
+    background: #28a745;
+  }
+  
+  .pagination button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  

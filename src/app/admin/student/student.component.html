@@ -1,0 +1,45 @@
+<div class="student-management">
+    <h2>Quản lý Sinh Viên</h2>
+    <div class="toolbar">
+        <input type="text" placeholder="Tìm kiếm sinh viên..." />
+        <button>➕ Thêm sinh viên</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Mã SV</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Giới tính</th>
+                <th>Ảnh</th>
+                <th>Vai trò</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let student of studentsList">
+                <td>{{ student.Account.UserCode }}</td>
+                <td>{{ student.Account.UserName }}</td>
+                <td>{{ student.InfoStudent.Email }}</td>
+                <td>{{ student.Account.NumberPhone }}</td>
+                <td>{{ student.InfoStudent.Gender === 0 ? 'Nam' : 'Nữ' }}</td>
+                <td>
+                    <img [src]="getImageUrl(student.InfoStudent.Picture)" 
+                         alt="Avatar" class="avatar1">
+                </td>
+                                <td>
+                    {{ student.Account.Roles === 0 ? 'Sinh viên' : 
+                       student.Account.Roles === 1 ? 'Admin' : 
+                       student.Account.Roles === 2 ? 'Nhân viên' : 'Không xác định' }}
+                </td>
+                                <td>
+                    <button>✏️ Sửa</button>
+                    <button>🗑️ Xóa</button>
+                    <button> Chi tiết</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

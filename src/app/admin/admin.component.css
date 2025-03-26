@@ -1,0 +1,174 @@
+/* ================= Sidebar ================= */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: linear-gradient(135deg, #0568e1, #012a59);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    position: fixed;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+    border-right: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Tiêu đề sidebar */
+.sidebar-header h2 {
+    font-size: 1.6rem;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Danh sách menu */
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+}
+
+/* Tiêu đề nhóm menu */
+.menu-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 12px 15px;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+/* Đường phân cách */
+hr {
+    border: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 12px 15px;
+    border-radius: 2px;
+}
+
+/* Item menu */
+.sidebar-menu li {
+    margin: 8px 0;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Link menu */
+.sidebar-menu li a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+/* Hiệu ứng hover */
+.sidebar-menu li a:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(5px);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Active menu */
+.sidebar-menu li .active {
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
+    font-weight: bold;
+    color: #ffe600;
+}
+
+/* ================= Logout Button ================= */
+.logout {
+    text-align: center;
+    margin-top: auto;
+}
+
+.logout-btn {
+    background: #ff3b3b;
+    color: white;
+    font-size: 1rem;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    width: 100%;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
+}
+
+.logout-btn:hover {
+    background: #c70000;
+    transform: scale(1.05);
+}
+
+/* ================= Responsive Sidebar ================= */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 220px;
+    }
+    
+    .sidebar-header h2 {
+        font-size: 1.4rem;
+    }
+
+    .sidebar-menu li a {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 60px;
+        padding: 10px;
+    }
+
+    .sidebar-header h2 {
+        display: none;
+    }
+
+    .sidebar-menu li a {
+        font-size: 0;
+    }
+
+    .sidebar-menu li {
+        text-align: center;
+    }
+
+    .sidebar-menu li a i {
+        font-size: 1.5rem;
+    }
+}
+
+/* ================= Nội dung chính ================= */
+.content {
+    flex: 1;
+    padding: 20px;
+    background: white;
+    box-shadow: -3px 0 5px rgba(0, 0, 0, 0.1);
+    margin-left: 260px;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+/* Sidebar thu nhỏ */
+@media (max-width: 576px) {
+    .content {
+        margin-left: 60px;
+    }
+}
+.sidebar-menu li a.active {
+    background: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
+    font-weight: bold;
+    color: #ffe600 !important;
+}

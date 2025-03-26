@@ -1,0 +1,109 @@
+.container {
+    width: 90%;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .filters {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  
+  .filters input, .filters select {
+    padding: 8px;
+    font-size: 16px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  th {
+    background-color: #f4f4f4;
+  }
+  
+  .active-status {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .inactive-status {
+    color: rgb(226, 8, 8);
+    font-weight: bold;
+  }
+  
+  .cancelled-status {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .paid-status {
+    color: blue;
+    font-weight: bold;
+  }
+  
+  .unpaid-status {
+    color: rgb(224, 151, 5);
+    font-weight: bold;
+  }
+  
+  .pagination {
+    margin-top: 10px;
+  }
+  
+  .pagination button {
+    padding: 5px 10px;
+    margin: 0 5px;
+  }
+  
+  .active-status {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .inactive-status {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .blocked-status {
+    color: gray;
+    font-weight: bold;
+  }
+  
+  .pending-status {
+    color: orange;
+    font-weight: bold;
+  }
+  /* Style chung cho select */
+.payment-select {
+  padding: 8px;
+  font-size: 14px;
+  border: 2px solid #007bff; /* Màu viền xanh */
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Khi di chuột vào */
+.payment-select:hover {
+  border-color: #0056b3; /* Màu xanh đậm hơn */
+}
+
+/* Khi select bị disabled */
+.payment-select:disabled {
+  background-color: #e9ecef; /* Màu nền xám nhạt */
+  color: #6c757d; /* Màu chữ xám */
+  border-color: #ced4da; /* Viền xám */
+  cursor: not-allowed;
+}

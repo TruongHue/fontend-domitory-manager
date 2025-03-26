@@ -1,0 +1,136 @@
+<div *ngIf="showRegistration; else noRegistration">
+
+    <div class="wrapper">
+
+        <div class="tab-container">
+            <!-- Tabs chọn tòa nhà -->
+            <div class="tab-header">
+                <button *ngFor="let dormitory of dormitories; let i = index" (click)="selectedTab = i"
+                    [class.active]="selectedTab === i">
+                    KTX {{ dormitory.name }}
+                </button>
+            </div>
+
+            <div class="container mt-4">
+                <div class="tab-content">
+                    <div *ngFor="let dormitory of dormitories; let i = index" [hidden]="selectedTab !== i">
+                        <div class="building">
+                            <div *ngFor="let floor of [1, 2, 3]" class="floor">
+                                <h4 class="text-primary">Tầng {{ floor }}</h4>
+                                <div class="row g-3">
+                                    <div *ngFor="let room of getRoomsByFloor(dormitory.rooms, floor)"
+                                        class="col-lg-2 col-md-4 col-sm-6">
+                                        <!-- Nếu phòng đăng ký được thì cho phép click -->
+                                        <div class="card p-3 room-card shadow-lg text-center" [ngClass]="{ 'bg-danger text-white': room.notAvailableSlots === room.totalSlots,
+                                                     'bg-secondary text-white': room.status === 1 }"
+                                            *ngIf="room.notAvailableSlots < room.totalSlots && room.status !== 1 || !isRoomDisabled(room.price) && room.status !== 1 ">
+
+
+                                            <div class="card-body">
+                                                <h3 class="card-title">{{ room.name }}</h3>
+                                                <h3 class="card-title">{{ room.price }}</h3>
+
+                                                <span class="badge bg-primary" *ngIf="room.gender === 0">Nam</span>
+                                                <span class="badge bg-danger" *ngIf="room.gender === 1">Nữ</span>
+                                                <p class="mt-2">
+                                                    <strong>{{ room.notAvailableSlots }} / {{ room.totalSlots
+                                                        }}</strong> chỗ đã đăng ký
+                                                </p>
+                                                <button class="btn btn-light mt-2" 
+                                                [disabled]="!isRoomPriceValid(room.price)" 
+                                                (click)="openRegisterForm(room)">
+                                            Đăng ký ngay
+                                        </button>
+                                        
+
+                                            </div>
+                                        </div>
+
+                                        <!-- Nếu phòng không đăng ký được, hiển thị nhưng không có sự kiện click -->
+                                        <div class="card p-3 room-card shadow-lg text-center opacity-50" [ngClass]="{ 'bg-danger text-white': room.notAvailableSlots === room.totalSlots,
+                                     'bg-secondary text-white': room.status === 1 }"
+                                            *ngIf="room.notAvailableSlots === room.totalSlots || room.status === 1 ||(room.status === 1 && isRoomDisabled(room.price))">
+
+                                            <div class="card-body">
+                                                <h3 class="card-title">{{ room.name }}</h3>
+                                                <span class="badge bg-primary" *ngIf="room.gender === 0">Nam</span>
+                                                <span class="badge bg-danger" *ngIf="room.gender === 1">Nữ</span>
+                                                <p class="mt-2">
+                                                    <strong>{{ room.notAvailableSlots }} / {{ room.totalSlots
+                                                        }}</strong> chỗ đã đăng ký
+                                                </p>
+                                                <p class="text-warning"
+                                                    *ngIf="room.notAvailableSlots === room.totalSlots">Phòng đã đầy</p>
+                                                <p class="text-dark" *ngIf="room.status === 1">Không hoạt động</p>
+                                                <button class="btn btn-light mt-2" disabled>Khóa đăng ký</button>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Form đăng ký hiển thị khi có phòng được chọn -->
+            <div class="modal-overlay" *ngIf="selectedRoom">
+                <div class="modal1">
+                    <h3 class="registration-title">Đăng ký phòng {{ selectedRoom.name }}</h3>
+
+                    <div class="student-info">
+                        <p><strong>Thông tin sinh viên:</strong></p>
+                        <div class="student-details">
+                            <div class="student-avatar">
+                                <img [src]="profile.picture" alt="Ảnh đại diện" width="100">
+                            </div>
+                            <ul class="student-list">
+                                <li><strong>Mã SV:</strong> {{ profile.userCode || 'Không có mã' }} </li>
+                                <li><strong>Tên SV:</strong> {{ profile.fullName || 'Không có tên' }}</li>
+                                <li><strong>Số điện thoại:</strong> {{ profile.phone || 'Không có SĐT' }}</li>
+                                <li><strong>Giới tính:</strong> {{ profile.gender === 0 ? 'Nam' : profile.gender === 1 ?
+                                    'Nữ' : 'Nam' }}</li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                    <label>Ngày bắt đầu:</label>
+                    <input type="date" [(ngModel)]="StartDate" required [min]="today" placeholder="Start Date"
+                        (ngModelChange)="onDateChange()" [disabled]="getActiveSemesterStatus() === 0">
+                    <!-- Nếu trạng thái là 0 thì không cho sửa -->
+
+                    <p style="color: red;" *NgIf="getActiveSemesterStatus() === 1">Ngày bắt đầu phải nhỏ hơn ngày kết
+                        thúc!</p>
+
+                    <label>Ngày kết thúc:</label>
+                    <input type="date" [(ngModel)]="EndDate" required [min]="today" placeholder="End Date"
+                        (ngModelChange)="onDateChange()" [disabled]="getActiveSemesterStatus() === 0">
+                    <!-- Nếu trạng thái là 0 thì không cho sửa -->
+
+                    <label>Tổng số ngày:</label>
+                    <input type="text" [(ngModel)]="totalDate" placeholder="{{ totalDate }}" disabled>
+
+                    <label>Tổng tiền:</label>
+                    <input type="text" class="form-control" placeholder="{{ price || 'Đang cập nhật...' }}" disabled>
+
+                    <button (click)="closeRegisterForm()">Hủy</button>
+                    <button (click)="submitRegister()">Đăng ký</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #noRegistration>
+    <div class="alert alert-warning text-center">
+        <h3>Chưa tới thời hạn đăng ký!</h3>
+    </div>
+</ng-template>

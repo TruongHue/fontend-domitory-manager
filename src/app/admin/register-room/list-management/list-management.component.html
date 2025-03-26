@@ -1,0 +1,83 @@
+<div class="container">
+    <h2>Danh sách đăng ký ký túc xá</h2>
+  
+    <!-- Bộ lọc & tìm kiếm -->
+    <div class="filters">
+      <input type="text" placeholder="Tìm kiếm theo ID sinh viên..." [(ngModel)]="searchText" (input)="filterData()">
+  
+      <select [(ngModel)]="selectedStatus" (change)="filterData()">
+        <option value="All">Tất cả trạng thái</option>
+        <option value="1">Còn hạn</option>
+        <option value="10">Hết hạn</option>
+      </select>
+  
+      <select [(ngModel)]="selectedPayment" (change)="filterData()">
+        <option value="All">Tất cả thanh toán</option>
+        <option value="0">Đã thanh toán</option>
+        <option value="1">Chưa thanh toán</option>
+      </select>
+    </div>
+  
+    <!-- Danh sách đăng ký -->
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>ID Sinh viên</th>
+          <th>ID Phòng</th>
+          <th>Ngày bắt đầu</th>
+          <th>Ngày kết thúc</th>
+          <th>Tổng tiền</th>
+          <th>Thanh toán</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th> <!-- Cột mới -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let register of paginatedRegisters; let i = index">
+          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+          <td>{{ register.idStudent }}</td>
+          <td>{{ register.idRoom }}</td>
+          <td>{{ formatDate(register.startDate) }}</td>
+          <td>{{ formatDate(register.endDate) }}</td>
+          <td>{{ register.total | currency:'VND' }}</td>
+          <td [ngClass]="{ 'paid-status': register.paymentStatus === 0,
+                           'unpaid-status': register.paymentStatus === 1,
+                           'blocked-status': register.paymentStatus === 2}">
+            {{ getPaymentText(register.paymentStatus) }}
+          </td>
+          <td [ngClass]="{
+            'active-status': register.status === 0,
+            'inactive-status': register.status === 1,
+            'blocked-status': register.status === 2,
+            'pending-status': register.status === 3
+        }">
+            {{ getStatusText(register.status) }}
+        </td>
+        
+        <td>
+          <select class="payment-select" 
+        [(ngModel)]="register.paymentStatus" 
+        (change)="updatePaymentStatus(register.idRegister, register.paymentStatus)" 
+        [disabled]="register.status === 1">
+    <option [value]="0">Đã thanh toán</option>
+    <option [value]="1">Chưa thanh toán</option>
+    <option [value]="2">Hủy</option>
+</select>
+
+      </td>
+      
+        
+        </tr>
+      </tbody>
+    </table>
+  
+    <!-- Phân trang -->
+    <!-- Phân trang -->
+<div class="pagination">
+    <button (click)="changePage(-1)" [disabled]="currentPage === 1">«</button>
+    <span>Trang {{ currentPage }} / {{ getTotalPages() }}</span>
+    <button (click)="changePage(1)" [disabled]="currentPage >= getTotalPages()">»</button>
+  </div>  
+  </div>
+  

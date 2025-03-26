@@ -1,0 +1,37 @@
+<input type="text" [(ngModel)]="searchText" (input)="searchAccounts()" placeholder="🔍 Tìm kiếm theo tên hoặc mã..." class="search-input"/>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>UserName</th>
+      <th>UserCode</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th>Hình ảnh</th>
+      <th>Thao tác</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let account of pagedAccounts">
+      <td>{{ account.IdAccount }}</td>
+      <td>{{ account.UserName }}</td>
+      <td>{{ account.UserCode }}</td>
+      <td>{{ account.NumberPhone }}</td>
+      <td>{{ account.InfoStudent?.Email }}</td>
+      <td>
+        <img *ngIf="account.InfoStudent?.Picture" [src]="getImageUrl(account.InfoStudent.Picture)" alt="Avatar" class="avatar" />
+      </td>
+      <td>
+        <button (click)="unblockAccount(account.IdAccount)">🔓 Bỏ chặn</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Phân trang -->
+<div class="pagination">
+  <button *ngFor="let page of getTotalPages()" (click)="changePage(page)" [class.active]="page === currentPage">
+    {{ page }}
+  </button>
+</div>

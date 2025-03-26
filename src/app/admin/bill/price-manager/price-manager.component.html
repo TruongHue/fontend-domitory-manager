@@ -1,0 +1,50 @@
+<h2>Danh sách giá điện nước</h2>
+
+<!-- Button thêm mới -->
+<button (click)="showForm()">➕ Thêm mới</button>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Giá điện</th>
+      <th>Giá nước</th>
+      <th>Số m³ vượt mức</th>
+      <th>Giá m³ vượt mức</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let price of prices">
+      <td>{{ price.idPrice }}</td>
+      <td>{{ price.electricityPrice | number }}</td>
+      <td>{{ price.waterPrice | number }}</td>
+      <td>{{ price.waterLimit }}</td>
+      <td>{{ price.waterPriceOverLimit | number }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Overlay mờ nền khi hiển thị form -->
+<div class="overlay" *ngIf="isFormVisible"></div>
+
+<!-- Form thêm/cập nhật giá điện nước -->
+<div class="form-container" *ngIf="isFormVisible">
+  <h3>Thêm / Cập nhật giá điện nước</h3>
+  <form (ngSubmit)="submitPrice()">
+    <label>Giá điện:</label>
+    <input type="number" [(ngModel)]="newPrice.electricityPrice" name="electricityPrice" min="0" required>
+  
+    <label>Giá nước:</label>
+    <input type="number" [(ngModel)]="newPrice.waterPrice" name="waterPrice" min="0" required>
+  
+    <label>Số m³ vượt mức:</label>
+    <input type="number" [(ngModel)]="newPrice.waterLimit" name="waterLimit" min="0" required>
+  
+    <label>Giá m³ vượt mức:</label>
+    <input type="number" [(ngModel)]="newPrice.waterPriceOverLimit" name="waterPriceOverLimit" min="0" required>
+  
+    <button type="submit">Lưu</button>
+    <button type="button" (click)="hideForm()">❌ Hủy</button>
+  </form>
+  
+</div>

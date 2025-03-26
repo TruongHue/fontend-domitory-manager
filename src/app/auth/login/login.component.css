@@ -1,0 +1,149 @@
+.login-box form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-box input::placeholder {
+    color: rgba(255, 255, 255, 0.7); /* Màu trắng mờ */
+    opacity: 1; /* Đảm bảo không bị làm mờ */
+} 
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url('/assets/background_home.jpg') no-repeat center;
+    background-size: cover;
+    position: relative;
+}
+
+/* Tạo lớp phủ mờ trên nền */
+.login-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Lớp tối nhẹ */
+    backdrop-filter: blur(8px); /* Làm mờ nền */
+    z-index: 1;
+}
+
+/* Form đăng nhập */
+.login-box {
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.1); /* Hiệu ứng kính mờ */
+    padding: 25px;
+    border-radius: 12px;
+    width: 380px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.login-box h2 {
+    color: white;
+    margin-bottom: 20px;
+}
+
+/* Nhóm input */
+.login-box input {
+    width: 80%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    outline: none;
+}
+
+/* Ô nhập mật khẩu có icon con mắt */
+.password-group {
+    position: relative;
+    width: 80%;
+}
+
+.password-group input {
+    padding-right: 40px; /* Chừa khoảng trống cho icon */
+}
+
+/* Nút con mắt */
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: rgba(19, 19, 19, 0.405);
+}
+
+/* Nút đăng nhập */
+.login-box button {
+    width: 40%; /* Full width */
+    padding: 12px;
+    background: rgba(255, 0, 0, 0.8);
+    color: rgba(255, 255, 255, 0.726);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.login-box button:hover {
+    background: rgba(255, 0, 0, 1);
+}
+
+/* Đăng ký */
+.login-box p {
+    margin-top: 15px;
+    color: white;
+}
+
+.login-box a {
+    color: rgba(4, 0, 255, 0.778);
+    text-decoration: none;
+}
+
+.login-box a:hover {
+    text-decoration: underline;
+}
+.error-message {
+    color: red !important;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .input-error {
+    border: 2px solid red !important;
+    background-color: #ffe6e6; /* Nhẹ nhàng báo lỗi */
+  }
+  .password-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .password-group input {
+    flex: 1;
+    padding-right: 30px; /* Chừa khoảng trống cho icon */
+  }
+  
+  .password-group i {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    color: #555;
+  }
+  
+  .password-group i:hover {
+    color: #000;
+  }
+  

@@ -1,0 +1,74 @@
+/* Tùy chỉnh tab */
+.nav-tabs .nav-link {
+  font-size: 16px;
+  font-weight: bold;
+  color: #007bff;
+  background: rgba(0, 123, 255, 0.1);
+  border-radius: 8px;
+  margin: 0 5px;
+  padding: 10px 15px;
+  transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+  background: rgba(0, 123, 255, 0.3);
+  color: #0056b3;
+}
+
+.nav-tabs .nav-link.active {
+  background: #007bff;
+  color: white;
+  border-radius: 8px;
+}
+
+/* Nội dung tab */
+.tab-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tiêu đề */
+h4 {
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+/* Bảng hóa đơn */
+.table {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table thead {
+  background: #ff8400;
+  color: white;
+}
+
+.table th, .table td {
+  text-align: center;
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.table tbody tr:hover {
+  background: rgba(0, 123, 255, 0.1);
+}
+h5 {
+  color: #c60700; /* Màu đỏ */
+  font-weight: bold; /* Chữ đậm */
+  text-transform: uppercase; /* Viết hoa */
+  margin-top: 20px; /* Khoảng cách trên */
+  border-bottom: 2px solid #d9534f; /* Gạch chân */
+  padding-bottom: 5px; /* Khoảng cách dưới */
+}
+
+.alert-info {
+  background-color: rgba(255, 255, 255, 0.7) !important; /* Màu nền trắng trong nhẹ */
+  color: #000 !important; /* Chữ màu đen cho dễ đọc */
+  border: 1px solid #ddd; /* Viền nhẹ để nhìn rõ */
+}

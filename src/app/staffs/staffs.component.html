@@ -1,0 +1,21 @@
+<div class="dashboard-container">
+
+    <nav class="sidebar">
+        <h2>Staff Dashboard</h2>
+        <ul>
+            <li routerLinkActive="active"><a routerLink="/staffs/electricity-managerment"><i class="fas fa-users"></i> 📌 Quản lý hóa đơn</a></li>
+            <li routerLinkActive="active"><a routerLink="/staffs/help-managerment"><i class="fas fa-users"></i> 📌 Hỗ trợ</a></li>
+        </ul>
+        <div class="logout">
+            <button class="logout-btn" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+              </button>
+                  </div>
+    </nav>
+    
+    <!-- Đây là nơi nội dung thay đổi theo route -->
+    <main class="content">
+        <router-outlet></router-outlet>
+    </main>
+    </div>
+    

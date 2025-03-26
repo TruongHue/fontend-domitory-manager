@@ -1,0 +1,16 @@
+<div class="container">
+    <nav class="horizontal-nav"> 
+        <button (click)="changeTab('registration-schedule')"
+            [class.active]="activeTab === 'registration-schedule'">Quản lý lịch đăng ký</button>
+        <button (click)="changeTab('register-room')" [class.active]="activeTab === 'register-room'">Quản lý phòng đăng
+            ký</button>
+        <button (click)="changeTab('list-register')" [class.active]="activeTab === 'list-register'">Quản lý danh sách
+            đăng ký</button>
+    </nav>
+
+    <div class="content">
+        <app-room-status-management *ngIf="activeTab === 'register-room'"></app-room-status-management>
+        <app-list-management *ngIf="activeTab === 'list-register'"></app-list-management>
+        <app-registration-schedule *ngIf="activeTab === 'registration-schedule'"></app-registration-schedule>
+    </div>
+</div>

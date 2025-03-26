@@ -1,0 +1,259 @@
+.room-management {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.room-management h2 {
+    color: #2c3e50;
+}
+
+
+
+
+.toolbar button, .modal-actions button {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-left: auto; /* Đẩy nút sang phải */
+}
+
+button:hover, .toolbar button:hover {
+    box-shadow: 0px 4px 15px rgba(38, 152, 255, 0.3);
+}
+
+.table-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    z-index: 2;
+}
+
+table th, table td {
+    min-width: 100px;
+    white-space: nowrap;
+    padding: 14px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 16px;
+}
+
+table tbody tr {
+    border-bottom: 2px solid #ddd;
+}
+
+table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.action-buttons button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+    border: none;
+}
+
+.action-buttons .edit {
+    background: #f1c40f;
+    color: white;
+}
+
+.action-buttons .edit:hover {
+    background: #f39c12;
+}
+
+.action-buttons .delete {
+    background: #e74c3c;
+    color: white;
+}
+
+.action-buttons .delete:hover {
+    background: #c0392b;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    width: 450px;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal h3 {
+    color: #6a11cb;
+    text-align: center;
+}
+
+.flex-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.flex-row > div {
+    flex: 1;
+    min-width: 150px;
+}
+
+.small-input input {
+    width: 100%;
+    max-width: 100px;
+    text-align: center;
+}
+
+.modal input, .modal select, .modal textarea {
+    width: 90%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    transition: 0.3s;
+    font-size: 16px;
+}
+
+.modal input:focus, .modal select:focus, .modal textarea:focus {
+    border-color: #6a11cb;
+    box-shadow: 0px 4px 10px rgba(106, 17, 203, 0.3);
+}
+
+.toggle-switch {
+    width: 50px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.toggle-switch.active {
+    background-color: #4caf50;
+}
+
+.toggle-button {
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    transition: transform 0.3s;
+}
+
+.toggle-switch.active .toggle-button {
+    transform: translateX(26px);
+}
+
+button {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.pagination-btn {
+    all:unset;
+    background-color: #d3d7ddd5;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin: 0 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.pagination-btn:hover {
+    background-color: #0056b3;
+}
+
+.pagination-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toolbar input {
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    outline: none;
+    width: 250px;
+}
+
+.toolbar select {
+    padding: 6px 10px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    background-color: #f2f2f2;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.toolbar button {
+    padding: 8px 12px;
+    border-radius: 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.avatar1 {
+    width: 100px;  /* Chiều rộng 50px */
+    height: 100px; /* Chiều cao 50px */
+}
+

@@ -1,0 +1,63 @@
+<div class="room-management">
+  <h2>Quản lý Tòa nhà</h2>
+  <div class="toolbar">
+      <input type="text" placeholder="Tìm kiếm tòa nhà..." [(ngModel)]="searchText" (input)="filterBuildings()" />
+      <button (click)="openAddModal()">➕ Thêm tòa nhà</button>
+  </div>
+
+  <table>
+      <thead>
+          <tr>
+              <th>Mã tòa nhà</th>
+              <th>Tên tòa nhà</th>
+              <th>Mô tả</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr *ngFor="let building of filteredBuildingsList">
+              <td>{{ building.IdBuilding }}</td>
+              <td>{{ building.NameBuilding }}</td>
+              <td>{{ building.Description }}</td>
+              <td>
+                  <div class="toggle-switch" [class.active]="building.Status === 0" (click)="toggleBuildingStatus(building)">
+                      <div class="toggle-button"></div>
+                  </div>
+              </td>
+              <td>
+                  <button>✏️ Sửa</button>
+                  <button>🗑️ Xóa</button>
+              </td>
+          </tr>
+      </tbody>
+  </table>
+</div>
+
+<!-- Modal thêm tòa nhà, hiển thị ngay khi vào trang -->
+<div *ngIf="isAddModalOpen" class="modal-overlay">
+  <div class="modal" [class.show]="isAddModalOpen">
+    <div class="modal-content">
+      <button (click)="isAddModalOpen = true">➕ Thêm phòng</button>
+
+      <label for="NameBuilding">Tên tòa nhà:</label>
+      <input id="NameBuilding" type="text" [(ngModel)]="newBuilding.NameBuilding" placeholder="Nhập tên tòa nhà">
+
+      <label for="Description">Mô tả:</label>
+      <textarea id="Description" [(ngModel)]="newBuilding.Description" placeholder="Mô tả"></textarea>
+
+      <div>
+        <label for="status">Trạng thái:</label>
+        <select id="status" [(ngModel)]="newBuilding.Status">
+          <option [value]="0">✅ On</option>
+          <option [value]="1">❌ Off</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button (click)="closeModals()">❌ Hủy</button>
+      <button (click)="addBuilding()">✔️ Hoàn tất</button>
+    </div>
+  </div>
+</div>

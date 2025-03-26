@@ -1,0 +1,123 @@
+<div class="tab-container">
+    <!-- Tabs chọn tòa nhà -->
+    <div class="tab-header">
+      <button *ngFor="let dormitory of dormitories; let i = index" 
+              (click)="selectedTab = i"
+              [class.active]="selectedTab === i">
+        KTX {{ dormitory.name }}
+      </button>
+    </div>
+  
+    <div class="container mt-4">
+      <div class="tab-content">
+        <div *ngFor="let dormitory of dormitories; let i = index" [hidden]="selectedTab !== i">
+          <div class="building">
+            <div *ngFor="let floor of [1, 2, 3]" class="floor">
+              <h4 class="text-primary">Tầng {{ floor }}</h4>
+              <div class="row g-3">
+                <div *ngFor="let room of getRoomsByFloor(dormitory.rooms, floor)" class="col-lg-2 col-md-4 col-sm-6">
+                  
+                  <!-- Nếu phòng đăng ký được thì cho phép click -->
+                  <div class="card p-3 room-card shadow-lg text-center"
+                       [ngClass]="{ 'bg-danger text-white': room.notAvailableSlots === room.totalSlots,
+                                     'bg-secondary text-white': room.status === 1 }"
+                       *ngIf="room.notAvailableSlots < room.totalSlots && room.status !== 1"
+                       (click)="openRegisterForm(room)">
+                    
+                    <div class="card-body">
+                      <h3 class="card-title">{{ room.name }}</h3>
+                      <span class="badge bg-primary" *ngIf="room.gender === 0">Nam</span>
+                      <span class="badge bg-danger" *ngIf="room.gender === 1">Nữ</span>
+                      <p class="mt-2">
+                        <strong>{{ room.notAvailableSlots }} / {{ room.totalSlots }}</strong> chỗ đã đăng ký
+                      </p>
+                      <button class="btn btn-light mt-2">Đăng ký ngay</button>
+                    </div>
+                  </div>
+    
+                  <!-- Nếu phòng không đăng ký được, hiển thị nhưng không có sự kiện click -->
+                  <div class="card p-3 room-card shadow-lg text-center opacity-50"
+                       [ngClass]="{ 'bg-danger text-white': room.notAvailableSlots === room.totalSlots,
+                                     'bg-secondary text-white': room.status === 1 }"
+                       *ngIf="room.notAvailableSlots === room.totalSlots || room.status === 1">
+                    
+                    <div class="card-body">
+                      <h3 class="card-title">{{ room.name }}</h3>
+                      <span class="badge bg-primary" *ngIf="room.gender === 0">Nam</span>
+                      <span class="badge bg-danger" *ngIf="room.gender === 1">Nữ</span>
+                      <p class="mt-2">
+                        <strong>{{ room.notAvailableSlots }} / {{ room.totalSlots }}</strong> chỗ đã đăng ký
+                      </p>
+                      <p class="text-warning" *ngIf="room.notAvailableSlots === room.totalSlots">Phòng đã đầy</p>
+                      <p class="text-dark" *ngIf="room.status === 1">Không hoạt động</p>
+                      <button class="btn btn-light mt-2" disabled>Khóa đăng ký</button>
+                    </div>
+                  </div>
+    
+                </div>
+              </div> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+<!-- Form đăng ký hiển thị khi có phòng được chọn -->
+<div class="modal-overlay" *ngIf="selectedRoom">
+  <div class="modal1">
+    <h3>Đăng ký phòng {{ selectedRoom.name }}</h3>
+
+    <label for="search">Tìm kiếm sinh viên:</label>
+    <input type="text" [(ngModel)]="searchText" (keyup)="filterStudents()" placeholder="Nhập tên hoặc mã sinh viên...">
+    
+    <div class="table-container">
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Mã SV</th>
+            <th>Tên SV</th>
+            <th>Số điện thoại</th>
+            <th>Giới tính</th>
+            <th>Chọn</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let student of filteredStudents">
+            <td>{{ student.Account.UserCode }}</td>
+            <td>{{ student.Account.UserName }}</td>
+            <td>{{ student.Account.NumberPhone }}</td>
+            <td>{{ student.InfoStudent.Gender === 0 ? 'Nam' : 'Nữ' }}</td>
+            <td>
+              <button (click)="selectStudent(student)">Chọn</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    
+    <p>Sinh viên đã chọn: <strong>{{ selectedStudentText || 'Chưa chọn' }}</strong></p>
+
+    <label>Ngày bắt đầu:</label>
+    <input type="date" [(ngModel)]="registerForm.startDate" required [min]="today">
+    <p style="color: red;">Ngày bắt đầu phải nhỏ hơn ngày kết thúc!</p>
+
+    <label>Ngày kết thúc:</label>
+    <input type="date" [(ngModel)]="registerForm.endDate" required [min]="registerForm.startDate">
+
+    <label>Tổng tiền:</label>
+    <input type="number" [(ngModel)]="registerForm.total" disabled>
+
+    <label>Trạng thái thanh toán:</label>
+    <select [(ngModel)]="registerForm.paymentStatus" required>
+      <option value="0">Chưa thanh toán</option>
+      <option value="1">Đã thanh toán</option>
+      <option value="2">Hủy</option>
+    </select>
+
+    <button (click)="closeRegisterForm()">Hủy</button>
+    <button (click)="submitRegister()">Đăng ký</button>
+  </div>
+</div>

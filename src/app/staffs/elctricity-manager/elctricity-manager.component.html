@@ -1,0 +1,73 @@
+<div class="bill-management container">
+    <h2 class="text-center my-3">📑 Quản lý Hóa Đơn Điện & Nước</h2>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <button class="btn btn-primary" (click)="isAddBillModalOpen = true">
+            ➕ Thêm Hóa Đơn
+        </button>
+    
+        <div class="d-flex gap-2">
+            <input 
+    type="text" class="form-control" 
+    placeholder="🔍 Tìm phòng..." 
+    [(ngModel)]="searchText" 
+    (ngModelChange)="filterRooms()"
+/>
+
+<select class="form-control" [(ngModel)]="selectedBuilding" (change)="filterRooms()">
+    <option value="">🏢 Tất cả tòa nhà</option>
+    <option *ngFor="let building of buildings" [value]="building.IdBuilding">
+        {{ building.NameBuilding }}
+    </option>
+</select>
+
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Tên phòng</th>
+                    <th>Tòa nhà</th>
+                    <th>Điện (Tháng trước)</th>
+                    <th>Ngày cuối ghi điện</th>
+                    <th>Điện (Tháng này)</th>
+                    <th>Hành động</th>
+                    <th>Nước (Tháng trước)</th>
+                    <th>Ngày cuối ghi nước</th>
+                    <th>Nước (Tháng này)</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let room of filteredRooms">
+                    <td>{{ room.RoomName }}</td>
+                    <td>{{ room.Building.NameBuilding }}</td>
+                    <td>{{ room.dienTruoc }}</td>
+                    <td>{{ room.ngayCuoiGhiDien || 'Chưa ghi' }}</td>
+                    <td>
+                        <input type="number" class="form-control" [(ngModel)]="room.dienThangNay" />
+                    </td>
+                    <td>
+                        <button class="btn btn-success btn-sm" (click)="addElectricBill(room)">
+                            💾 Lưu Điện
+                        </button>
+                    </td>
+                    
+                    <td>{{ room.nuocTruoc }}</td>
+                    <td>{{ room.ngayCuoiGhiNuoc || 'Chưa ghi' }}</td>
+                    <td>
+                        <input type="number" class="form-control" [(ngModel)]="room.nuocThangNay" />
+                    </td>
+                    <td>
+                        <button class="btn btn-info btn-sm" (click)="addWaterBill(room)">
+                            💾 Lưu Nước
+                        </button>
+                    </td>
+                    
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

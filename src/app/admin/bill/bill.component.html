@@ -1,0 +1,12 @@
+<div class="container">
+    <nav class="horizontal-nav">
+        <button (click)="changeTab('electric-bill')" [class.active]="activeTab === 'electric-bill'">Quản lý hóa đơn tổng</button>
+        <button (click)="changeTab('detail-bill')" [class.active]="activeTab === 'detail-bill'" >Chi tiết hóa đơn</button>
+        <button (click)="changeTab('price-manager')" [class.active]="activeTab === 'price-manager'" >Giá điện - nước</button>
+    </nav>
+</div>
+<div class="content">
+    <app-management-total-bill *ngIf="activeTab === 'electric-bill'"></app-management-total-bill>
+    <app-detail-bill *ngIf="activeTab === 'detail-bill'"></app-detail-bill>
+    <app-price-manager *ngIf="activeTab === 'price-manager'"></app-price-manager>
+</div>

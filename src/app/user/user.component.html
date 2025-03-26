@@ -1,0 +1,25 @@
+<header class="navbar">
+  <div class="logo">
+    <img src="/assets/background_home.jpg" alt="Logo" />
+  </div>
+  <nav class="nav-menu">
+    <ul>
+      <li><a routerLink="/user/home" routerLinkActive="active">Trang chủ</a></li>
+      <li><a routerLink="/user/personal" routerLinkActive="active">Cá nhân</a></li>
+      <li><a routerLink="/user/registerRoomUser" routerLinkActive="active">Đăng ký phòng</a></li>
+      <li><a routerLink="/user/roomManager" routerLinkActive="active">Quản lý phòng</a></li>
+      <li><a routerLink="/user/historyRegister" routerLinkActive="active">Lịch sử đăng ký</a></li>
+      <li><a routerLink="/user/help" routerLinkActive="active">Hỗ trợ</a></li>
+    </ul>
+    
+  </nav>
+  <div class="nav-icons">
+    <button class="logout-btn" (click)="logout()">
+      <i class="fas fa-sign-out-alt"></i>
+    </button>
+  </div>
+</header>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
