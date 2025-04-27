@@ -1,83 +1,84 @@
+<div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
 <div class="container">
-    <h2>Danh sách đăng ký ký túc xá</h2>
-  
-    <!-- Bộ lọc & tìm kiếm -->
-    <div class="filters">
-      <input type="text" placeholder="Tìm kiếm theo ID sinh viên..." [(ngModel)]="searchText" (input)="filterData()">
-  
+  <h2>Danh sách đăng ký ký túc xá</h2>
+
+  <!-- Bộ lọc & tìm kiếm -->
+  <div class="filters">
+      <input type="text" class="search-box" placeholder="Tìm kiếm theo ID sinh viên..." [(ngModel)]="searchText" (input)="filterData()">
+
       <select [(ngModel)]="selectedStatus" (change)="filterData()">
-        <option value="All">Tất cả trạng thái</option>
-        <option value="1">Còn hạn</option>
-        <option value="10">Hết hạn</option>
+          <option value="All">Tất cả trạng thái</option>
+          <option value="0">Còn hạn</option>
+          <option value="1">Hết hạn</option>
+          <option value="2">Bị khóa</option>
+          <option value="3">Đợi thanh toán</option>
       </select>
-  
+
       <select [(ngModel)]="selectedPayment" (change)="filterData()">
-        <option value="All">Tất cả thanh toán</option>
-        <option value="0">Đã thanh toán</option>
-        <option value="1">Chưa thanh toán</option>
+          <option value="All">Tất cả thanh toán</option>
+          <option value="0">Đã thanh toán</option>
+          <option value="1">Chưa thanh toán</option>
+          <option value="2">Hủy</option>
       </select>
-    </div>
-  
-    <!-- Danh sách đăng ký -->
-    <table>
+  </div>
+
+  <!-- Danh sách đăng ký -->
+  <table class="table">
       <thead>
-        <tr>
-          <th>#</th>
-          <th>ID Sinh viên</th>
-          <th>ID Phòng</th>
-          <th>Ngày bắt đầu</th>
-          <th>Ngày kết thúc</th>
-          <th>Tổng tiền</th>
-          <th>Thanh toán</th>
-          <th>Trạng thái</th>
-          <th>Thao tác</th> <!-- Cột mới -->
-        </tr>
+          <tr>
+              <th>Mã sinh viên</th>
+              <th>Tên phòng</th>
+              <th>Ngày bắt đầu</th>
+              <th>Ngày kết thúc</th>
+              <th>Tổng tiền</th>
+              <th>Thanh toán</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+          </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let register of paginatedRegisters; let i = index">
-          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-          <td>{{ register.idStudent }}</td>
-          <td>{{ register.idRoom }}</td>
-          <td>{{ formatDate(register.startDate) }}</td>
-          <td>{{ formatDate(register.endDate) }}</td>
-          <td>{{ register.total | currency:'VND' }}</td>
-          <td [ngClass]="{ 'paid-status': register.paymentStatus === 0,
-                           'unpaid-status': register.paymentStatus === 1,
-                           'blocked-status': register.paymentStatus === 2}">
-            {{ getPaymentText(register.paymentStatus) }}
-          </td>
-          <td [ngClass]="{
-            'active-status': register.status === 0,
-            'inactive-status': register.status === 1,
-            'blocked-status': register.status === 2,
-            'pending-status': register.status === 3
-        }">
-            {{ getStatusText(register.status) }}
-        </td>
-        
-        <td>
-          <select class="payment-select" 
-        [(ngModel)]="register.paymentStatus" 
-        (change)="updatePaymentStatus(register.idRegister, register.paymentStatus)" 
-        [disabled]="register.status === 1">
-    <option [value]="0">Đã thanh toán</option>
-    <option [value]="1">Chưa thanh toán</option>
-    <option [value]="2">Hủy</option>
-</select>
-
-      </td>
-      
-        
-        </tr>
+          <tr *ngFor="let register of paginatedRegisters; let i = index">
+              <td>{{ register.accountInfo?.userCode }}</td>
+              <td>{{ register.RoomName }} - {{ register.BuildingName }}</td>
+              <td>{{ formatDate(register.startDate) }}</td>
+              <td>{{ formatDate(register.endDate) }}</td>
+              <td>{{ register.total | currency:'VND' }}</td>
+              
+              <td>
+                <select [(ngModel)]="register.paymentStatus" 
+                        (change)="updatePaymentAndReload(register.idRegister, 'paymentStatus', register.paymentStatus)"
+                        [disabled]="register.status === 1 || register.status === 2">
+                    <option [value]="0">Đã thanh toán</option>
+                    <option [value]="1">Chưa thanh toán</option>
+                    <option [value]="2">Hủy</option>
+                </select>
+            </td>
+            
+            <!-- Trạng thái đăng ký -->
+            <td>
+                <select [(ngModel)]="register.status" 
+                        (change)="updateAndReload(register.idRegister, 'status', register.status)"
+                        [disabled]="register.paymentStatus === 2">
+                    <option [value]="0">Hoạt động</option>
+                    <option [value]="1">Không hoạt động</option>
+                    <option [value]="2">Bị chặn</option>
+                    <option [value]="3">Chờ duyệt</option>
+                </select>
+            </td>
+            <td>
+              <button class="btn btn-danger" (click)="delete(register.idRegister)">🗑️ Xóa</button>
+            </td>
+            
+          </tr>
       </tbody>
-    </table>
-  
-    <!-- Phân trang -->
-    <!-- Phân trang -->
-<div class="pagination">
-    <button (click)="changePage(-1)" [disabled]="currentPage === 1">«</button>
-    <span>Trang {{ currentPage }} / {{ getTotalPages() }}</span>
-    <button (click)="changePage(1)" [disabled]="currentPage >= getTotalPages()">»</button>
-  </div>  
+  </table>
+
+  <!-- Phân trang -->
+  <div class="modal-actions">
+      <button class="pagination-btn" (click)="prevPage()" [disabled]="currentPage === 1"><<</button>
+      <span class="pagination-info">{{ currentPage }} / {{ totalPages }}</span>
+      <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage >= totalPages">>></button>
   </div>
-  
+</div>

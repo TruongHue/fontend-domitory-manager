@@ -1,0 +1,53 @@
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+
+<div class="help-container">
+  <h2>📩 Gửi hỗ trợ / Góp ý</h2>
+
+  <!-- Form gửi hỗ trợ -->
+  <div class="help-form">
+    <input
+      type="text"
+      [(ngModel)]="newSupport.subject"
+      placeholder="📝 Tiêu đề"
+      name="subject"
+      required
+    />
+    <textarea
+      [(ngModel)]="newSupport.message"
+      placeholder="✍️ Nội dung"
+      name="message"
+      rows="4"
+      required
+    ></textarea>
+    <button (click)="sendSupport()">🚀 Gửi hỗ trợ</button>
+  </div>
+
+  <hr />
+
+  <details class="history" *ngIf="data.length > 0">
+    <summary>📂 Danh sách hỗ trợ đã gửi</summary>
+  
+    <div class="feedback-card" *ngFor="let item of data">
+      <h3>{{ item.Feedback.Title }}</h3>
+      <p><strong>Người gửi:</strong> {{ item.Feedback.Sender }}</p>
+      <p><strong>🕒 Thời gian gửi:</strong> {{ item.Feedback.CreatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+  
+      <p class="feedback-content">
+        <strong>Nội dung:</strong> {{ item.Feedback.Content }}
+      </p>
+  
+      <div *ngIf="item.Feedback.Response; else noResponse">
+        <p class="feedback-response">
+          💬 <strong>Phản hồi từ Admin:</strong> {{ item.Feedback.Response }}
+        </p>
+        <p><strong>📅 Phản hồi lúc:</strong> {{ item.Feedback.ResponseAt | date:'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+  
+      <ng-template #noResponse>
+        <p class="no-response">⏳ Chưa có phản hồi</p>
+      </ng-template>
+    </div>
+  </details>
+  

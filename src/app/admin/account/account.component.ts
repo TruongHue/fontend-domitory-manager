@@ -1,22 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-account',
   templateUrl: './account.component.html',
-  styleUrl: './account.component.css'
+  styleUrls: ['./account.component.css'] // Lưu ý: styleUrls đúng cú pháp
 })
-export class AccountComponent {
-  activeTab: string = 'account-list-inactive';
+export class AccountComponent implements OnInit {
+  activeTab: string = 'account-list-inactive'; // Mặc định là tab đầu tiên
 
   ngOnInit() {
-    const savedTab = localStorage.getItem('activeTab');
-    if (savedTab) {
-      this.activeTab = savedTab;
-    }
   }
+  
 
   changeTab(tab: string) {
     this.activeTab = tab;
-    localStorage.setItem('activeTab', tab);
+    localStorage.setItem('activeTab', tab); // Lưu lại tab đã chọn vào localStorage
   }
 }

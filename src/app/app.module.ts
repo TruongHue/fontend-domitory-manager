@@ -9,9 +9,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './auth/login/login.component';
-import { RegisterComponent } from './auth/register/register.component';
-import { StudentComponent } from './admin/student/student.component';
-import { BillComponent } from './admin/bill/bill.component';
+import { RegisterComponent } from './auth/register/register.component';import { BillComponent } from './admin/bill/bill.component';
 import { RoomComponent } from './admin/room/room.component';
 import { HelpComponent } from './admin/help/help.component';
 import { ReportComponent } from './admin/report/report.component';
@@ -47,8 +45,13 @@ import { AccountBlockedComponent } from './admin/account/account-blocked/account
 import { DetailBillComponent } from './admin/bill/detail-bill/detail-bill.component';
 import { PriceWaterElectricitiesComponent } from './admin/bill/price-water-electricities/price-water-electricities.component';
 import { CommonModule } from '@angular/common';
-
-
+import { UserhelpComponent } from './user/userhelp/userhelp.component';
+import { PostComponent } from './admin/post/post.component';
+import { AngularEditorModule } from '@kolkov/angular-editor';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';  // Import CKEditorModule
+import { QuillModule } from 'ngx-quill';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -60,7 +63,6 @@ import { CommonModule } from '@angular/common';
     RegisterComponent,
     StaffComponent,
     DashboardComponent,
-    StudentComponent,
     BillComponent,
     RoomComponent,
     HelpComponent,
@@ -91,6 +93,8 @@ import { CommonModule } from '@angular/common';
     AccountBlockedComponent,
     DetailBillComponent,
     PriceWaterElectricitiesComponent,
+    UserhelpComponent,
+    PostComponent,
     
   ],
   imports: [
@@ -102,9 +106,16 @@ import { CommonModule } from '@angular/common';
     NgxPaginationModule,
     MatTabsModule,
     NgChartsModule,
-    CommonModule // ✅ Đảm bảo đã import
-
-
+    CommonModule, // ✅ Đảm bảo đã import
+    AngularEditorModule,
+    CKEditorModule,
+    QuillModule.forRoot(), 
+    BrowserAnimationsModule, // bắt buộc cho toastr hoạt động
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
   ],
   providers: [
     provideClientHydration(),

@@ -1,38 +1,6 @@
-/* Căn giữa nội dung */
-.container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
+
   
-  /* Bảng danh sách */
-  .table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  .table th {
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    color: white;
-    padding: 12px;
-    font-size: 16px;
-  }
-  
-  .table td {
-    padding: 12px;
-    text-align: center;
-  }
-  
-  .table tr:nth-child(even) {
-    background: #f2f2f2;
-  }
+ 
   
   /* Nút bấm */
   .btn {
@@ -120,7 +88,6 @@
     color: #333;
   }
   
-  /* Các input và select */
   .modal-content label {
     font-size: 14px;
     font-weight: bold;
@@ -130,15 +97,7 @@
   }
   
   .modal-content input,
-  .modal-content select {
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 10px;
-  }
-  
+ 
   /* Hành động modal */
   .modal-actions {
     display: flex;
@@ -181,9 +140,7 @@
     font-weight: bold;
   }
   
-  .filter-container select {
-    width: 150px;
-  }
+
 
   .pagination {
     display: flex;
@@ -191,3 +148,95 @@
     margin-top: 10px;
   }
   
+ 
+
+option {
+  padding: 8px;
+  font-size: 14px;
+}
+
+select {
+  width: 200px; /* Độ rộng của dropdown */
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hover effect */
+select:hover {
+  border-color: #007bff; /* Xanh dương */
+}
+
+/* Khi focus (chọn vào dropdown) */
+select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Kiểu khi disabled */
+select:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+.pagination-btn {
+  background-color: #007bff; /* Màu xanh dương */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 16px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover {
+  background-color: #0056b3; /* Màu xanh đậm hơn khi hover */
+}
+
+.pagination-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  color: #666;
+}
+
+.pagination-info {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 10px;
+  color: #333;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #007bff;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

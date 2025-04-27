@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -6,41 +6,78 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class RoomBillService {
-  private apiUrl = 'https://localhost:7206/api/Bill';
+  private apiUrl = 'https://domitory-backend.onrender.com/api/Bill';
 
   constructor(private http: HttpClient) {}
 
-  getBillByRoomId(idRoom: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/Room/${idRoom}`);
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : new HttpHeaders();
   }
-  getPriceWaterElectricities(): Observable<any[]>{
-    return this.http.get<any[]>(`${this.apiUrl}/price`);
+
+  getAllBillElectricAndWaterByRoomId(idRoom: string): Observable<any> {
+    console.log(idRoom);
+    return this.http.get<any[]>(`${this.apiUrl}/all/bills/${idRoom}`, { headers: this.getAuthHeaders() });
   }
+
+  getLatestElectricBillByIdRoom(idRoom: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/electricity/${idRoom}`, { headers: this.getAuthHeaders() });
+  }
+
+  getPriceWaterElectricities(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/price`, { headers: this.getAuthHeaders() });
+  }
+
+  deletePriceWaterElectricities(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/price/${id}`, { headers: this.getAuthHeaders() });
+  }
+
   addOrUpdatePrice(price: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/price/add-or-update-price`, price);
+    return this.http.post<any>(`${this.apiUrl}/price/add-or-update-price`, price, { headers: this.getAuthHeaders() });
   }
-   // 🛠 Thanh toán hóa đơn điện
-   payElectricBill(billId: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/electricity/pay/${billId}`, {});
+
+  // 🛠 Thanh toán hóa đơn điện
+  payElectricBill(billId: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/electricity/pay/${billId}`, data, { headers: this.getAuthHeaders() });
   }
 
   // 🛠 Thanh toán hóa đơn nước
-  payWaterBill(billId: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/water/pay/${billId}`, {});
+  payWaterBill(billId: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/water/pay/${billId}`, data, { headers: this.getAuthHeaders() });
   }
 
   // 🗑 Xóa hóa đơn điện
-  deleteElectricBill(billId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/electricity/${billId}`);
+  deleteElectricBill(billId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/electric/${billId}`, { headers: this.getAuthHeaders() });
   }
 
   // 🗑 Xóa hóa đơn nước
-  deleteWaterBill(billId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/water/${billId}`);
+  deleteWaterBill(billId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/water/${billId}`, { headers: this.getAuthHeaders() });
   }
-  
-  checkHasUnpaidBill(idRoom: number) {
-    return this.http.get<{ hasUnpaidBill: boolean }>(`${this.apiUrl}/room/${idRoom}/has-unpaid-bill`);
+
+  checkHasUnpaidBill(idRoom: string): Observable<{ hasUnpaidBill: boolean }> {
+    const url = `${this.apiUrl}/room/${idRoom}/has-unpaid-bill`;
+    console.log('📌 [checkHasUnpaidBill] URL gọi API:', url);
+    return this.http.get<{ hasUnpaidBill: boolean }>(url, { headers: this.getAuthHeaders() });
   }
-  
+
+  getlatestElectricity(idRoom: string): Observable<any> {
+    console.log("Gửi request lấy hóa đơn điện mới nhất cho phòng:", idRoom);
+    return this.http.get<any>(`${this.apiUrl}/latestElectricity/${idRoom}`, { headers: this.getAuthHeaders() });
+  }
+
+  addElectricityBill(requestPayload: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/add/electricity`, requestPayload, { headers: this.getAuthHeaders() });
+  }
+
+  getlatestWater(idRoom: string): Observable<any> {
+    console.log("Gửi request lấy hóa đơn nước mới nhất cho phòng:", idRoom);
+    return this.http.get<any>(`${this.apiUrl}/latestWater/${idRoom}`, { headers: this.getAuthHeaders() });
+  }
+
+  addWaterBill(requestPayload: any): Observable<any> {
+    console.log(requestPayload);
+    return this.http.post<any>(`${this.apiUrl}/add/water`, requestPayload, { headers: this.getAuthHeaders() });
+  }
 }

@@ -25,10 +25,38 @@
     border-bottom: 2px solid #3498db;
   }
   
-  .tab-content {
-    margin-top: 10px;
-  }
-  
+.tab-content {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+  width: 100%;
+}
+
+.tab-content > div {
+  flex: 1;
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.tab-content .active-tab {
+  transform: translateX(0);
+  opacity: 1;
+}
+h3.text-center {
+  font-size: 24px; /* Đặt kích thước chữ */
+  font-weight: bold; /* Đặt chữ đậm */
+  color: #007bff; /* Màu chữ (có thể thay đổi theo yêu cầu) */
+  margin-top: 20px; /* Khoảng cách phía trên */
+  margin-bottom: 20px; /* Khoảng cách phía dưới */
+  text-transform: uppercase; /* Chữ in hoa */
+  text-align: center; /* Căn giữa chữ */
+  letter-spacing: 1px; /* Khoảng cách giữa các chữ cái */
+}
+
+h3.text-center.mt-4 {
+  margin-top: 30px; /* Cung cấp thêm khoảng cách khi sử dụng lớp mt-4 */
+}
+
   .building {
     display: flex;
     flex-direction: column;
@@ -192,3 +220,55 @@
   font-weight: bold;
   color: #333;
 }
+
+.bg-gradient-danger {
+  background: linear-gradient(135deg, #dc3545, #a71d2a);
+  color: white !important;
+  border: 2px solid #fff;
+}
+
+.bill-container {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 128, 255, 0.1);
+  max-width: 800px;
+  margin: 20px auto;
+  font-family: 'Segoe UI', sans-serif;
+  backdrop-filter: blur(8px);
+}
+.in-room {
+  background-color: #e0ffe0; /* xanh nhạt */
+}
+
+.bill-container h3 {
+  color: #007BFF;
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 700; /* ✅ In đậm */
+
+}
+
+.bill-section {
+  margin-top: 30px;
+  padding: 15px;
+  background: rgba(240, 248, 255, 0.6); /* xanh nhạt trong */
+  border: 1px solid #cce7ff;
+  border-radius: 12px;
+}
+
+.bill-section h4 {
+  font-size: 20px;
+  color: #0056b3;
+  margin-bottom: 10px;
+  font-weight: 700; /* ✅ In đậm */
+
+}
+button.unpaid-bill {
+  color: red !important;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+

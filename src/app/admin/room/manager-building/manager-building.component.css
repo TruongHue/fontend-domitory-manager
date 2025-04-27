@@ -8,49 +8,6 @@
 .building-management h2, .room-management h2 {
     color: #2c3e50;
 }
-.toggle-switch {
-    width: 50px;
-    height: 24px;
-    background-color: #ccc;
-    border-radius: 12px;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    display: flex;
-    align-items: center;
-    padding: 2px;
-}
-
-.toggle-switch.active {
-    background-color: #4caf50;
-}
-
-.toggle-button {
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    position: absolute;
-    transition: transform 0.3s ease-in-out;
-    left: 2px;
-}
-
-.toggle-switch.active .toggle-button {
-    transform: translateX(26px);
-}
-
-button {
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
-    border: none;
-    color: white;
-    padding: 8px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-button:hover {
-    box-shadow: 0px 4px 15px rgba(38, 152, 255, 0.3);
-}
 
 .toolbar {
     display: flex;
@@ -98,8 +55,9 @@ span.active {
   }
   
   .modal {
-    display: none;
+    display: flex;
     position: fixed;
+    justify-content: center; /* Căn giữa theo chiều ngang */
     top: 0;
     left: 0;
     width: 100%;
@@ -113,7 +71,14 @@ span.active {
     display: flex;
     flex-direction: column;
     gap: 15px;
-  }
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 500px; /* Giới hạn kích thước */
+    margin: auto;
+}
+
     
   .modal.show {
     display: flex;
@@ -127,6 +92,7 @@ span.active {
     background: #f9f9f9;
     transition: 0.3s;
   }
+  
   .modal select {
     width:  20%;
     padding: 10px;
@@ -144,17 +110,29 @@ span.active {
   .modal-actions {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
-  }
-  
-  .modal-actions button {
+    width: 90%; /* Đảm bảo cùng độ rộng với modal */
+    margin-top: 15px;
+    gap: 10px;
+}
+
+ .toolbar-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 0px;
+  gap: 10px;
+}
+/* Nút bấm */
+.modal-actions button {
     padding: 12px 20px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
     font-weight: bold;
     transition: 0.3s;
-  }
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    text-align: center;
+}
+
   
   .modal-actions button:first-child {
     background: #ff4757;
@@ -176,4 +154,32 @@ span.active {
 
 body.modal-open {
     overflow: hidden;
+}
+
+.modal-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* Định dạng chung cho ô tìm kiếm */
+
+
+/* Container để căn chỉnh ô tìm kiếm với dropdown */
+.filter-container {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Responsive: Khi màn hình nhỏ, hiển thị theo cột */
+@media (max-width: 768px) {
+  .filter-container {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+
 }

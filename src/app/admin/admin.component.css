@@ -172,3 +172,54 @@ hr {
     font-weight: bold;
     color: #ffe600 !important;
 }
+.notification-badge {
+    background-color: white;
+    color: red;
+    border-radius: 50%;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    min-width: 24px;
+    text-align: center;
+    border: 2px solid red;
+    line-height: 1.2;
+  }
+  
+.bill-container {
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 128, 255, 0.1);
+    max-width: 800px;
+    margin: 20px auto;
+    font-family: 'Segoe UI', sans-serif;
+    backdrop-filter: blur(8px);
+  }
+  
+  .bill-container h3 {
+    color: #007BFF;
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 700; /* ✅ In đậm */
+  
+  }
+  
+  .bill-section {
+    margin-top: 30px;
+    padding: 15px;
+    background: rgba(240, 248, 255, 0.6); /* xanh nhạt trong */
+    border: 1px solid #cce7ff;
+    border-radius: 12px;
+  }
+  
+  .bill-section h4 {
+    font-size: 20px;
+    color: #0056b3;
+    margin-bottom: 10px;
+    font-weight: 700; /* ✅ In đậm */
+  
+  }
+
+  

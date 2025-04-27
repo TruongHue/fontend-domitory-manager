@@ -1,0 +1,70 @@
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+<div class="post-container modern-ui">
+    <div class="header">
+      <h2>📢 Quản lý Bài đăng</h2>
+      <button (click)="addPost()" class="button">+ Thêm Bài đăng</button>
+    </div>
+  
+    <div *ngIf="posts.length === 0" class="no-posts">
+      <p>Chưa có bài đăng nào! ✨</p>
+    </div>
+    
+    <div *ngFor="let post of posts" class="card-style-post">
+      <div class="post-header">
+        <strong>{{ post.Title }}</strong>
+        <span class="post-date">{{ post.PostDate | date: 'short' }}</span>
+      </div>
+      <div class="post-body" [innerHTML]="post.Content"></div>
+      <div class="post-actions">
+        <button (click)="deletePost(post.Id)" class="btn btn-delete">🗑 Xóa</button>
+      </div>
+    </div>    
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal" [class.show]="showModal">
+    <div class="modal-content fancy-modal">
+      <h3>📝 Thêm Bài đăng mới</h3>
+  
+      <form  #newPostForm="ngForm" class="form-post">
+        <div class="form-group">
+          <label for="title">📌 Tiêu đề</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            [(ngModel)]="newPost.Title"
+            required
+            class="input-field"
+            placeholder="Nhập tiêu đề..."
+          />
+        </div>
+        <div class="form-group">
+          <label for="content">🗒 Nội dung</label>
+          
+          <!-- Nút tải tệp -->
+          <button type="button" class="btn btn-sm btn-secondary mb-2" (click)="openFileUploadDialog()">
+            <i class="fa fa-paperclip"></i> Tải tệp
+          </button>
+          
+          <!-- Trình soạn thảo nội dung -->
+          <quill-editor
+            name="content"
+            #editor
+            [(ngModel)]="newPost.Content"
+            [style]="{ height: '200px' }"
+            [placeholder]="'Nhập nội dung bài viết...'"
+          ></quill-editor>
+        </div>
+        
+  
+        <div class="modal-actions">
+          <button (click) = "savePost(newPost)" class="btn btn-save">💾 Lưu</button>
+          <button type="button" class="btn btn-cancel" (click)="closeModal()">❌ Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  

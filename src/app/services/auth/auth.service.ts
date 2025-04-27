@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://localhost:7206/api/Account';
+  private apiUrl = 'https://domitory-backend.onrender.com/api/Account';
 
   constructor(private http: HttpClient,private router: Router) {}
 

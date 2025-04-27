@@ -1,11 +1,32 @@
-<div class="search-container">
-    <input type="text" [(ngModel)]="searchText" (input)="searchAccounts()" placeholder="🔍 Tìm kiếm theo tên hoặc mã" />
-  </div>
-  
-  <table>
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+
+<div class="container">
+  <h2>Quản lý sinh viên hợp lệ</h2>
+  <button (click)="exportToExcel()" class="export-btn">
+    <i class="fa fa-download"></i> Xuất ra Excel
+  </button>
+  <input
+  id="file-input"
+  type="file"
+  accept=".xlsx, .xls"
+  style="display: none"
+  (change)="importFile($event)"
+/>
+
+<button class="import-btn" onclick="document.getElementById('file-input').click();">
+  <i class="fa fa-upload"></i> Import
+</button>
+ 
+    <input type="text" [(ngModel)]="searchText" (input)="searchAccounts()" placeholder="🔍 Tìm kiếm theo tên hoặc mã..."
+    class="search-input" />
+
+  <!-- Bảng thông tin -->
+  <table class="table">
     <thead>
       <tr>
-        <th>ID</th>
         <th>UserName</th>
         <th>UserCode</th>
         <th>Phone</th>
@@ -15,30 +36,55 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let account of pagedAccounts">
-        <td>{{ account.IdAccount }}</td>
-        <td>{{ account.UserName }}</td>
-        <td>{{ account.UserCode }}</td>
-        <td>{{ account.NumberPhone }}</td>
-        <td>{{ account.InfoStudent?.Email }}</td>
+      <tr *ngFor="let account of accounts">
+        <td>{{ account.Account.UserName }}</td>
+        <td>{{ account.Account.UserCode }}</td>
+        <td>{{ account.Account.NumberPhone }}</td>
+        <td>{{ account.InfoStudent.Email }}</td>
         <td>
-          <img *ngIf="account.InfoStudent?.Picture" [src]="getImageUrl(account.InfoStudent.Picture)" alt="Avatar" class="avatar" />
+          <img *ngIf="account.InfoStudent?.Picture" [src]="getImageUrl(account.InfoStudent.Picture)" alt="Avatar"
+            class="avatar" />
         </td>
         <td>
-          <button (click)="blockAccount(account.IdAccount)" class="btn-block">🚫 Chặn</button>
+          <button (click)="detail(account)">Chi tiết</button>
+          <button (click)="blockAccount(account.Account.AccountId)">🚫 Chặn</button>
         </td>
       </tr>
     </tbody>
   </table>
-  
-  <!-- Pagination -->
-  <div class="pagination">
-    <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">◀ Trước</button>
-    <button *ngFor="let page of getTotalPages()" 
-            (click)="changePage(page)" 
-            [class.active]="page === currentPage">
-      {{ page }}
-    </button>
-    <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === getTotalPages().length">Sau ▶</button>
+
+  <!-- Phân trang -->
+  <div class="modal-actions">
+    <button class="pagination-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+      << </button>
+        <span class="pagination-info">{{ currentPage }} / {{ getTotalPages() }}</span>
+        <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage >= getTotalPages()">>></button>
   </div>
-  
+</div>
+<div class="modal" [class.show]="selectedAccount">
+  <div class="fancy-modal">
+    <h2>📋 Chi tiết tài khoản sinh viên</h2>
+
+    <div class="detail-info">
+      <img *ngIf="selectedAccount?.InfoStudent?.Picture" [src]="getImageUrl(selectedAccount.InfoStudent.Picture)"
+        alt="Avatar" class="avatar-large" />
+
+      <div class="info-fields">
+        <p><strong>👤 Tên đăng nhập:</strong> {{ selectedAccount?.Account.UserName }}</p>
+        <p><strong>🆔 Mã sinh viên:</strong> {{ selectedAccount?.Account.UserCode }}</p>
+        <p><strong>📱 Số điện thoại:</strong> {{ selectedAccount?.Account.NumberPhone }}</p>
+        <p><strong>📧 Email:</strong> {{ selectedAccount?.InfoStudent.Email }}</p>
+        <p><strong>🚻 Giới tính:</strong>
+          {{ selectedAccount?.InfoStudent.Gender === 0 ? 'Nam' : 'Nữ' }}
+        </p>
+        <p><strong>🏠 Địa chỉ:</strong> {{ selectedAccount?.InfoStudent.Address }}</p>
+        <p><strong>👨‍👩‍👧 Tên phụ huynh:</strong> {{ selectedAccount?.InfoStudent.NameParent }}</p>
+        <p><strong>📞 SĐT phụ huynh:</strong> {{ selectedAccount?.InfoStudent.ParentNumberPhone }}</p>
+      </div>
+    </div>
+
+    <div class="actions" style="text-align: right; margin-top: 20px;">
+      <button class="close-btn" (click)="selectedAccount = null">❌ Đóng</button>
+    </div>
+  </div>
+</div>

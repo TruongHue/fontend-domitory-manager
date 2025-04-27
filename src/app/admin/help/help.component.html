@@ -1,1 +1,117 @@
-<p>help works!</p>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+
+<div class="container">
+  <div class="filter-container">
+    <h2>Quản lý Yêu cầu từ Sinh viên</h2>
+    <div class="filter-status">
+      <label for="statusFilter">Trạng thái phản hồi:</label>
+      <select id="statusFilter" [(ngModel)]="statusFilter" (change)="filterRequests()">
+        <option value="all">Tất cả</option>
+        <option value="responded">Đã phản hồi</option>
+        <option value="unresponded">Chưa phản hồi</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="requests.length === 0" class="no-requests">
+    <p>Chưa có yêu cầu nào từ sinh viên!</p>
+  </div>
+
+  <table class="table" *ngIf="filteredHelps.length > 0">
+    <thead>
+      <tr>
+        <th>Mã sinh viên</th>
+        <th>Tiêu đề</th>
+        <th>Nội dung</th>
+        <th>Ngày gửi</th>
+        <th>Trạng thái</th>
+        <th>Chi tiết</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let request of filteredHelps">
+        <td>{{ request.Account.UserCode }}</td> 
+        <td>{{ request.Feedback.Title }}</td>
+        <td>{{ request.Feedback.Content }}</td>
+        <td>{{ request.Feedback.CreatedAt | date: 'short' }}</td>
+        <td>
+          <span *ngIf="!request.IsResponded" (click)="respondToRequest(request)" class="btn-respond">Chưa phản hồi</span>
+          <span *ngIf="request.IsResponded" class="responded-status">Đã phản hồi</span>
+        </td>
+        <td>
+          <button *ngIf="request.IsResponded && request.Responses.length > 0" (click)="viewResponseDetails(request)" class="view-response-btn">
+            Xem chi tiết
+          </button>
+          <button *ngIf="!request.IsResponded || request.Responses.length === 0" (click)="viewResponseDetails(request)" class="no-response-btn">
+            Phản hồi
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="modal-actions">
+    <button class="pagination-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+      << </button>
+      <span class="pagination-info">{{ currentPage }} / {{ getTotalPages() }}</span>
+      <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage >= getTotalPages()">>></button>
+  </div>
+</div>
+
+<!-- Modal chi tiết phản hồi -->
+<div *ngIf="showResponseDetails" class="modal-overlay">
+  <div class="modal1">
+    <h3 >Chi tiết phản hồi</h3>
+    <!-- Thông tin sinh viên và nội dung hỗ trợ -->
+    <div class="student-info">
+      <p><strong>Tên sinh viên:</strong> {{ selectedRequest.Account.UserName }}</p>
+      <p><strong>Mã sinh viên:</strong> {{ selectedRequest.Account.UserCode }}</p>
+      <p><strong>Nội dung hỗ trợ:</strong> {{ selectedRequest.Feedback.Content }}</p>
+    </div>
+
+    <!-- Phản hồi (nếu có) -->
+    <div *ngIf="selectedRequest?.Responses?.length > 0" class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Phản hồi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let response of selectedRequest.Responses">
+            <td>{{ response }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="modal-footer">
+        <button class="close-button" (click)="closeResponseDetails()">Đóng</button>
+      </div>
+    </div>
+
+    <!-- Nếu chưa có phản hồi, người dùng có thể nhập phản hồi mới -->
+    <div *ngIf="!selectedRequest?.Responses || selectedRequest.Responses.length === 0" class="response-container">
+      <table class="response-table">
+        <tr>
+          <td colspan="2">
+            <div class="response-input">
+              <label for="newResponse">Nhập phản hồi mới:</label>
+              <textarea [(ngModel)]="selectedRequest.newResponseText" id="newResponse" rows="3" placeholder="Nhập nội dung phản hồi..."></textarea>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <div class="modal-footer">
+              <div class="submit-button">
+                <button (click)="sendResponse(selectedRequest)">Gửi phản hồi</button>
+              </div>
+              <button class="close-button" (click)="closeResponseDetails()">Đóng</button>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

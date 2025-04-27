@@ -1,14 +1,17 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
 <div class="room-management">
   <h2>Quản lý Tòa nhà</h2>
   <div class="toolbar">
-      <input type="text" placeholder="Tìm kiếm tòa nhà..." [(ngModel)]="searchText" (input)="filterBuildings()" />
-      <button (click)="openAddModal()">➕ Thêm tòa nhà</button>
+      <input class="search-box" type="text" placeholder="Tìm kiếm tòa nhà..." [(ngModel)]="searchText" (input)="filterBuildings()" />
+      <button class="button" (click)="openAddModal()">➕ Thêm tòa nhà</button>
   </div>
 
-  <table>
+  <table class="table">
       <thead>
           <tr>
-              <th>Mã tòa nhà</th>
               <th>Tên tòa nhà</th>
               <th>Mô tả</th>
               <th>Trạng thái</th>
@@ -17,7 +20,6 @@
       </thead>
       <tbody>
           <tr *ngFor="let building of filteredBuildingsList">
-              <td>{{ building.IdBuilding }}</td>
               <td>{{ building.NameBuilding }}</td>
               <td>{{ building.Description }}</td>
               <td>
@@ -25,9 +27,9 @@
                       <div class="toggle-button"></div>
                   </div>
               </td>
-              <td>
-                  <button>✏️ Sửa</button>
-                  <button>🗑️ Xóa</button>
+              <td class="toolbar-actions">
+                  <button class="btn btn-warning" (click)="openUpdateModal(building)">✏️ Sửa</button>
+                  <button class="btn btn-danger" (click)="delete(building)">🗑️ Xóa</button>
               </td>
           </tr>
       </tbody>
@@ -35,11 +37,12 @@
 </div>
 
 <!-- Modal thêm tòa nhà, hiển thị ngay khi vào trang -->
-<div *ngIf="isAddModalOpen" class="modal-overlay">
+<div *ngIf="isAddModalOpen || isUpdateModalOpen" class="modal-overlay">
   <div class="modal" [class.show]="isAddModalOpen">
     <div class="modal-content">
-      <button (click)="isAddModalOpen = true">➕ Thêm phòng</button>
-
+      <h3 class="modal-title">
+      {{ isUpdateModalOpen ? '✏️ Chỉnh sửa tòa nhà' : '➕ Thêm tòa nhà' }}
+      </h3>
       <label for="NameBuilding">Tên tòa nhà:</label>
       <input id="NameBuilding" type="text" [(ngModel)]="newBuilding.NameBuilding" placeholder="Nhập tên tòa nhà">
 
@@ -53,11 +56,14 @@
           <option [value]="1">❌ Off</option>
         </select>
       </div>
-    </div>
+    
 
     <div class="modal-actions">
       <button (click)="closeModals()">❌ Hủy</button>
-      <button (click)="addBuilding()">✔️ Hoàn tất</button>
-    </div>
+
+        <button *ngIf="isAddModalOpen" (click)="addBuilding()">➕ Thêm</button>
+        <button *ngIf="isUpdateModalOpen" (click)="updateBuilding(newBuilding)">✏️ Cập nhật</button>
+          </div>
+  </div>
   </div>
 </div>

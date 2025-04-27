@@ -5,22 +5,28 @@ import { RegisterRoomService } from '../../services/register-room/register-room.
 import { ElectricityBillService } from '../../services/bill/electricity-bill.service';
 import { WaterbillService } from '../../services/bill/waterbill.service';
 import { RoomService } from '../../services/room/room.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-room-manager',
   templateUrl: './room-manager.component.html',
-  styleUrls: ['./room-manager.component.css']
+  styleUrls: ['./room-manager.component.css', '../../app.component.css']
+
 })
 export class RoomManagerComponent implements OnInit {
-  idStudent: number = 0;
-  idRoom: number= 0;
+  idStudent: string = '';
+  idRoom: string ='';
   unpaidElectricBills: any[] = [];
   unpaidWaterBills: any[] = [];
+  paidElectricBills: any[] = [];
   allElectricBills: any[] = [];
   allWaterBills: any[] = [];
+  paidWaterBills: any[] = [];
   idRooms: any[]= [];
   nameRoom: string = '';
   building: string = '';
+  isLoading: boolean = true;
+
   constructor(
     private authService: AuthService,
     private userService: UserService,
@@ -32,92 +38,115 @@ export class RoomManagerComponent implements OnInit {
 
   ngOnInit() {
     this.loadUserInfo();
-    this.getInfoRoomUser();
+    //this.getInfoRoomUser();
   }
 
   loadUserInfo() {
-    const accountId = Number(localStorage.getItem('accountId'));
+    const accountId = localStorage.getItem('accountId');
+    console.log(accountId);
     if (accountId) {
       this.userService.getUsersById(accountId).subscribe(
         (response) => {
-          this.idStudent = response.InfoStudent.idStudent;
-          this.getInfoRoomUser();
+          this.idStudent = response.InfoStudent.Id;
+          console.log(this.idStudent);
+          this.getInfoRoomUser(this.idStudent);
+
         },
         (error) => {
           console.error('❌ Lỗi khi tải thông tin người dùng:', error);
+          this.isLoading = false; // Bắt đầu loading
+
         }
       );
     }
   }
 
-  getInfoRoomUser() {
-    if (!this.idStudent) return;
   
-    this.registerRoom.getRegistersByUser(this.idStudent).subscribe(
+  getInfoRoomUser(idUser: string) {
+    if (!idUser) return;
+  
+    this.registerRoom.getRegistersByUser(idUser).subscribe(
       (response: any[]) => {
         const activeRooms = response
-          .filter(item => item.status === 0)
-          .map(item => item.idRoom);
+          .filter(item => item.Status === 0)
+          .map(item => item.IdRoom);
   
         if (activeRooms.length > 0) {
           this.idRooms = activeRooms;
-          this.idRoom = this.idRooms[0]; // Lấy idRoom đầu tiên phát hiện được
+          this.idRoom = this.idRooms[0];
+  
           this.roomService.getRoomById(this.idRoom).subscribe(room => {
             this.nameRoom = room.RoomName;
             this.building = room.Building.NameBuilding;
-            console.log('Thông tin phòng:', room);
+  
+            // Sau khi có thông tin phòng, mới bắt đầu lấy hóa đơn
+            this.getUnpaidBills();
           }, error => {
             console.error('Lỗi khi lấy phòng:', error);
-          });
-          
-          console.log('✅ ID Room đầu tiên:', this.idRoom);
-          console.log('✅ Danh sách idRoom có trạng thái active:', this.idRooms);
-  
-          this.getUnpaidBills();
+            this.isLoading = false;
+          });         
         } else {
           console.log('⚠️ Không có phòng nào đang active.');
+          this.isLoading = false;
         }
       },
       (error) => {
         console.error('❌ Lỗi khi lấy danh sách đăng ký phòng:', error);
+        this.isLoading = false;
       }
     );
   }
   
-
   getUnpaidBills() {
-    // Reset lại mảng trước khi thêm dữ liệu mới
     this.unpaidElectricBills = [];
     this.unpaidWaterBills = [];
+    this.paidElectricBills = [];
+    this.paidWaterBills = [];
     this.allElectricBills = [];
     this.allWaterBills = [];
   
-    this.idRooms.forEach((roomId) => {
-      // Lấy hóa đơn điện
-      this.electricBill.getElectricitiesBillByIdRoom(roomId).subscribe(
-        (bills) => {
-          const newBills = bills.filter((bill: { Id: any; }) => !this.allElectricBills.some(existing => existing.Id === bill.Id));
-          this.allElectricBills = [...this.allElectricBills, ...newBills];
+    const electricBillObservables = this.idRooms.map(roomId =>
+      this.electricBill.getElectricitiesBillByIdRoom(roomId)
+    );
   
-          const unpaidElectric = newBills.filter((bill: { Status: number }) => bill.Status === 1);
-          this.unpaidElectricBills = [...this.unpaidElectricBills, ...unpaidElectric];
-        },
-        (error) => console.error(`❌ Lỗi khi lấy hóa đơn điện cho phòng ${roomId}:`, error)
-      );
+    const waterBillObservables = this.idRooms.map(roomId =>
+      this.waterBill.getWaterBillByIdRoom(roomId)
+    );
   
-      // Lấy hóa đơn nước
-      this.waterBill.getWaterBillByIdRoom(roomId).subscribe(
-        (bills) => {
-          const newBills = bills.filter((bill: { Id: any; }) => !this.allWaterBills.some(existing => existing.Id === bill.Id));
-          this.allWaterBills = [...this.allWaterBills, ...newBills];
+    forkJoin([...electricBillObservables, ...waterBillObservables]).subscribe(
+      (results) => {
+        const totalRooms = this.idRooms.length;
   
-          const unpaidWater = newBills.filter((bill: { Status: number }) => bill.Status === 1);
-          this.unpaidWaterBills = [...this.unpaidWaterBills, ...unpaidWater];
-        },
-        (error) => console.error(`❌ Lỗi khi lấy hóa đơn nước cho phòng ${roomId}:`, error)
-      );
-    });
+        // Điện
+        results.slice(0, totalRooms).forEach((bills: any) => {
+          const newBills = bills.filter((bill: any) =>
+            !this.allElectricBills.some(existing => existing.Id === bill.Id)
+          );
+          this.allElectricBills.push(...newBills);
+          this.paidElectricBills.push(...newBills.filter((bill: any) => bill.Status === 0));
+          this.unpaidElectricBills.push(...newBills.filter((bill: any) => bill.Status === 1));
+        });
+  
+        // Nước
+        results.slice(totalRooms).forEach((bills: any) => {
+          const newBills = bills.filter((bill: any) =>
+            !this.allWaterBills.some(existing => existing.Id === bill.Id)
+          );
+          this.allWaterBills.push(...newBills);
+          this.paidWaterBills.push(...newBills.filter((bill: any) => bill.Status === 0));
+          this.unpaidWaterBills.push(...newBills.filter((bill: any) => bill.Status === 1));
+        });
+  
+        // ✅ Chỉ sau khi toàn bộ dữ liệu xong thì mới ẩn loading
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('❌ Lỗi khi lấy hóa đơn:', error);
+        this.isLoading = false;
+      }
+    );
   }
+  
   
   
 }

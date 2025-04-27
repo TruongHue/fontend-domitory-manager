@@ -1,18 +1,15 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+
 <div class="container">
     <h2>Danh sách kỳ đăng ký</h2>
-    <button class="btn btn-primary" (click)="openAddModal()">➕ Thêm mới</button>
-    <div class="filter-container">
-        <label for="statusFilter">Lọc theo trạng thái:</label>
-        <select id="statusFilter" class="form-control" [(ngModel)]="selectedStatus" (change)="filterByStatus()">
-          <option value="">Tất cả</option>
-          <option value="0">Đang mở</option>
-          <option value="1">Đã đóng</option>
-        </select>
-      </div>
+    <button class="button" (click)="openAddModal()">➕ Thêm mới</button>
+  
     <table class="table">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Ngày bắt đầu</th>
           <th>Ngày kết thúc</th>
           <th>Ngày thực hiện</th>
@@ -22,14 +19,15 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of filteredList | paginate: { itemsPerPage: itemsPerPage, currentPage: page }">
-            <td>{{ item.IdRegistrationPeriod }}</td>
+        <tr *ngFor="let item of filteredList ">
           <td>{{ item.StartDate | date: 'dd/MM/yyyy' }}</td>
           <td>{{ item.EndDate | date: 'dd/MM/yyyy' }}</td>
           <td>{{ item.ActionDate | date: 'dd/MM/yyyy' }}</td>
-          <td [class.open]="item.Status === 0" [class.closed]="item.Status === 1">
-            {{ getStatusText(item.Status) }}
-          </td>
+          <td>
+            <div class="toggle-switch" [class.active]="item.Status === 0" (click)="toggleRegistrationStatus(item)">
+                <div class="toggle-button"></div>
+            </div>
+        </td>
           <td>{{ getSemesterText(item.SemesterStatus) }}</td>
           <td>
             <button class="btn btn-warning" (click)="openEditModal(item)">✏️ Sửa</button>
@@ -38,7 +36,9 @@
         </tr>
       </tbody>
     </table>
-    <pagination-controls (pageChange)="page = $event"></pagination-controls>
+    <button class="pagination-btn" (click)="prevPage()" [disabled]="currentPage === 1"><<</button>
+    <span class="pagination-info">{{ currentPage }} / {{ totalPages }}</span>
+    <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage >= totalPages">>></button>
   </div>
   
   <!-- Modal Thêm/Sửa -->
@@ -51,8 +51,8 @@
       <input type="date" [(ngModel)]="selectedPeriod.EndDate">
       <label>Học kỳ:</label>
       <select [(ngModel)]="selectedPeriod.SemesterStatus">
-        <option [value]="0">Trong năm</option>
-        <option [value]="1">Nghỉ hè</option>
+        <option [value]="0">Kỳ hè</option>
+        <option [value]="1">Trong năm</option>
       </select>
       <label>Trạng thái:</label>
       <select [(ngModel)]="selectedPeriod.Status">
@@ -72,9 +72,9 @@
   <div class="modal" [class.show]="showDeleteConfirm">
     <div class="modal-content">
       <h3>Xác nhận xóa</h3>
-      <p>Bạn có chắc muốn xóa kỳ đăng ký ID: {{ selectedPeriod.IdRegistrationPeriod }}?</p>
+      <p>Bạn có chắc muốn xóa kỳ đăng ký?</p>
       <div class="modal-actions">
-        <button class="btn btn-danger" (click)="deleteRegistrationPeriod(selectedPeriod.IdRegistrationPeriod)">🗑 Xóa</button>
+        <button class="btn btn-danger" (click)="deleteRegistrationPeriod(selectedPeriod.Id)">🗑 Xóa</button>
         <button class="btn btn-secondary" (click)="closeDeleteConfirm()">Hủy</button>
       </div>
     </div>

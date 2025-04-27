@@ -1,36 +1,16 @@
-.container {
-    width: 90%;
-    margin: auto;
-    text-align: center;
-  }
-  
+
   .filters {
     display: flex;
     justify-content: space-between;
     margin-bottom: 15px;
   }
   
-  .filters input, .filters select {
+  .filters input{
     padding: 8px;
     font-size: 16px;
   }
   
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-  }
-  
-  th {
-    background-color: #f4f4f4;
-  }
-  
+ 
   .active-status {
     color: green;
     font-weight: bold;
@@ -84,26 +64,31 @@
     color: orange;
     font-weight: bold;
   }
-  /* Style chung cho select */
-.payment-select {
-  padding: 8px;
-  font-size: 14px;
-  border: 2px solid #007bff; /* Màu viền xanh */
-  border-radius: 5px;
-  background-color: #fff;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-}
 
-/* Khi di chuột vào */
-.payment-select:hover {
-  border-color: #0056b3; /* Màu xanh đậm hơn */
-}
-
-/* Khi select bị disabled */
-.payment-select:disabled {
-  background-color: #e9ecef; /* Màu nền xám nhạt */
-  color: #6c757d; /* Màu chữ xám */
-  border-color: #ced4da; /* Viền xám */
-  cursor: not-allowed;
-}
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #007bff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  

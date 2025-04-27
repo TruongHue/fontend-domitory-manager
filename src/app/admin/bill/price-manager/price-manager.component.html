@@ -1,25 +1,33 @@
-<h2>Danh sách giá điện nước</h2>
-
-<!-- Button thêm mới -->
-<button (click)="showForm()">➕ Thêm mới</button>
-
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+<button class="button" (click)="showForm()">➕ Thêm mới</button>
 <table>
   <thead>
     <tr>
-      <th>ID</th>
       <th>Giá điện</th>
       <th>Giá nước</th>
       <th>Số m³ vượt mức</th>
       <th>Giá m³ vượt mức</th>
+      <th>Ngày thực hiện</th>
+      <th>Trạng thái</th>
+      <th>Thao tác</th>
+
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let price of prices">
-      <td>{{ price.idPrice }}</td>
-      <td>{{ price.electricityPrice | number }}</td>
-      <td>{{ price.waterPrice | number }}</td>
-      <td>{{ price.waterLimit }}</td>
-      <td>{{ price.waterPriceOverLimit | number }}</td>
+    <tr *ngFor="let price of prices; let i = index">
+      <td>{{ price.ElectricityPrice | number }}</td>
+      <td>{{ price.WaterPrice | number }}</td>
+      <td>{{ price.WaterLimit }}</td>
+      <td>{{ price.WaterPriceOverLimit | number }}</td>
+      <td>{{ price.ActionDate | date }}</td>
+      <td [ngClass]="{'status-active': i === 0, 'status-inactive': i !== 0}">
+        {{ i === 0 ? 'Còn hiệu lực' : 'Vô hiệu lực' }}
+      </td>
+      <td class="toolbar-actions">
+        <button class="btn btn-danger" (click)="delete(price.Id)" >🗑️ Xóa</button>
+    </td>
     </tr>
   </tbody>
 </table>

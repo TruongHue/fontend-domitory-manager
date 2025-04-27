@@ -1,3 +1,6 @@
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
 <div *ngIf="registers && registers.length > 0; else noRegister" class="container">
 
 <div class="container">
@@ -8,7 +11,6 @@
           <tr>
             <th>#</th>
             <th>Phòng</th>
-            <th>Tòa</th>
             <th>Ngày bắt đầu</th>
             <th>Ngày kết thúc</th>
             <th>Ngày thực hiện</th>
@@ -20,34 +22,32 @@
         <tbody>
           <tr *ngFor="let register of registers; let i = index">
             <td>{{ i + 1 }}</td>
-            <td>{{ register.roomName }}</td>
-            <td>{{ register.buildingName }}</td>
-            <td>{{ register.startDate | date: 'dd/MM/yyyy' }}</td>
-            <td>{{ register.endDate | date: 'dd/MM/yyyy' }}</td>
-            <td>{{ register.actionDate | date: 'dd/MM/yyyy' }}</td>
-            <td>{{ register.total | currency: 'VND' }}</td>
+            <td>{{ register.RoomInfo.RoomName }} - {{ register.BuildingInfo.NameBuilding }}</td>
+            <td>{{ register.StartDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ register.EndDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ register.ActionDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ register.Total | currency: 'VND' }}</td>
             <td [ngClass]="{
-              'payment-status': true,
-              'paid': register.paymentStatus === 0,
-              'unpaid': register.paymentStatus === 1,
-              'payment-status-huy': register.paymentStatus === 2
-        }">
-            {{ register.paymentStatus === 0 ? 'Đã thanh toán' :
-            register.paymentStatus === 1 ? 'Chưa thanh toán' :
-            register.paymentStatus === 2 ? 'Hủy' : 'Không xác định' }}
-        </td>
-        
-        <td [ngClass]="{
-              'status-active': register.status === 0,
-              'status-inactive': register.status === 1,
-              'status-blocked': register.status === 2,
-              'status-pending': register.status === 3
-        }">
-            {{ register.status === 0 ? 'Hoạt động' :
-            register.status === 1 ? 'Ngưng hoạt động' :
-            register.status === 2 ? 'Blocked' :
-            register.status === 3 ? 'Đợi thanh toán' : 'Hết hạn' }}
-        </td>
+              'text-success': register.PaymentStatus === 0,
+              'text-danger': register.PaymentStatus === 1 || register.PaymentStatus === 2
+            }">
+              {{ register.PaymentStatus === 0 ? 'Đã thanh toán' :
+                 register.PaymentStatus === 1 ? 'Chưa thanh toán' :
+                 register.PaymentStatus === 2 ? 'Hủy' : 'Không xác định' }}
+            </td>
+            
+            <td [ngClass]="{
+              'text-success': register.Status === 0,
+              'text-secondary': register.Status === 1,
+              'text-danger': register.Status === 2,
+              'text-warning': register.Status === 3
+            }">
+              {{ register.Status === 0 ? 'Hoạt động' :
+                 register.Status === 1 ? 'Ngưng hoạt động' :
+                 register.Status === 2 ? 'Blocked' :
+                 register.Status === 3 ? 'Đợi thanh toán' : 'Hết hạn' }}
+            </td>
+            
         
           </tr>
         </tbody>

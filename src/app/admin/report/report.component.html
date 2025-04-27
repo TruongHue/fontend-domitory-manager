@@ -1,3 +1,6 @@
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
 <div class="container">
   <h2>Báo cáo thống kê</h2>
 
@@ -21,15 +24,15 @@
   <div class="summary">
     <div class="card">
       <p>Tổng sinh viên</p>
-      <h3 class="highlight">{{ totalStudents }}</h3>
+      <h3 class="highlight">{{ index.TotalStudents }}</h3>
     </div>
     <div class="card">
       <p>Sinh viên đã đăng ký</p>
-      <h3 class="highlight">{{ registeredStudents }}</h3>
+      <h3 class="highlight">{{ index.TotalRegisteredStudents }}</h3>
     </div>
     <div class="card not-registered">
       <p>Sinh viên chưa đăng ký</p>
-      <h3 class="highlight">{{ unregisteredStudents }}</h3>
+      <h3 class="highlight">{{ index.UnregisteredStudents }}</h3>
     </div>
   </div>
 

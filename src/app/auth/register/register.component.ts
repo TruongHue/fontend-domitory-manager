@@ -29,7 +29,8 @@ export class RegisterComponent {
   previewImage: string | null = null;
   uploadedImageUrl: string | null = null;
   errorMessage: string = "";
-  
+  successMessage: string = '';
+
   constructor(private authService: AuthService, private router: Router) {
     this.registerData = {
       Account: {
@@ -38,7 +39,7 @@ export class RegisterComponent {
         NumberPhone: '',
         Password: '',
         Roles: 0,
-        Status: 1
+        Status: 3
       },
       InfoStudent: {
         Gender: 0,
@@ -82,7 +83,7 @@ export class RegisterComponent {
       this.errorMessage = "Mật khẩu không khớp!";
       return;
     }
-    if (!this.registerData.Account.Email) {
+    if (!this.registerData.InfoStudent.Email) {
       this.errorMessage = "Email không hợp lệ!";
       return;
     }
@@ -114,12 +115,16 @@ export class RegisterComponent {
     formData.forEach((value, key) => {
       console.log(`${key}:`, value);
     });
-  
+    console.log(this.registerData);
     this.authService.register(formData).subscribe({
       next: (response) => {
         console.log("✅ Đăng ký thành công", response);
-        this.router.navigate(['/login']);
-      },
+        this.successMessage = "🎉 Đăng ký thành công! Bạn sẽ được chuyển hướng...";
+    
+        // Chờ 2 giây rồi chuyển hướng qua trang đăng nhập
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);      },
       error: (error) => {
         console.error("❌ Đăng ký thất bại", error);
         this.errorMessage = error.error?.message || "Có lỗi xảy ra khi đăng ký.";

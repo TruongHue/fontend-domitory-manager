@@ -83,6 +83,7 @@
 }
 
 /* Lớp phủ nền mờ, nhưng không ảnh hưởng nội dung */
+/* Lớp phủ nền mờ, nhưng không ảnh hưởng nội dung */
 .main-content::before {
   content: "";
   position: absolute;
@@ -90,9 +91,11 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: url('/assets/background_home.jpg') center/cover no-repeat;
+  /* background: url('/assets/background_home.jpg') center/cover no-repeat; */
+  background-attachment: fixed; /* Cố định hình nền */
   filter: blur(8px); /* Làm mờ hình nền */
   z-index: -1; /* Đưa nền ra sau nội dung */
 }
+
 
 

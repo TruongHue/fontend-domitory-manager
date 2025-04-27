@@ -1,73 +1,120 @@
-<div class="bill-management container">
-    <h2 class="text-center my-3">📑 Quản lý Hóa Đơn Điện & Nước</h2>
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <button class="btn btn-primary" (click)="isAddBillModalOpen = true">
-            ➕ Thêm Hóa Đơn
-        </button>
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+<div class="tab-container">
+    <!-- Tabs chọn tòa nhà -->
+    <div class="tab-header">
+      <button *ngFor="let dormitory of dormitories; let i = index" 
+              (click)="selectedTab = i"
+              [class.active]="selectedTab === i">
+        KTX {{ dormitory.name }}
+      </button>
+    </div>
+  
+    <div class="container mt-4">
+      <div class="tab-content">
+        <div *ngFor="let dormitory of dormitories; let i = index" [hidden]="selectedTab !== i">
+          <h3 class="text-center mt-4">Khu {{ dormitory.name }}</h3>
+          <div class="building">
+            <div *ngFor="let floor of getUniqueFloors(dormitory)" class="floor">
+              <h4 class="text-primary">Tầng {{ floor }}</h4> 
+              <div class="row g-3">
+                <div *ngFor="let room of getRoomsByFloor(dormitory.rooms, floor)" class="col-lg-2 col-md-4 col-sm-6">
+                  
+                  <!-- Nút xem chi tiết hóa đơn -->
+                  <div class="card p-3 room-card shadow-lg text-center"
+                  [ngClass]="{ 
+                    'bg-danger text-white': room.statusBill === 1, 
+                    'bg-warning text-dark': room.notAvailableSlots === room.totalSlots && room.statusBill !== 1,
+                    'bg-secondary text-white': room.status === 1 
+                  }"
+                       (click)="openBillForm(room)">
+                    
+                    <div class="card-body">
+                      <h3 class="card-title">{{ room.name}}</h3>
+                      <span class="badge bg-primary" *ngIf="room.gender === 0">Nam</span>
+                      <span class="badge bg-danger" *ngIf="room.gender === 1">Nữ</span>
+                      <button class="btn btn-light mt-2">Thêm hóa đơn</button>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     
-        <div class="d-flex gap-2">
-            <input 
-    type="text" class="form-control" 
-    placeholder="🔍 Tìm phòng..." 
-    [(ngModel)]="searchText" 
-    (ngModelChange)="filterRooms()"
-/>
+    <div class="modal-overlay" *ngIf="selectedRoomBills">
 
-<select class="form-control" [(ngModel)]="selectedBuilding" (change)="filterRooms()">
-    <option value="">🏢 Tất cả tòa nhà</option>
-    <option *ngFor="let building of buildings" [value]="building.IdBuilding">
-        {{ building.NameBuilding }}
-    </option>
-</select>
+        <div class="modal1">
+            <div class="table-responsive">
+                <h3 class="bill-container"><strong>Hóa đơn điện nước - Phòng {{ selectedRoomBills.name }}</strong></h3>
+                
+                <table class="table table-bordered table-striped text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Điện (Tháng trước)</th>
+                            <th>Ngày cuối ghi điện</th>
+                            <th>Điện (Tháng này)</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ selectedRoomBills.dienTruoc }}</td>
+                            <td>{{ selectedRoomBills.ngayCuoiGhiDien || 'Chưa ghi' }}</td>
+                            <td>
+                                <input type="number" class="form-control" [(ngModel)]="selectedRoomBills.dienThangNay" 
+                                       [min]="selectedRoomBills.dienTruoc + 1" 
+                                       [ngClass]="{'is-invalid': isInvalidInput()}" />
+                                <div *ngIf="isInvalidInput()" class="text-danger">
+                                    Điện phải là số nguyên lớn hơn chỉ số cũ.
+                                </div>
+                            </td>
+                            <td>
+                                <button (click)="selectElectricity(selectedRoomBills)" class="btn btn-success btn-sm" [disabled]="isInvalidInput()">
+                                    💾 Lưu Điện
+                                </button>
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
 
+                <table class="table table-bordered table-striped text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nước (Tháng trước)</th>
+                            <th>Ngày cuối ghi nước</th>
+                            <th>Nước (Tháng này)</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ selectedRoomBills.nuocTruoc }}</td>
+                            <td>{{ selectedRoomBills.ngayCuoiGhiNuoc || 'Chưa ghi' }}</td>
+                            <td>
+                                <input type="number" class="form-control" [(ngModel)]="selectedRoomBills.nuocThangNay" 
+                                       [min]="selectedRoomBills.nuocTruoc + 1" 
+                                       [ngClass]="{'is-invalid': isInvalidInput()}" />
+                                <div *ngIf="isInvalidWaterInput()" class="text-danger">
+                                    Điện phải là số nguyên lớn hơn chỉ số cũ.
+                                </div>
+                            </td>
+                            <td>
+                                <button (click)="selectWater(selectedRoomBills)" class="btn btn-success btn-sm" [disabled]="isInvalidWaterInput()">
+                                    💾 Lưu Nước
+                                </button>
+                            </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+                <button class="btn btn-danger btn-sm close-btn" (click)="closeBillForm()">❌ Đóng</button>
+            </div>
         </div>
     </div>
     
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped text-center">
-            <thead class="table-dark">
-                <tr>
-                    <th>Tên phòng</th>
-                    <th>Tòa nhà</th>
-                    <th>Điện (Tháng trước)</th>
-                    <th>Ngày cuối ghi điện</th>
-                    <th>Điện (Tháng này)</th>
-                    <th>Hành động</th>
-                    <th>Nước (Tháng trước)</th>
-                    <th>Ngày cuối ghi nước</th>
-                    <th>Nước (Tháng này)</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let room of filteredRooms">
-                    <td>{{ room.RoomName }}</td>
-                    <td>{{ room.Building.NameBuilding }}</td>
-                    <td>{{ room.dienTruoc }}</td>
-                    <td>{{ room.ngayCuoiGhiDien || 'Chưa ghi' }}</td>
-                    <td>
-                        <input type="number" class="form-control" [(ngModel)]="room.dienThangNay" />
-                    </td>
-                    <td>
-                        <button class="btn btn-success btn-sm" (click)="addElectricBill(room)">
-                            💾 Lưu Điện
-                        </button>
-                    </td>
-                    
-                    <td>{{ room.nuocTruoc }}</td>
-                    <td>{{ room.ngayCuoiGhiNuoc || 'Chưa ghi' }}</td>
-                    <td>
-                        <input type="number" class="form-control" [(ngModel)]="room.nuocThangNay" />
-                    </td>
-                    <td>
-                        <button class="btn btn-info btn-sm" (click)="addWaterBill(room)">
-                            💾 Lưu Nước
-                        </button>
-                    </td>
-                    
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>

@@ -1,40 +1,81 @@
 import { Component, OnInit } from '@angular/core';
 import { BuildingService } from '../../../services/building/building.service';
 import { RoomService } from '../../../services/room/room.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-manager-room',
   templateUrl: './manager-room.component.html',
-  styleUrls: ['./manager-room.component.css']
+  styleUrls: ['./manager-room.component.css', '../../../app.component.css']
 })
 export class ManagerRoomComponent implements OnInit {
   searchText: string = '';
   rooms: any[] = []; // Dữ liệu từ API
   filteredRoomsList: any[] = []; // Danh sách sau khi lọc
   isAddModalOpen: boolean = false;
-  isEditModalOpen: boolean = false;
-  isDetailModalOpen: boolean = false;
   buildings: any[] = []; // Dữ liệu từ API
   filteredBuildingsList: any[] = [];
   newRoom = {
-    roomName: '',
-    idBuilding: null,
-    numberOfBed: null,
-    status: 0
+    IdRoom: null,
+    IdBuilding: null,
+    RoomName: null,
+    NumberOfBed: null,
+    Status: 0,
+    Gender: 0,
+    DailyPrice: 0,
+    PriceYear: 0,
+    DateOfRecord:null,
   };
+  selectedGender: string = '';
+  selectedStatus: string = ''; // Giá trị mặc định: hiển thị tất cả
   currentPage = 1;
   itemsPerPage = 20;
   totalRooms: number = 0;
   selectedBuilding: string = '';
   sortAscending: boolean = true; // Mặc định là tăng dần
-
+  isUpdateModalOpen: boolean = false;
+  newBuilding = {
+    IdRoom: '',
+    IdBuilding: '',
+    RoomName: '',
+    NumberOfBed: 0,
+    Status: 0,
+    Gender: 0
+  };
+  isLoading: boolean = false;
+  editingRoomId: string = '';
   constructor(private roomService: RoomService, private buildingService: BuildingService) {}
 
   ngOnInit() {
-    this.getRoomsFromApi();
-    this.getBuildingsFromApi();
+    this.fetchData();
   }
-
+  
+  fetchData() {
+    this.isLoading = true;
+  
+    forkJoin({
+      buildings: this.buildingService.getBuildings(),
+      rooms: this.roomService.getRooms()
+    }).subscribe({
+      next: (res) => {
+        // Xử lý buildings
+        this.buildings = res.buildings.filter(building => building.Status === 0);
+        this.filteredBuildingsList = [...this.buildings];
+  
+        // Xử lý rooms
+        this.rooms = [...res.rooms];
+        this.filteredRoomsList = [...res.rooms];
+        this.totalRooms = res.rooms.length;
+  
+        // Kết thúc loading sau khi cả 2 API xong
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Lỗi khi gọi API:', err);
+        this.isLoading = false;
+      }
+    });
+  }
 
   getBuildingsFromApi() {
     this.buildingService.getBuildings().subscribe({
@@ -62,56 +103,90 @@ export class ManagerRoomComponent implements OnInit {
   }
 
   filterRooms() {
+    const searchText = this.searchText?.toLowerCase() || '';
+
     this.filteredRoomsList = this.rooms.filter(room => {
-      const matchesSearch = room.RoomName.toLowerCase().includes(this.searchText.toLowerCase()) ||
-                            room.IdBuilding.toString().includes(this.searchText) || 
-                            room.IdRoom.toString().includes(this.searchText);
-      
-      const matchesBuilding = this.selectedBuilding === '' || room.IdBuilding.toString() === this.selectedBuilding;
-  
-      return matchesSearch && matchesBuilding;
+        const roomBuildingId = room.Building?.Id ? room.Building.Id.toString() : ''; // Lấy đúng Id của Building
+
+        const matchesSearch = room.RoomName?.toLowerCase().includes(searchText) ||
+                              roomBuildingId.includes(searchText) ||
+                              room.Id?.toString().includes(searchText);
+
+        const matchesBuilding = this.selectedBuilding === '' || roomBuildingId === this.selectedBuilding.toString();
+        const matchesStatus = this.selectedStatus === '' || room.Status === this.selectedStatus;
+        const matchesGender = this.selectedGender === '' || room.Gender === this.selectedGender;
+        return matchesSearch && matchesBuilding && matchesStatus && matchesGender ;
     });
-  
+
     this.totalRooms = this.filteredRoomsList.length;
     this.currentPage = 1;
-  }
-   
+}
 
 
 
-  addRoom() {
-    if (!this.newRoom.roomName || !this.newRoom.idBuilding || !this.newRoom.numberOfBed) {
-      alert('Vui lòng nhập đầy đủ thông tin!');
+addRoom(roomRegister: any) { 
+  console.log(roomRegister);
+  const newRooms = {
+      IdBuilding: roomRegister.IdBuilding,  // Hoặc lấy từ input
+      RoomName: roomRegister.RoomName, // Hoặc lấy từ input
+      NumberOfBed: roomRegister.NumberOfBed, // Giá trị mặc định hoặc từ form
+      Status: parseInt(roomRegister.Status), // Trạng thái phòng (1: Đang sử dụng, 0: Trống)
+      Gender: parseInt(roomRegister.Gender), // 0: Nam, 1: Nữ
+      DailyPrice: roomRegister.DailyPrice, // Giá theo ngày
+      PriceYear: roomRegister.PriceYear, // Giá theo năm
+      DateOfRecord: new Date().toISOString() // Tự động lấy thời gian hiện tại
+  };
+
+  console.log("Dữ liệu gửi lên API:", newRooms); 
+
+  if (!newRooms.RoomName || !newRooms.IdBuilding || newRooms.NumberOfBed <= 0) { 
+      alert('Vui lòng nhập đầy đủ thông tin hợp lệ!');
       return;
-    }
-    this.roomService.postRoom(this.newRoom).subscribe(
+  }
+
+
+  this.roomService.postRoom(newRooms).subscribe( 
       response => {
-        alert('Thêm phòng thành công!');
-        this.getRoomsFromApi();
-        this.closeModals();
+          alert('Thêm phòng thành công!');
+          this.getRoomsFromApi();
+          this.closeModals();
       },
       error => {
-        alert('Có lỗi xảy ra khi thêm phòng.');
+          alert('Có lỗi xảy ra khi thêm phòng.');
       }
-    );
-  }
+  );
+}
+
 
   openAddModal() {
     this.isAddModalOpen = true;
+    this.isUpdateModalOpen = false;
+    this.newRoom = {    
+      IdRoom: null,
+      IdBuilding: null,
+      RoomName: null,
+      NumberOfBed:null,
+      Status: 0,
+      Gender: 0,
+      DailyPrice: 0,
+      PriceYear: 0,
+      DateOfRecord:null,
+
+    }
   }
 
   closeModals() {
     this.isAddModalOpen = false;
-    this.isEditModalOpen = false;
-    this.isDetailModalOpen = false;
-  }
+    this.isUpdateModalOpen = false;
+    }
 
   toggleRoomStatus(room: any) {
     if (!confirm(`Bạn có chắc muốn đổi trạng thái của phòng ${room.RoomName} không?`)) return;
     const newStatus = room.Status === 0 ? 1 : 0;
-    this.roomService.updateRoomStatus(room.IdRoom, newStatus).subscribe(
+    this.roomService.updateRoomStatus(room.Id, newStatus).subscribe(
       () => {
         room.Status = newStatus;
+        alert("Cập nhật trạng thái thành công!");
       },
       () => {
         alert("Cập nhật trạng thái thất bại!");
@@ -123,8 +198,65 @@ export class ManagerRoomComponent implements OnInit {
     console.log(`Total Pages: ${total}`);
     return total;
   }
+
+
+  delete(room: any){
+    if (!confirm(`Bạn có chắc muốn xóa phòng ${room.RoomName} không?`)) return;
+    const newStatus = room.Status === 0 ? 1 : 0;
+    this.roomService.deleteRoom(room.Id).subscribe(
+      () => {
+        room.Status = newStatus;
+        alert("Xóa phòng thành công!");
+        this.getRoomsFromApi();
+      },
+      () => {
+        alert("Xóa phòng thất bại!");
+      }
+    );
+  }
   
-  
+  openUpdateModal(room: any) {
+    this.isUpdateModalOpen = true;
+    this.isAddModalOpen = false;
+    this.editingRoomId = room.Id;
+    
+    // Đảm bảo lấy đúng IdBuilding
+    this.newRoom = {
+      IdRoom: room.Id,
+      IdBuilding: room.Building ? room.Building.Id : null, // Lấy IdBuilding từ room.Building
+      RoomName: room.RoomName,
+      NumberOfBed: room.NumberOfBed,
+      Status: room.Status,
+      Gender: room.Gender,
+      DailyPrice: room,
+      PriceYear: 0,
+      DateOfRecord:null,
+    };
+}
+
+updateRoom(newRoom:any) {
+  if (!this.newRoom.IdRoom) {
+      console.error("Không tìm thấy ID phòng cần cập nhật.");
+      return;
+  }
+  newRoom.Status = Number(newRoom.Status);
+  console.log("Dữ liệu gửi lên API:", JSON.stringify(newRoom));
+
+  this.roomService.updateRoom(this.newRoom.IdRoom, this.newRoom).subscribe(
+      (response) => {
+          console.log("Cập nhật phòng thành công:", response);
+          alert("Cập nhật phòng thành công!");
+          this.closeModals();
+          this.getRoomsFromApi; // Load lại danh sách phòng sau khi cập nhật
+      },
+      (error) => {
+          console.error("Lỗi khi cập nhật phòng:", error);
+          alert("Có lỗi xảy ra khi cập nhật phòng!");
+      }
+  );
+}
+
+
   get paginatedRooms() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredRoomsList.slice(startIndex, startIndex + this.itemsPerPage);

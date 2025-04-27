@@ -9,12 +9,14 @@ import { ChangeDetectorRef } from '@angular/core';
 import { RegistrationPeriodService } from '../../../services/registration-period/registration-period.service';
 
 interface Room {
-  id: number;
+  id: string;
   name: string;
   totalSlots: number;
   notAvailableSlots: number;
   status: number; // Trạng thái phòng (0: hoạt động, 1: không hoạt động)
   gender: number;
+  price: number;
+  statusBuilding: number;
 }
 
 
@@ -34,21 +36,27 @@ export class RoomStatusManagementComponent implements OnInit {
   id = null;
   selectedRoom: any = null;
   registerForm = {
-    idStudent: 0,
+    idStudent: '',
     idRoom: 0,
     startDate: '',
     endDate: '',
     total: 0,
-    paymentStatus: 0
+    paymentStatus: 0,
+    price:0
   };
+  dormitory: any;
   studentsList: any[] = [];
   filteredStudents: any[] = [];
   searchText: string = '';
   selectedStudentText: string = '';
   today: string = new Date().toISOString().split('T')[0]; // Lấy ngày hôm nay (YYYY-MM-DD)
   dateError: boolean = false;
-  idRegistrationPeriodsActive: number = 0;
+  idRegistrationPeriodsActive: string ='';
   registrationPeriods: any =[];
+  isYearly: any;
+  selectedRoomDetail: any = null;
+  isLoading: boolean = false;
+
   constructor(private roomService: RoomService,
     private buildingService: BuildingService,
     private registerRoom: RegisterRoomService,
@@ -57,11 +65,60 @@ export class RoomStatusManagementComponent implements OnInit {
     private registrationService: RegistrationPeriodService) { }
 
   ngOnInit() {
+    this.loadRooms();
+    this.loadRegistrationPeriods();
     this.getDormitoriesFromApi();
     this.getStudentsFromApi();
-    this.loadRegistrationPeriods();
+    this.calculateTotal();
+
   }
 
+  detailRoom(data: any) {
+    console.log(data.id);
+    this.registerRoom.getAllRegisterRoombyIdRoomActive(data.id).subscribe(
+      response => {
+        this.selectedRoomDetail = {
+          id: data.id,
+          students: response || [] // Gán danh sách sinh viên từ API vào biến selectedRoomDetail
+        };
+      },
+      error => {
+        console.error('Lỗi khi lấy danh sách sinh viên:', error);
+        // Gán giá trị mặc định khi gặp lỗi để tránh lỗi giao diện
+        this.selectedRoomDetail = {
+          id: data.id,
+          students: []
+        };
+      }
+    );
+  }
+  
+  
+
+closeDetailRoom() {
+    this.selectedRoomDetail = null;
+}
+block(student:any) {
+  if (!confirm("Bạn có chắc chắn muốn cập nhật?")) {
+        return;
+    }
+
+    const updateData = { status: 1 }; // Chỉ cập nhật trạng thái
+
+    console.log("Gửi dữ liệu:", { student, updateData });
+
+    this.registerRoom.updateStatus(student.IdRegister, updateData).subscribe({
+        next: (res) => {
+            console.log("Phản hồi từ API:", res); // Debug API response
+            this.detailRoom(student.IdRoom);
+            alert("Cập nhật thành công!");
+        },
+        error: (err) => {
+            console.error("Lỗi cập nhật:", err);
+            alert("Cập nhật thất bại!");
+        }
+    });
+}
   getDormitoriesFromApi() {
     this.buildingService.getBuildings().subscribe({
       next: (buildings: any[]) => {
@@ -77,7 +134,7 @@ export class RoomStatusManagementComponent implements OnInit {
       }
     });
   }
-  submitRegister() {
+  submitRegister(data:any) {
     if (!this.registerForm.idStudent) {
       alert('Vui lòng chọn sinh viên!');
       return;
@@ -90,48 +147,66 @@ export class RoomStatusManagementComponent implements OnInit {
       alert('Vui lòng chọn ngày kết thúc!');
       return;
     }
-    const startDate = new Date(this.registerForm.startDate);
-    const endDate = new Date(this.registerForm.endDate);
-
+  
+    // Đảm bảo đã có kỳ đăng ký trước khi tiếp tục
+    if (!this.idRegistrationPeriodsActive) {
+      this.loadRegistrationPeriods(); // Tải lại kỳ đăng ký nếu chưa có
+      setTimeout(() => {
+        if (!this.idRegistrationPeriodsActive) {
+          alert('Không có kỳ đăng ký!');
+          return;
+        }
+        this.proceedRegister(data);
+      }, 500); // Đợi 0.5 giây để lấy dữ liệu
+    } else {
+      this.proceedRegister(data);
+    }
+  }
+  
+  proceedRegister(data:any) {
+    const startDate = new Date(data.startDate);
+    const endDate = new Date(data.endDate);
+  
     if (startDate >= endDate) {
       alert('Ngày bắt đầu phải nhỏ hơn ngày kết thúc!');
       return;
     }
-
+  
     const requestData = {
-      idStudent: Number(this.registerForm.idStudent), // Chuyển về số nguyên
-      idRoom: this.selectedRoom.id, // Lấy ID phòng từ `selectedRoom`
+      idUser: data.idStudent,
+      idRoom: this.selectedRoom.id,
       idRegistrationPeriod: this.idRegistrationPeriodsActive,
-      startDate: new Date(this.registerForm.startDate).toISOString(),
-      endDate: new Date(this.registerForm.endDate).toISOString(),
-      total: this.registerForm.total,
-      paymentStatus: Number(this.registerForm.paymentStatus), // Chuyển về số nguyên
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      total: data.total,
+      paymentStatus: Number(this.registerForm.paymentStatus),
       status: 0
     };
-
+  
     console.log('Dữ liệu gửi lên API:', requestData);
-
+  
     this.registerRoom.createRegister(requestData).subscribe({
       next: (res) => {
         alert('Đăng ký thành công!');
         this.closeRegisterForm();
         window.location.reload();
-
-        this.loadRooms(); // Cập nhật danh sách phòng
+        this.loadRooms();
       },
       error: (error) => {
         const errorMessage = error.error?.message;
-        alert(errorMessage); // Hiển thị thông báo lỗi từ backend
+        alert(errorMessage);
       }
     });
   }
+  
   loadRegistrationPeriods(): void {
     this.registrationService.getRegistrationPeriodsActive().subscribe({
       next: (data) => {
         if (data) {
-          // Nếu có dữ liệu, gán vào biến và kiểm tra kỳ đăng ký
           this.registrationPeriods = data;
-          this.idRegistrationPeriodsActive = data.IdRegistrationPeriod;
+          this.idRegistrationPeriodsActive = data.Id;
+
+          console.log(this.idRegistrationPeriodsActive);
         } 
       },
       error: (err: any) => {
@@ -141,64 +216,86 @@ export class RoomStatusManagementComponent implements OnInit {
   }
 
   loadRooms() {
-    this.roomService.getRooms().subscribe({
-      next: (rooms: any[]) => {
-        rooms.forEach(room => {
-          const dormitory = this.dormitories.find(d => d.name === room.Building.NameBuilding);
-          if (dormitory) {
-            // Tạo đối tượng phòng với `notAvailableSlots` = 0 trước
-            const roomData: Room = {
-              id: room.IdRoom,
-              name: room.RoomName,
-              totalSlots: room.NumberOfBed,
-              notAvailableSlots: 0, // Giá trị mặc định,
-              status: room.Status,
-              gender: room.Gender ?? 0 // Nếu không có thì gán 0
-            };
-            console.log(`Dữ liệu roomData sau khi xử lý:`, roomData); // 🛠 Kiểm tra object
-
-            dormitory.rooms.push(roomData);
-
-            // Gọi API để cập nhật số lượng user thực tế trong phòng
-            this.getUserCountInRoom(room.IdRoom).subscribe({
-              next: (count: number) => {
-                roomData.notAvailableSlots = count; // Cập nhật lại giá trị
-              },
-              error: (err: any) => {
-                console.error(`Lỗi khi lấy số lượng user của phòng ${room.IdRoom}:`, err);
+    this.isLoading = true; // Bắt đầu loading
+    // Gọi API lấy kỳ đăng ký đang hoạt động
+    this.registrationService.getRegistrationPeriodsActive().subscribe({
+      next: (period: any) => {
+        // Xác định loại giá dựa trên SemesterStatus
+        this.isYearly = period.SemesterStatus;
+        console.log(this.isYearly);
+        this.idRegistrationPeriodsActive = period.id;
+        // Gọi API lấy danh sách phòng
+        this.roomService.getRooms().subscribe({
+          next: (rooms: any[]) => {
+            rooms.forEach(room => {
+              this.dormitory = this.dormitories.find(d => d.name === room.Building.NameBuilding);
+              if (this.dormitory) {
+                // Chọn giá theo kỳ đăng ký
+                const price = this.isYearly ? room.RoomBills?.[0]?.PriceYear ?? 0 : room.RoomBills?.[0]?.DailyPrice ?? 0;
+  
+                // Tạo đối tượng phòng
+                const roomData: Room = {
+                  id: room.Id,
+                  name: room.RoomName,
+                  totalSlots: room.NumberOfBed,
+                  notAvailableSlots: room.NumberOfRegistrations, // Giá trị mặc định
+                  status: room.Status,
+                  gender: room.Gender ?? 0,
+                  price: price,
+                  statusBuilding: room.Building.Status
+                }; 
+                console.log(`Dữ liệu roomData sau khi xử lý:`, roomData); // 🛠 Kiểm tra object
+  
+                if (!this.dormitory.rooms.some((r: { id: string; }) => r.id === roomData.id)) {
+                  this.dormitory.rooms.push(roomData);
+                }
+                 
+                // Gọi API cập nhật số lượng user thực tế trong phòng
+               
               }
             });
+  
+            // Sắp xếp phòng theo số phòng
+            this.dormitories.forEach(dormitory => {
+              dormitory.rooms.sort((a, b) => {
+                const roomNumberA = parseInt(a.name.replace(/\D/g, ''), 10);
+                const roomNumberB = parseInt(b.name.replace(/\D/g, ''), 10);
+                return roomNumberA - roomNumberB;
+              });
+            });
+            this.isLoading = false; // Kết thúc loading
+          },
+          error: (err: any) => {
+            console.error('Lỗi khi lấy danh sách phòng:', err);
+            this.isLoading = false; // Kết thúc loading
           }
-        });
-
-        // Sắp xếp phòng theo số phòng
-        this.dormitories.forEach(dormitory => {
-          dormitory.rooms.sort((a, b) => {
-            const roomNumberA = parseInt(a.name.replace(/\D/g, ''), 10);
-            const roomNumberB = parseInt(b.name.replace(/\D/g, ''), 10);
-            return roomNumberA - roomNumberB;
-          });
         });
       },
       error: (err: any) => {
-        console.error('Lỗi khi lấy danh sách phòng:', err);
+        console.error('Lỗi khi lấy kỳ đăng ký:', err);
       }
     });
   }
+  
 
 
   openRegisterForm(room: any) {
-    console.log("Room selected:", room);
     this.selectedRoom = room;
-    console.log("Room selected:", room);
-
+    // Gán giá phòng dựa theo loại hình đăng ký
+    this.registerForm.price = room.price;
+    // Reset các thông tin đăng ký
+    this.registerForm.startDate = '';
+    this.registerForm.endDate = '';
+    this.registerForm.total = 0;
+    this.registerForm.paymentStatus = 0; // Mặc định chưa thanh toán
   }
+  
 
   closeRegisterForm() {
     this.selectedRoom = null;
   }
 
-  getListRegisterRoom(idRoom: number) {
+  getListRegisterRoom(idRoom: string) {
     this.registerRoom.getActiveRegisterByIdRoom(idRoom).subscribe({
       next: (data: any[]) => {
         console.log(`Danh sách đăng ký active của phòng ${idRoom}:`, data);
@@ -210,7 +307,7 @@ export class RoomStatusManagementComponent implements OnInit {
     });
   }
 
-  getUserCountInRoom(idRoom: number): Observable<number> {
+  getUserCountInRoom(idRoom: string): Observable<number> {
     return this.registerRoom.getActiveRegisterByIdRoom(idRoom).pipe(
       map((data: any[]) => data.length)
     )
@@ -248,7 +345,7 @@ export class RoomStatusManagementComponent implements OnInit {
   selectStudent(student: any) {
     console.log("Sinh viên được chọn:", student); // Kiểm tra dữ liệu
 
-    this.registerForm.idStudent = student.InfoStudent.idStudent; 
+    this.registerForm.idStudent = student.InfoStudent.Id; 
     this.selectedStudentText = `${student.Account.UserCode} - ${student.Account.UserName}`;
 
     console.log("Giá trị registerForm sau khi chọn:", this.registerForm);
@@ -259,6 +356,65 @@ export class RoomStatusManagementComponent implements OnInit {
     this.dateError = startDate >= endDate;
   }
 
+  calculateTotal() {
+
+    if (this.registerForm.startDate && this.registerForm.endDate) {
+        const start = new Date(this.registerForm.startDate);
+        const end = new Date(this.registerForm.endDate);
+        const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24));
+
+        if (this.isYearly === 1) {
+            // Nếu là đăng ký theo năm, giá cố định
+            this.registerForm.total = this.registerForm.price;
+        } else {
+            // Nếu không phải theo năm, nhân giá theo số ngày
+            this.registerForm.total = this.registerForm.price * days;
+        }
+    }
+}
+
+// Trong component TypeScript
+// Trong component TypeScript
+getRoomStats(dormitory: any): { rooms: string, beds: string } {
+  let totalRooms = 0;
+  let availableRooms = 0;
+  let totalBeds = 0;
+  let availableBeds = 0;
+
+  dormitory.rooms.forEach((room: { totalSlots: number; notAvailableSlots: number; status: number; }) => {
+    totalRooms++;
+    totalBeds += room.totalSlots;
+
+    if (room.notAvailableSlots < room.totalSlots && room.status !== 1) {
+      availableRooms++;  // Tính số phòng còn trống
+      availableBeds += (room.totalSlots - room.notAvailableSlots);  // Tính số giường trống
+    }
+  });
+
+  return {
+    rooms: `${availableRooms}/${totalRooms}`,  // Trả về dạng "12/30 phòng"
+    beds: `${availableBeds}/${totalBeds}`     // Trả về dạng "32/33 giường"
+  };
+}
+
+// Hàm lấy tầng từ mã phòng
+getFloorFromRoom(roomName: string): number {
+  // Giả sử tên phòng có dạng "P101", "P102",... thì lấy 2 ký tự sau "P"
+  return parseInt(roomName.substring(1, 2), 10); // Lấy chữ số thứ 2 trong tên phòng
+}
+getUniqueFloors(dormitory: any): number[] {
+  const floors: number[] = [];
+  
+  // Lấy tất cả các tầng từ danh sách phòng
+  dormitory.rooms.forEach((room: any) => {
+    const floor = this.getFloorFromRoom(room.name);  // Lấy tầng từ tên phòng
+    if (!floors.includes(floor)) {
+      floors.push(floor);
+    }
+  });
+
+  return floors.sort((a, b) => a - b);  // Sắp xếp các tầng theo thứ tự
+}
 
 
 }

@@ -14,7 +14,7 @@ export class LoginComponent {
   errorMessage: string = '';
   invalidLogin: boolean = false;
   showPassword: boolean = false;
-  idAccount: number = 0;
+  idAccount: string ='';
   idStudent:number = 0;
 
   constructor(private authService: AuthService, private router: Router,private userService: UserService) {} // ✅ Đảm bảo router được inject vào constructor
@@ -28,16 +28,18 @@ export class LoginComponent {
         localStorage.setItem('token', response.token);
         localStorage.setItem('accountId', response.idAccount);
         localStorage.setItem('role', response.role);
-
+        console.log('Token saved:', response.token);
+        console.log('AccountId saved:', response.idAccount);
+        console.log('Role saved:', response.role);
         this.errorMessage = '';
         this.invalidLogin = false;
 
         // ✅ Kiểm tra role và điều hướng
-        if (response.role == '0') {
-          this.router.navigate(['/user']); // Admin
-        } else if (response.role == '1') {
+        if (response.role == 'Student') {
+          this.router.navigate(['/user']); // User
+        } else if (response.role == 'Admin') {
           this.router.navigate(['/admin']); // Admin
-        } else if (response.role == '2') {
+        } else if (response.role == 'Staff') {
           this.router.navigate(['/staffs']); // Staff
         } else {
           this.router.navigate(['/login']); // Student

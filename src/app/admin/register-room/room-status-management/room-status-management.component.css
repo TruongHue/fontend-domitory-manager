@@ -1,7 +1,24 @@
 .tab-container {
     width: 100%;
   }
+  /* Nút chặn */
+  .btn-block {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+  }
   
+  .btn-block:hover {
+    background-color: #c82333;
+  }
   .tab-header {
     display: flex;
     gap: 10px;
@@ -191,3 +208,114 @@
   font-weight: bold;
   color: #333;
 }
+.modal-container {
+  background: #fff;
+  padding: 20px;
+  width: 70%;
+  max-width: 900px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #f9f9f9;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background: #007BFF;
+  color: white;
+}
+
+.no-students {
+  text-align: center;
+  font-weight: bold;
+  color: red;
+}
+
+.btn-block {
+  background: #dc3545;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.btn-block:hover {
+  background: #c82333;
+}
+
+.btn-close {
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  background: #007BFF;
+  color: white;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+h3.text-center {
+  font-size: 24px; /* Đặt kích thước chữ */
+  font-weight: bold; /* Đặt chữ đậm */
+  color: #007bff; /* Màu chữ (có thể thay đổi theo yêu cầu) */
+  margin-top: 20px; /* Khoảng cách phía trên */
+  margin-bottom: 20px; /* Khoảng cách phía dưới */
+  text-transform: uppercase; /* Chữ in hoa */
+  text-align: center; /* Căn giữa chữ */
+  letter-spacing: 1px; /* Khoảng cách giữa các chữ cái */
+}
+
+h3.text-center.mt-4 {
+  margin-top: 30px; /* Cung cấp thêm khoảng cách khi sử dụng lớp mt-4 */
+}
+
+.btn-close:hover {
+  background: #0056b3;
+}
+
+/* Định dạng cho span hiển thị thông tin phòng và giường */
+.tab-header button span {
+  font-size: 0.9rem;               /* Kích thước font nhỏ hơn một chút */
+  color: #555;                     /* Màu chữ xám tối */
+  margin-left: 8px;                /* Khoảng cách giữa tên tòa nhà và thông tin phòng, giường */
+  font-weight: 500;                 /* Làm đậm chữ cho dễ đọc */
+}
+
+/* Nếu số phòng hoặc giường trống nhỏ, có thể sử dụng màu đỏ để nhấn mạnh */
+.tab-header button span {
+  color: #06c413;                  /* Màu đỏ nhẹ nếu cần nhấn mạnh */
+}
+
+/* Màu sắc cho phần text nếu phòng đầy */
+.tab-header button span.no-availability {
+  color: #d9534f;                  /* Màu đỏ đậm cho phần đầy phòng */
+  font-weight: bold;                /* Đậm hơn để nhấn mạnh */
+}
+
+/* Nếu phòng hoặc giường còn trống, thay đổi màu sắc cho dễ đọc */
+.tab-header button span.available {
+  color: #0015ff;                  /* Màu xanh dương sáng nếu có phòng trống */
+  font-weight: bold;
+}
+

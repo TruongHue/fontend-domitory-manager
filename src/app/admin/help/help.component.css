@@ -1,0 +1,215 @@
+.view-response-btn {
+  background-color: #3498db !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+}
+
+.view-response-btn:hover {
+  background-color: #2c80b4 !important;
+}
+
+.no-response-btn {
+  background-color: #e74c3c !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+}
+
+.no-response-btn:hover {
+  background-color: #c0392b !important;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* Làm mờ nền */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  pointer-events: auto; /* Đảm bảo overlay bắt được sự kiện */
+}
+
+
+.modal1 h3 {
+  color: #007BFF; /* Màu xanh dương nổi bật */
+  margin-top: 0;
+  font-size: 28px; /* Tăng kích thước chữ để thêm ấn tượng */
+  font-weight: 600; /* Sử dụng độ đậm vừa phải */
+  text-align: center; /* Căn giữa tiêu đề */
+  text-transform: uppercase; /* Chữ hoa tất cả */
+  padding: 15px 0; /* Thêm khoảng cách trên và dưới để tạo sự thoải mái */
+  /* Thêm hiệu ứng bóng đổ để tạo chiều sâu */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  /* Thêm màu gradient cho chữ để làm nó sinh động hơn */
+  background: linear-gradient(90deg, #007BFF, #00D4FF);
+  -webkit-background-clip: text; /* Đảm bảo gradient chỉ áp dụng lên chữ */
+  color: transparent; /* Chữ sẽ không có màu đen mà sẽ dùng màu gradient */
+  border-bottom: 3px solid #007BFF; /* Đường viền dưới dày hơn */
+  letter-spacing: 1px; /* Thêm khoảng cách giữa các chữ */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font chữ hiện đại */
+}
+
+.modal1 {
+  position: relative; /* hoặc fixed như bạn đã để */
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+}
+.response-container {
+  padding: 15px;
+}
+
+.response-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.response-input {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.response-input textarea {
+  width: 100%;
+  border-radius: 6px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.submit-button button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.3s ease;
+}
+
+.submit-button button:hover {
+  background-color: #218838;
+}
+
+.close-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.3s ease;
+}
+
+.close-button:hover {
+  background-color: #c82333;
+}
+
+/* Container bảng phản hồi */
+.table-container, .response-container {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
+
+/* Bảng phản hồi */
+.table-container table,
+.response-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table-container th,
+.table-container td,
+.response-table td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  text-align: left;
+}
+
+/* Nhãn và textarea */
+.response-input label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: inline-block;
+  color: #333;
+}
+
+.response-input textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 80px;
+  transition: border 0.2s;
+}
+
+.response-input textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Nút gửi và đóng */
+.modal-footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.submit-button button,
+.close-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Nút gửi */
+.submit-button button {
+  background-color: #007bff;
+  color: white;
+}
+
+.submit-button button:hover {
+  background-color: #0056b3;
+}
+
+/* Nút đóng */
+.close-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.close-button:hover {
+  background-color: #c82333;
+}

@@ -1,18 +1,19 @@
 <header class="navbar">
   <div class="logo">
-    <img src="/assets/background_home.jpg" alt="Logo" />
+    <!-- <img src="/assets/logo_xt.png" alt="Logo" /> -->
   </div>
+
   <nav class="nav-menu">
     <ul>
-      <li><a routerLink="/user/home" routerLinkActive="active">Trang chủ</a></li>
-      <li><a routerLink="/user/personal" routerLinkActive="active">Cá nhân</a></li>
-      <li><a routerLink="/user/registerRoomUser" routerLinkActive="active">Đăng ký phòng</a></li>
-      <li><a routerLink="/user/roomManager" routerLinkActive="active">Quản lý phòng</a></li>
-      <li><a routerLink="/user/historyRegister" routerLinkActive="active">Lịch sử đăng ký</a></li>
-      <li><a routerLink="/user/help" routerLinkActive="active">Hỗ trợ</a></li>
+      <li><a routerLink="/user/home" routerLinkActive="active"><i class="fas fa-home"></i> Trang chủ</a></li>
+      <li><a routerLink="/user/personal" routerLinkActive="active"><i class="fas fa-user"></i> Cá nhân</a></li>
+      <li><a routerLink="/user/registerRoomUser" routerLinkActive="active"><i class="fas fa-door-open"></i> Đăng ký phòng</a></li>
+      <li><a routerLink="/user/roomManager" routerLinkActive="active"><i class="fas fa-cogs"></i> Quản lý phòng</a></li>
+      <li><a routerLink="/user/historyRegister" routerLinkActive="active"><i class="fas fa-history"></i> Lịch sử</a></li>
+      <li><a routerLink="/user/userhelp" routerLinkActive="active"><i class="fas fa-question-circle"></i> Hỗ trợ</a></li>
     </ul>
-    
   </nav>
+
   <div class="nav-icons">
     <button class="logout-btn" (click)="logout()">
       <i class="fas fa-sign-out-alt"></i>

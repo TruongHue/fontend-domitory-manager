@@ -3,8 +3,9 @@
         <h2>Đăng Ký</h2>
         
         <!-- Hiển thị lỗi nếu có -->
+        <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
         <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-  
+          
         <form #registerForm="ngForm" (submit)="onRegister()">
             <div class="form-group">
               <input type="text" placeholder="Họ và tên" [(ngModel)]="registerData.Account.UserName" name="userName" required>

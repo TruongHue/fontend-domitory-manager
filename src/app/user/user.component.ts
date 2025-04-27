@@ -24,7 +24,7 @@ export class UserComponent implements OnInit {
   }
 
   loadUserInfo(){
-    const userId = Number(localStorage.getItem('accountId'));
+    const userId = localStorage.getItem('accountId');
     if(userId){
     this.userService.getUsersById(userId).subscribe(
     (response) =>{

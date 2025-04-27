@@ -1,25 +1,31 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportServiceService {
-  private apiUrl = 'https://localhost:7206/api/RegisterRoom/get-active-registers';
-  private roomApiUrl = 'https://localhost:7206/api/Room'; // API lấy danh sách phòng
-  private userApiUrl = 'https://localhost:7206/api/User'; // API lấy danh sách người dùng
+  private apiUrl = 'https://domitory-backend.onrender.com/api/RegisterRoom/total-registered-students';
+  private roomApiUrl = 'https://domitory-backend.onrender.com/api/Room'; // API lấy danh sách phòng
+  private userApiUrl = 'https://domitory-backend.onrender.com/api/User'; // API lấy danh sách người dùng
 
   constructor(private http: HttpClient) {}
 
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : new HttpHeaders();
+  }
+
   getAllRegisterRoom(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+    return this.http.get<any[]>(this.apiUrl, { headers: this.getAuthHeaders() });
   }
-  
+
   getAllRooms(): Observable<any[]> { 
-    return this.http.get<any[]>(this.roomApiUrl); // Gọi API lấy danh sách phòng
+    return this.http.get<any[]>(this.roomApiUrl, { headers: this.getAuthHeaders() }); // Gọi API lấy danh sách phòng
   }
+
   getAllUsers(): Observable<any[]> { 
-    return this.http.get<any[]>(this.userApiUrl); // Gọi API lấy danh sách sinh viên
+    return this.http.get<any[]>(this.userApiUrl, { headers: this.getAuthHeaders() }); // Gọi API lấy danh sách sinh viên
   }
 }

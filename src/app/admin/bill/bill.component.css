@@ -6,7 +6,6 @@
     color: #333;
   }
   
-  /* Thanh sidebar ngang */
   .horizontal-nav {
     display: flex;
     justify-content: center;
@@ -14,6 +13,11 @@
     padding: 12px;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  .horizontal-nav button.active {
+    background-color: #0d6efd;  /* Màu nền khi tab đang được chọn */
+    color: white;  /* Màu chữ khi tab đang được chọn */
+    font-weight: bold; /* Đậm chữ khi tab đang được chọn */
   }
   
   .horizontal-nav button {
@@ -32,7 +36,6 @@
     border-radius: 8px;
     padding: 12px 25px;
   }
-  
   /* Nội dung chính */
   .content {
     margin-top: 20px;

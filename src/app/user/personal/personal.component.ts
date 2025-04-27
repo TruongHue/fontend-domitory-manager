@@ -4,20 +4,12 @@ import { UserService } from '../../services/user/user.service';
 @Component({
   selector: 'app-personal',
   templateUrl: './personal.component.html',
-  styleUrl: './personal.component.css'
+  styleUrls: ['./personal.component.css', '../../app.component.css']
+
 })
 export class PersonalComponent implements OnInit {
-  profile = {
-    userCode: '',
-    fullName: '',
-    gender:null,
-    email: '',
-    phone: '',
-    address: '',
-    parentName: '',
-    parentPhone: '',
-    picture: ''
-  };
+  profile: any = [];
+  isLoading: boolean = false;
 
   constructor(private userService: UserService) {}
 
@@ -26,22 +18,20 @@ export class PersonalComponent implements OnInit {
   }
 
   loadUserProfile() {
-    const userId = Number(localStorage.getItem('accountId'));
+    this.isLoading = true; // Bắt đầu loading
+
+    const userId = localStorage.getItem('accountId');
     if (userId) {
       this.userService.getUsersById(userId).subscribe(
         (response) => {
-          this.profile.userCode = response.Account?.UserCode || 'Không có mã';
-          this.profile.fullName = response.InfoStudent?.Name || 'Không có tên';
-          this.profile.gender = response.InfoStudent?.Gender || 'Không có giới tính';
-          this.profile.email = response.InfoStudent?.Email || 'Không có email';
-          this.profile.phone = response.Account?.NumberPhone || 'Không có SĐT';
-          this.profile.address = response.InfoStudent?.Address || 'Không có địa chỉ';
-          this.profile.parentName = response.InfoStudent?.NameParent || 'Không có tên phụ huynh';
-          this.profile.parentPhone = response.InfoStudent?.ParentNumberPhone || 'Không có SĐT phụ huynh';
-          this.profile.picture = response.InfoStudent?.Picture || 'assets/default-avatar.png';
+         this.profile = response;
+         this.isLoading = false; // Bắt đầu loading
+
         },
         (error) => {
           console.error('Lỗi khi tải thông tin người dùng', error);
+          this.isLoading = false; // Bắt đầu loading
+
         }
       );
     }
@@ -49,5 +39,9 @@ export class PersonalComponent implements OnInit {
 
   editProfile() {
     alert('Chức năng chỉnh sửa đang phát triển...');
+  }
+
+  getImageUrl(imagePath: string): string {
+    return imagePath ? `http://localhost:5048/images/${imagePath}` : 'assets/default-avatar.png';
   }
 }

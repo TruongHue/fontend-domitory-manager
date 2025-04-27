@@ -1,0 +1,338 @@
+.button {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.button:hover {
+    box-shadow: 0px 4px 15px rgba(38, 152, 255, 0.3);
+}
+
+.search-box {
+    width: 250px; /* Độ rộng */
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #333;
+    transition: all 0.3s ease-in-out;
+    outline: none;
+  }
+  @media (max-width: 768px) {
+    .filter-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+  
+    .search-box {
+        width: 100%;
+    }
+  }
+  /* Hover effect */
+  .search-box:hover {
+    border-color: #007bff;
+  }
+  
+  /* Khi focus vào ô tìm kiếm */
+  .search-box:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Placeholder màu xám nhẹ */
+  .search-box::placeholder {
+    color: #aaa;
+    font-style: italic;
+  }
+
+  .toggle-button {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    transition: transform 0.3s ease-in-out;
+    left: 2px;
+}
+.toggle-switch {
+    width: 50px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+}
+
+.toggle-switch.active {
+    background-color: #4caf50;
+}
+
+.toggle-switch {
+    width: 50px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+}
+
+.toggle-switch.active {
+    background-color: #4caf50;
+}
+
+.toggle-button {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    transition: transform 0.3s ease-in-out;
+    left: 2px;
+}
+
+.toggle-switch.active .toggle-button {
+    
+    transform: translateX(26px);
+} 
+
+/* Định dạng chung cho dropdown */
+select {
+    width: 200px; /* Độ rộng của dropdown */
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Hover effect */
+  select:hover {
+    border-color: #007bff; /* Xanh dương */
+  }
+  
+  /* Khi focus (chọn vào dropdown) */
+  select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Kiểu khi disabled */
+  select:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+  }
+  
+  /* Định dạng option */
+  option {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+
+.pagination-btn {
+    background-color: #007bff; /* Màu xanh dương */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 16px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .pagination-btn:hover {
+    background-color: #0056b3; /* Màu xanh đậm hơn khi hover */
+  }
+  
+  .pagination-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    color: #666;
+  }
+  
+  .pagination-info {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 10px;
+    color: #333;
+  }
+
+  
+  /* Hiệu ứng overlay nền mờ */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10;
+  }
+  
+  /* Form hiển thị ở giữa màn hình */
+  .form-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    z-index: 20;
+    width: 350px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
+  
+  .form-container h3 {
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  /* Input fields */
+  .form-container input {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  /* Nút bấm trong form */
+  .form-container button {
+    width: 48%;
+    padding: 10px;
+    margin: 10px 1%;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  /* Nút Lưu */
+  .form-container button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .form-container button[type="submit"]:hover {
+    background-color: #218838;
+  }
+  
+  /* Nút Hủy */
+  .form-container button[type="button"] {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .form-container button[type="button"]:hover {
+    background-color: #c82333;
+  }
+  
+
+   /* Bảng danh sách */
+   .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .table th {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+  }
+  
+  .table td {
+    padding: 12px;
+    text-align: center;
+  }
+  
+  .table tr:nth-child(even) {
+    background: #f2f2f2;
+  }
+
+  
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal.show {
+      display: flex;
+    }
+    .fancy-modal {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+      width: 450px;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(255, 255, 255, 0.7);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .spinner {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #007bff;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    

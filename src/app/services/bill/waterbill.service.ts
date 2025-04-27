@@ -1,46 +1,26 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WaterbillService {
-  private apiUrl = 'https://localhost:7206/api/Bill/water';
+  private apiUrl = 'https://domitory-backend.onrender.com/api/Bill';
 
   constructor(private http: HttpClient) {}
 
-  // 📌 Lấy hóa đơn điện theo IdRoom
-  getBillByRoomId(idRoom: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/get-water-bill/${idRoom}`)
-    .pipe(
-      tap((res) => console.log(`✅ Dữ liệu nhận từ API (roomId: ${idRoom}):`, res)),
-      catchError((error) => {
-        console.error(`❌ Lỗi khi gọi API hóa đơn điện (roomId: ${idRoom}):`, error);
-        return of(null);
-      })
-    );
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : new HttpHeaders();
   }
 
-  // 📌 Thêm hóa đơn điện mới
+  // 📌 Thêm hóa đơn nước mới
   addWaterBill(data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/add-water-bill`, data);
+    return this.http.post<any>(`${this.apiUrl}/add-water-bill`, data, { headers: this.getAuthHeaders() });
   }
 
-
-  // ✅ Lấy hóa đơn điện mới nhất của một phòng
-  getLatestWaterBill(roomId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/latest/${roomId}`)
-          .pipe(
-            tap((res) => console.log(`✅ Dữ liệu nhận từ API (roomId: ${roomId}):`, res)),
-            catchError((error) => {
-              console.error(`❌ Lỗi khi gọi API hóa đơn điện (roomId: ${roomId}):`, error);
-              return of(null);
-            })
-          );
+  getWaterBillByIdRoom(IdRoom: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/all/water/${IdRoom}`, { headers: this.getAuthHeaders() });
   }
-  getWaterBillByIdRoom(IdRoom: number): Observable<any>{
-    return this.http.get<any>(`${this.apiUrl}/room/${IdRoom}`);
-  }
-
 }

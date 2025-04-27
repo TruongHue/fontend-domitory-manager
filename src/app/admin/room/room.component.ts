@@ -10,10 +10,7 @@ export class RoomComponent implements OnInit {
   activeTab: string = 'room';
 
   ngOnInit() {
-    const savedTab = localStorage.getItem('activeTab');
-    if (savedTab) {
-      this.activeTab = savedTab;
-    }
+
   }
 
   changeTab(tab: string) {

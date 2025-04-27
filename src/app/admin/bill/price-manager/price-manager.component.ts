@@ -4,8 +4,9 @@ import { RoomBillService } from '../../../services/bill/room-bill.service';
 @Component({
   selector: 'app-price-manager',
   templateUrl: './price-manager.component.html',
-  styleUrls: ['./price-manager.component.css']
-})
+  styleUrls: ['./price-manager.component.css', '../../../app.component.css']
+})  
+
 export class PriceManagerComponent implements OnInit {
   prices: any[] = [];
   isFormVisible = false; // Biến kiểm soát hiển thị form
@@ -16,6 +17,8 @@ export class PriceManagerComponent implements OnInit {
     waterLimit: 0,
     waterPriceOverLimit: 0
   };
+  isLoading: boolean = false;
+
 
   constructor(private roomBillService: RoomBillService) {}
 
@@ -24,13 +27,36 @@ export class PriceManagerComponent implements OnInit {
   }
 
   getPrices() {
+    this.isLoading = true; // Bắt đầu loading
     this.roomBillService.getPriceWaterElectricities().subscribe({
       next: (data) => {
-        this.prices = data;
+        this.prices = data.sort((a: any, b: any) => new Date(b.ActionDate).getTime() - new Date(a.ActionDate).getTime());
+        this.isLoading = false; // Bắt đầu loading
       },
-      error: (err) => console.error('❌ Lỗi lấy danh sách giá:', err)
+      error: (err: any) => {
+        console.error('❌ Lỗi lấy danh sách giá:', err);
+        this.isLoading = false; // Bắt đầu loading
+      }
     });
   }
+  
+  delete(id: string) {
+    if (!id) {
+      alert("ID không hợp lệ!");
+      return;
+    }
+  
+    if (confirm("Bạn có chắc muốn xóa giá này không?")) {
+      this.roomBillService.deletePriceWaterElectricities(id).subscribe({
+        next: () => {
+          alert("✅ Xóa thành công!");
+          this.getPrices(); // Cập nhật danh sách sau khi xóa
+        },
+        error: (err) => console.error('❌ Lỗi khi xóa:', err)
+      });
+    }
+  }
+  
 
   submitPrice() {
     if (

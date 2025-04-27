@@ -1,101 +1,161 @@
 /* Ô tìm kiếm */
-/* Ô tìm kiếm */
 .search-input {
-    width: 300px;
-    padding: 8px 12px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    display: block;
-  }
-  
-  
-  .search-container input {
-    width: 40%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-  
-  /* Bảng danh sách */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  th, td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
-    white-space: nowrap;
-  }
-  
-  th {
-    background-color: #f4f4f4;
-  }
-  
-  /* Ảnh avatar */
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    margin: auto;
-  }
-  
-  /* Nút chặn */
-  .btn-block {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.3s;
-  }
-  
-  .btn-block:hover {
-    background-color: #c82333;
-  }
-  
-  /* Phân trang */
-  .pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 15px;
-  }
-  
-  .pagination button {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    margin: 2px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  .pagination button:hover {
-    background: #0056b3;
-  }
-  
-  .pagination button.active {
-    background: #28a745;
-  }
-  
-  .pagination button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-  
+  width: 300px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  display: block;
+  margin-top: 10px; /* Khoảng cách phía trên */
+}
+
+.import-btn {
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 10px;  /* Khoảng cách giữa nút và các phần tử khác */
+}
+/* Căn giữa ảnh */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: auto;
+}
+
+/* Nút duyệt & từ chối */
+button {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+td button {
+  margin: 0 5px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+/* Chi tiết */
+td button:nth-child(1) {
+  background: #007bff;
+  color: white;
+}
+
+/* Từ chối */
+td button:nth-child(2) {
+  background: #dc3545;
+  color: white;
+}
+
+td button:hover {
+  opacity: 0.9;
+}
+
+
+/* Phân trang */
+.avatar-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #007bff;
+  margin-bottom: 10px;
+}
+
+.detail-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.avatar-large {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #007bff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.info-fields {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f1f9ff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.info-fields p {
+  font-size: 15px;
+  color: #333;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.info-fields p strong {
+  color: #0056b3;
+  width: 160px;
+  display: inline-block;
+}
+
+.actions button.close-btn {
+  padding: 8px 16px;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.actions button.close-btn:hover {
+  background-color: #c82333;
+}
+
+.export-btn {
+  background-color: #4CAF50; /* Màu nền xanh */
+  color: white; /* Màu chữ trắng */
+  border: none; /* Không có viền */
+  padding: 10px 20px; /* Khoảng cách trong nút */
+  text-align: center; /* Canh giữa nội dung */
+  text-decoration: none; /* Không có gạch chân */
+  display: inline-flex; /* Để icon và chữ nằm ngang */
+  align-items: center; /* Canh chỉnh nội dung theo chiều dọc */
+  border-radius: 5px; /* Bo tròn góc */
+  cursor: pointer; /* Hiển thị con trỏ khi di chuột lên nút */
+  font-size: 16px; /* Kích thước chữ */
+  margin-right: 20px;  /* Tạo khoảng cách giữa nút và ô tìm kiếm */
+}
+
+.export-btn:hover {
+  background-color: #45a049; /* Màu nền khi hover */
+}
+
+.export-btn i {
+  margin-right: 8px; /* Khoảng cách giữa icon và chữ */
+}

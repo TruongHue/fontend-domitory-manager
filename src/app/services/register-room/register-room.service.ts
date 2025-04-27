@@ -1,42 +1,63 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegisterRoomService {
-  private apiUrl = 'https://localhost:7206/api/RegisterRoom';
+  private apiUrl = 'https://domitory-backend.onrender.com/api/RegisterRoom';
 
   constructor(private http: HttpClient) {}
 
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : new HttpHeaders();
+  }
+
   getAllRegisters(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/get-all-registers`);
+    return this.http.get<any[]>(`${this.apiUrl}`, { headers: this.getAuthHeaders() });
   }
 
   getActiveRegisters(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/get-active-registers`);
+    return this.http.get<any[]>(`${this.apiUrl}/get-active-registers`, { headers: this.getAuthHeaders() });
   }
 
-  // Lấy danh sách đăng ký đang hoạt động theo idRoom
-  getActiveRegisterByIdRoom(idRoom: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/get-active-registers-byIdRoom/${idRoom}`);
-  }
-  getRegistersByUser(idStudent: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/get-registers-byUser/${idStudent}`);
+  getActiveRegisterByIdRoom(idRoom: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/get-active-registers-byIdRoom/${idRoom}`, { headers: this.getAuthHeaders() });
   }
 
-  // Lấy tất cả danh sách đăng ký theo idRoom
-  getAllRegisterByIdRoom(idStudent: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/get-all-registers-byIdRoom/${idStudent}`);
+  getRegistersByUser(idStudent: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/history/${idStudent}`, { headers: this.getAuthHeaders() });
   }
+
+  getAllRegisterByIdRoom(idStudent: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/get-all-registers-byIdRoom/${idStudent}`, { headers: this.getAuthHeaders() });
+  }
+
   createRegister(registerData: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, registerData);
+    return this.http.post<any>(this.apiUrl, registerData, { headers: this.getAuthHeaders() });
   }
 
-  updatePaymentStatus(idRegister: number, newPaymentStatus: number) {
-    return this.http.put<any>(`${this.apiUrl}/update-status-payment/${idRegister}/${newPaymentStatus}`, {});
-}
+  fetchStudents(idRoom: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/students-paybill/${idRoom}`, { headers: this.getAuthHeaders() });
+  }
 
+  updatePaymentStatus(idRegister: string, data: any): Observable<any> {
+    console.log('Updating payment status for:', idRegister, 'with data:', data);
+    return this.http.put(`${this.apiUrl}/update-payment-status/${idRegister}`, data, { headers: this.getAuthHeaders() });
+  }
 
+  updateStatus(idRegister: string, data: any): Observable<any> {
+    console.log('Updating status for:', idRegister, 'with data:', data);
+    return this.http.put(`${this.apiUrl}/update-status/${idRegister}`, data, { headers: this.getAuthHeaders() });
+  }
+
+  deleteRegister(idRegister: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/delete-register/${idRegister}`, { headers: this.getAuthHeaders() });
+  }
+
+  getAllRegisterRoombyIdRoomActive(idRoom: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/students-in-room/${idRoom}`, { headers: this.getAuthHeaders() });
+  }
 }

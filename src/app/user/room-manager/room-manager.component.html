@@ -1,3 +1,6 @@
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
 <div *ngIf="nameRoom && building; else noRoom" class="container">
 
 <!-- Hiển thị tên phòng -->
@@ -9,7 +12,7 @@
     <a class="nav-link active" id="unpaid-tab" data-bs-toggle="tab" href="#unpaid-bills">Hóa đơn chưa thanh toán</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="all-tab" data-bs-toggle="tab" href="#all-bills">Tất cả hóa đơn</a>
+    <a class="nav-link" id="all-tab" data-bs-toggle="tab" href="#paid-bills">Hóa đơn đã thanh toán</a>
   </li>
 </ul>
 
@@ -61,7 +64,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngIf="allElectricBills.length === 0">
+        <tr *ngIf="unpaidWaterBills.length === 0">
           <td colspan="7" class="text-center text-danger fw-bold">Không có hóa đơn nào</td>
         </tr>
         <tr *ngFor="let bill of unpaidWaterBills">
@@ -79,7 +82,7 @@
   </div>
 
   <!-- Tất cả hóa đơn -->
-  <div class="tab-pane fade" id="all-bills">
+  <div class="tab-pane fade" id="paid-bills">
 
     <h5>Hóa đơn điện</h5>
     <table class="table table-bordered">
@@ -95,7 +98,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let bill of allElectricBills">
+        <tr *ngIf="paidElectricBills.length === 0">
+          <td colspan="7" class="text-center text-danger fw-bold">Không có hóa đơn nào</td>
+        </tr>
+        <tr *ngFor="let bill of paidElectricBills">
           <td>{{ bill.DateOfRecord | date:'dd/MM/yyyy' }}</td>
           <td>{{bill.BeforeIndex }} kWh</td>
           <td>{{bill.AfterIndex }} kWh</td>
@@ -104,9 +110,12 @@
           <td>{{ bill.Total | number }} VND</td>
           <td>
             <span class="badge" [ngClass]="{ 'bg-success': bill.Status === 0, 'bg-danger': bill.Status === 1 }">
-              {{ bill.Status === 0 ? 'Đã thanh toán' : 'Chưa thanh toán' }}
+                {{ bill.Status === 0 ? 'Đã thanh toán' : 'Chưa thanh toán' }}
             </span>
-          </td>
+            <br> <!-- Xuống dòng -->
+            Bởi <strong>{{ bill.StudentCode }}</strong> - {{ bill.StudentName }}
+        </td>
+        
         </tr>
       </tbody>
     </table>
@@ -126,7 +135,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let bill of allWaterBills">
+        <tr *ngIf="paidWaterBills.length === 0">
+          <td colspan="7" class="text-center text-danger fw-bold">Không có hóa đơn nào</td>
+        </tr>
+        <tr *ngFor="let bill of paidWaterBills">
           <td>{{ bill.DateOfRecord | date:'dd/MM/yyyy' }}</td>
           <td>{{bill.BeforeIndex }} kWh</td>
           <td>{{bill.AfterIndex }} kWh</td>
@@ -147,6 +159,6 @@
 </div>
 <ng-template #noRoom>
   <div class="alert alert-warning text-center">
-    <strong>Bạn chưa đăng ký phòng. Vui lòng liên hệ quản lý để được hỗ trợ!</strong>
+    <strong>Bạn chưa đăng ký phòng thành công. Vui lòng liên hệ quản lý để được hỗ trợ!</strong>
   </div>
 </ng-template>

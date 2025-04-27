@@ -1,34 +1,39 @@
-<div class="main-content">
-    <section id="home">
-      <h1>Chào mừng đến với Ký túc xá XYZ</h1>
-      <p>Chúng tôi cung cấp các tiện nghi và dịch vụ tốt nhất cho sinh viên...</p>
-    </section>
-  
-    <section id="regulations">
-      <h2>Quy định và Quy tắc</h2>
-      <ul>
-        <li>Vệ sinh phòng ở và khu vực chung.</li>
-        <li>An ninh và trật tự trong khu ký túc.</li>
-        <li>Hành vi ứng xử của sinh viên trong ký túc xá.</li>
-      </ul>
-    </section>
-  
-    <section id="hours">
-      <h2>Giờ Giấc Ký Túc Xá</h2>
-      <p>Giờ mở cửa: 6:00 AM - 10:00 PM</p>
-      <p>Giờ giới nghiêm: 11:00 PM</p>
-      <p>Giờ hoạt động các dịch vụ: 7:00 AM - 9:00 PM</p>
-    </section>
-  
-    <section id="contact">
-      <h2>Liên hệ với chúng tôi</h2>
-      <p>Số điện thoại: 0123-456-789</p>
-      <p>Email: contactkytucxa.com</p>
-      <p>Địa chỉ: 123, Đường ABC, Thành phố XYZ</p>
-    </section>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+
+<div class="dormitory-container">
+  <!-- Cột trái: Quy định -->
+  <div class="rules-section">
+    <h2>📜 Quy định Ký túc xá</h2>
+    <ul class="rules-list">
+      <li>🧼 Giữ vệ sinh sạch sẽ.</li>
+      <li>🔒 Bảo vệ an ninh, không gây rối.</li>
+      <li>🤝 Ứng xử lịch sự với mọi người.</li>
+    </ul>
+    <div class="hours">
+      <h4>🕐 Giờ giấc</h4>
+      <p>⏰ Mở cửa: 6:00 AM - 10:00 PM</p>
+      <p>🔕 Giới nghiêm: 11:00 PM</p>
+    </div>
   </div>
-  
-  <div class="footer">
-    <p>&copy; 2025 Ký túc xá XYZ. All rights reserved.</p>
+
+  <!-- Cột phải: Bảng tin Admin -->
+  <div class="posts-section">
+    <h2>📢 Tin mới từ Ban quản lý</h2>
+
+    <div *ngIf="adminPosts.length === 0">
+      <p>Chưa có bài viết nào!</p>
+    </div>
+    <div *ngFor="let post of adminPosts" class="post-card">
+      <div class="post-header">
+        <img src="assets\image\admin-avatar.jpg" alt="admin" class="avatar" />
+        <div>
+          <h4 class="post-title">{{ post.Title }}</h4>
+          <span class="post-time">📅 {{ post.PostDate | date: 'short' }}</span>
+        </div>
+      </div>
+      <div class="post-body" [innerHTML]="post.Content"></div>
+    </div>
   </div>
-  
+</div>

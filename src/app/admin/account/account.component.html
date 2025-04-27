@@ -1,13 +1,14 @@
 <div class="container">
     <nav class="horizontal-nav">
-        <button (click)="changeTab('account-list-inactive')" [class.active]="activeTab === 'account-list-inactive'">Quản lý đăng ký tài khoản</button>
-        <button (click)="changeTab('account-list-active')" [class.active]="activeTab === 'account-list-active'">Quản lý danh sách tài khoản</button>
-        <button (click)="changeTab('account-list-blocked')" [class.active]="activeTab === 'account-list-blocked'">Quản lý danh sách tài khoản đã chặn</button>
+        <button (click)="changeTab('account-list-inactive')" [class.active]="activeTab === 'account-list-inactive'">Quản lý đăng ký thông tin</button>
+        <button (click)="changeTab('account-list-active')" [class.active]="activeTab === 'account-list-active'">Quản lý sinh viên hợp lệ</button>
+        <button (click)="changeTab('account-list-blocked')" [class.active]="activeTab === 'account-list-blocked'">Quản lý sinh viên không hợp lệ</button>
     </nav>
-
+    
     <div class="content">
         <app-account-inactive *ngIf="activeTab === 'account-list-inactive'"></app-account-inactive>
         <app-account-list *ngIf="activeTab === 'account-list-active'"></app-account-list>
         <app-account-blocked *ngIf="activeTab === 'account-list-blocked'"></app-account-blocked>
     </div>
-</div>
+  </div>
+  

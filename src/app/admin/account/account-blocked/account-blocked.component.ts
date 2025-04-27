@@ -4,7 +4,8 @@ import { AccountService } from '../../../services/account.service';
 @Component({
   selector: 'app-account-blocked',
   templateUrl: './account-blocked.component.html',
-  styleUrl: './account-blocked.component.css'
+  styleUrls: ['./account-blocked.component.css', '../../../app.component.css']
+
 })
 export class AccountBlockedComponent implements OnInit {
   accounts: any[] = [];
@@ -12,6 +13,8 @@ export class AccountBlockedComponent implements OnInit {
   searchText: string = '';
   currentPage: number = 1;
   itemsPerPage: number = 5;
+  isLoading: boolean = false;
+  selectedAccount: any = null;
 
   constructor(private accountService: AccountService) {}
 
@@ -19,12 +22,35 @@ export class AccountBlockedComponent implements OnInit {
     this.loadBlockedAccounts();
   }
 
-  loadBlockedAccounts() {
-    this.accountService.getBlockedAccounts().subscribe((data) => {
-      this.accounts = data;
-      this.filteredAccounts = [...this.accounts];
-    });
+  getTotalPages(): number {
+    return Math.ceil(this.filteredAccounts.length / this.itemsPerPage);
   }
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+  
+  nextPage(): void {
+    if (this.currentPage < this.getTotalPages()) {
+      this.currentPage++;
+    }
+  }
+
+  loadBlockedAccounts() {
+    this.isLoading = true; // Bắt đầu loading
+    this.accountService.getBlockedAccounts().subscribe({
+      next: (data) => {
+        this.accounts = data;
+        this.filteredAccounts = [...this.accounts];
+        this.isLoading = false; // ✅ Kết thúc loading khi thành công
+      },
+      error: (err) => {
+        console.error('Lỗi khi lấy danh sách tài khoản bị khóa:', err);
+        this.isLoading = false; // ✅ Kết thúc loading khi có lỗi
+      }
+    });
+  }    
 
   searchAccounts() {
     this.filteredAccounts = this.accounts.filter(account =>
@@ -47,26 +73,33 @@ export class AccountBlockedComponent implements OnInit {
     return imagePath ? `http://localhost:5048/images/${imagePath}` : 'assets/default-avatar.png';
   }
 
-  getTotalPages(): number[] {
-    const totalPages = Math.ceil(this.filteredAccounts.length / this.itemsPerPage);
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
 
-  unblockAccount(id: number) {
+
+  unblockAccount(id: string) {
+    const status = { Status: 0 }; // Object status đúng định dạng
+  
     if (confirm('Bạn có chắc chắn muốn bỏ chặn tài khoản này?')) {
-      this.accountService.putStatusActive(id).subscribe(
+      this.accountService.putStatus(id, status).subscribe(
         () => {
           alert('Tài khoản đã được bỏ chặn!');
-          this.filteredAccounts = this.filteredAccounts.filter(acc => acc.IdAccount !== id);
-          if (this.filteredAccounts.length === 0 && this.currentPage > 1) {
+  
+          // Nếu chỉ còn 1 tài khoản trên trang hiện tại, lùi về trang trước
+          if (this.filteredAccounts.length === 1 && this.currentPage > 1 ) {
             this.currentPage--;
-            this.loadBlockedAccounts();
           }
+          if (this.filteredAccounts.length === 1 && this.currentPage === 1 ) {
+            this.currentPage = 0 ;
+          }
+          // Cập nhật danh sách tài khoản
+          this.loadBlockedAccounts();
         },
         () => {
           alert('Có lỗi xảy ra khi cập nhật trạng thái!');
         }
       );
     }
+  }
+  detail(account: any) {
+    this.selectedAccount = account;
   }
 }

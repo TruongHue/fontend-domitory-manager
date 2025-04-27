@@ -15,7 +15,11 @@
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   }
-  
+  .horizontal-nav button.active {
+    background-color: #007bff;  /* Màu nền của tab đang chọn */
+    color: white; /* Màu chữ của tab đang chọn */
+  }
+ 
   .horizontal-nav button {
     background: none;
     border: none;

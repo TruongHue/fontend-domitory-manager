@@ -77,6 +77,25 @@ tbody tr:hover {
   color: #ffc107;
   border: 1px solid #ffc107;
 }
+.text-success {
+  color: #28a745; /* Xanh lá */
+  font-weight: 500;
+}
+
+.text-danger {
+  color: #dc3545; /* Đỏ */
+  font-weight: 500;
+}
+
+.text-warning {
+  color: #ffc107; /* Vàng */
+  font-weight: 500;
+}
+
+.text-secondary {
+  color: #6c757d; /* Xám */
+  font-weight: 500;
+}
 
 /* Responsive cho thiết bị nhỏ */
 @media (max-width: 768px) {
@@ -89,3 +108,5 @@ tbody tr:hover {
     font-size: 12px;
   }
 }
+
+

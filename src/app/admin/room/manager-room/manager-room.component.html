@@ -1,52 +1,62 @@
-<div class="room-management">
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+<div class="container">
     <h2>Quản lý Phòng</h2>
-    <div class="toolbar">
-        <input type="text" placeholder="Tìm kiếm phòng..." [(ngModel)]="searchText" (input)="filterRooms()" />
+    <div class="filter-container">
+        <input class="search-box" type="text" placeholder="Tìm kiếm phòng..." [(ngModel)]="searchText" (input)="filterRooms()" />
         
         <select [(ngModel)]="selectedBuilding" (change)="filterRooms()">
-            <option value="">Tất cả tòa nhà</option>
-            <option *ngFor="let building of buildings" [value]="building.IdBuilding">
+            <option [ngValue]="''">Tất cả tòa nhà</option>
+            <option *ngFor="let building of buildings" [ngValue]="building.Id">
                 {{ building.NameBuilding }}
             </option>
         </select>
+        <select [(ngModel)]="selectedGender" (change)="filterRooms()">
+            <option [ngValue]="''">Tất cả đối tượng</option>
+            <option [ngValue]="0">Nam</option>
+            <option [ngValue]="1">Nữ</option>
+        </select>
+        <select [(ngModel)]="selectedStatus" (change)="filterRooms()">
+            <option [ngValue]="''">Tất cả trạng thái</option>
+            <option [ngValue]="0">✅ On</option>
+            <option [ngValue]="1">❌ Off</option>
+        </select>
+        
     
-        <button (click)="isAddModalOpen = true">➕ Thêm phòng</button>
+        <button class="button" (click)="isAddModalOpen = true">➕ Thêm phòng</button>
     </div>
     
-    <div class="table-wrapper">
-        <table>
+        <table class="table">
             <thead>
                 <tr>
-                    <th (click)="sortRoomsById()">
-                        Mã phòng <span *ngIf="sortAscending">▲ ▼</span><span *ngIf="!sortAscending">▲ ▼</span>
-                    </th>
                     <th>Tên phòng</th>
                     <th>Tòa nhà</th>
                     <th>Số giường</th>
+                    <th>Đối tượng</th>
                     <th>Trạng thái</th>
                     <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let room of paginatedRooms">
-                    <td>{{ room.IdRoom }}</td>
                     <td>{{ room.RoomName }}</td>
                     <td>{{ room.Building.NameBuilding }}</td>
                     <td>{{ room.NumberOfBed }}</td>
+                    <td>{{ room.Gender === 0 ? 'Nam' : 'Nữ' }}</td>
                     <td>
                         <div class="toggle-switch" [class.active]="room.Status === 0" (click)="toggleRoomStatus(room)">
                             <div class="toggle-button"></div>
                         </div>
                     </td>
-                    <td>
-                        <button (click)="isEditModalOpen = true" style="margin-right: 5px;">✏️ Sửa</button>
-                        <button style="margin-right: 5px;">🗑️ Xóa</button>
-                        <button (click)="isDetailModalOpen = true">Chi tiết</button>
+                    <td class="toolbar-actions">
+                        <button class="btn btn-warning" (click)="openUpdateModal(room)">✏️ Sửa</button>
+                        <button class="btn btn-danger" (click)="delete(room)">🗑️ Xóa</button>
                     </td>
                 </tr>
             </tbody>
         </table>
-    </div>
     
     <button class="pagination-btn" (click)="prevPage()" [disabled]="currentPage === 1"><<</button>
     <span class="pagination-info">{{ currentPage }} / {{ totalPages }}</span>
@@ -55,39 +65,71 @@
     <p>Tổng số phòng: {{ totalRooms }}</p>
 </div>
 
-<!-- Form Thêm Phòng hiển thị trên nền -->
-<div class="register-form" *ngIf="isAddModalOpen">
-    <h3>➕ Thêm Phòng</h3>
-
-    <label for="roomName">Tên phòng:</label>
-    <input id="roomName" type="text" [(ngModel)]="newRoom.roomName" placeholder="Nhập tên phòng">
-
-    <div class="flex-row">
-        <div>
+<!-- Modal thêm phòng, hiển thị khi mở -->
+<div *ngIf="isAddModalOpen || isUpdateModalOpen" class="modal-overlay">
+    <div class="modal show" [class.show]="isAddModalOpen">
+      <div class="modal-content">
+        <h3 class="modal-title">   
+               {{ isUpdateModalOpen ? '✏️ Chỉnh sửa phòng' : '➕ Thêm phòng' }}
+        </h3>
+  
+        <label for="roomName">Tên phòng:</label>
+        <input id="roomName" type="text" [(ngModel)]="newRoom.RoomName" placeholder="Nhập tên phòng">
+  
+        <div class="flex-row">
+          <div>
             <label for="idBuilding">Tòa nhà:</label>
-            <select id="idBuilding" [(ngModel)]="newRoom.idBuilding">
-                <option *ngFor="let building of filteredBuildingsList" [value]="building.IdBuilding">
-                    {{ building.NameBuilding }}
-                </option>
+            <select id="idBuilding" [(ngModel)]="newRoom.IdBuilding">
+              <option *ngFor="let building of filteredBuildingsList" [value]="building.Id">
+                {{ building.NameBuilding }}
+              </option>                
             </select>
-        </div>
-
-        <div class="small-input">
+          </div>
+  
+          <div class="small-input">
             <label for="numberOfBed">Số giường:</label>
-            <input id="numberOfBed" type="number" [(ngModel)]="newRoom.numberOfBed" min="1">
+            <input id="numberOfBed" type="number" [(ngModel)]="newRoom.NumberOfBed" min="1">
+          </div>
+          <div class="small-input">
+            <label for="DailyPrice">Giá kỳ hè:</label>
+            <input id="DailyPrice" type="number" [(ngModel)]="newRoom.DailyPrice" min="1">
+          </div>
+          <div class="small-input">
+            <label for="PriceYear">Giá trong năm:</label>
+            <input id="PriceYear" type="number" [(ngModel)]="newRoom.PriceYear" min="1">
+          </div>
+          <div class="small-input">
+            <label for="DateOfRecord">Ngày ghi nhận:</label>
+            <input id="DateOfRecord" type="datetime-local" [(ngModel)]="newRoom.DateOfRecord">
+          </div>
+          
+          
         </div>
-
-        <div>
+  
+        <div class="flex-row">
+          <div>
             <label for="status">Trạng thái:</label>
-            <select id="status" [(ngModel)]="newRoom.status">
-                <option [value]="0">✅ On</option>
-                <option [value]="1">❌ Off</option>
+            <select id="status" [(ngModel)]="newRoom.Status">
+              <option [value]="0">✅ On</option>
+              <option [value]="1">❌ Off</option>
             </select>
+          </div>
+  
+          <div>
+            <label for="gender">Giới tính:</label>
+            <select id="gender" [(ngModel)]="newRoom.Gender">
+              <option [value]="0">Nam</option>
+              <option [value]="1">Nữ</option>
+            </select>
+          </div>
         </div>
+  
+        <div class="modal-actions">
+          <button (click)="closeModals()">❌ Hủy</button>
+          <button *ngIf="isAddModalOpen" (click)="addRoom(newRoom); ">✔️ Hoàn tất</button>     
+          <button *ngIf="isUpdateModalOpen" (click)="updateRoom(newRoom)">✔️ Hoàn tất</button>
+        </div>
+      </div>
     </div>
-
-    <div class="modal-actions">
-        <button (click)="isAddModalOpen = false">❌ Hủy</button>
-        <button (click)="addRoom()">✔️ Hoàn tất</button>
-    </div>
-</div>
+  </div>
+  

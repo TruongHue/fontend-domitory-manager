@@ -1,125 +1,197 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
 <div class="tab-container">
-    <!-- Tabs chọn tòa nhà -->
-    <div class="tab-header">
-      <button *ngFor="let dormitory of dormitories; let i = index" 
-              (click)="selectedTab = i"
-              [class.active]="selectedTab === i">
-        KTX {{ dormitory.name }}
-      </button>
-    </div>
+  <!-- Tabs chọn tòa nhà -->
+  <div class="tab-header">
+    <button
+    *ngFor="let dormitory of dormitories; let i = index"
+    (click)="selectedTab = i"
+    [class.active]="selectedTab === i"
+    [class.unpaid-bill]="hasUnpaidBill(dormitory)">
+    KTX {{ dormitory.name }} <span *ngIf="getUnpaidBillCount(dormitory) > 0">({{ getUnpaidBillCount(dormitory) }})</span>
+  </button>
   
-    <div class="container mt-4">
-      <div class="tab-content">
-        <div *ngFor="let dormitory of dormitories; let i = index" [hidden]="selectedTab !== i">
-          <div class="building">
-            <div *ngFor="let floor of [1, 2, 3]" class="floor">
-              <h4 class="text-primary">Tầng {{ floor }}</h4> 
-              <div class="row g-3">
-                <div *ngFor="let room of getRoomsByFloor(dormitory.rooms, floor)" class="col-lg-2 col-md-4 col-sm-6">
-                  
-                  <!-- Nút xem chi tiết hóa đơn -->
-                  <div class="card p-3 room-card shadow-lg text-center"
-                  [ngClass]="{ 
-                    'bg-danger text-white': room.statusBill === 1, 
+
+  </div>
+
+  <div class="container mt-4">
+    <div class="tab-content">
+      <div *ngFor="let dormitory of dormitories; let i = index" 
+      [hidden]="selectedTab !== i" 
+      [ngClass]="{'active-tab': selectedTab === i}">
+      <h3 class="text-center mt-4">Khu {{ dormitory.name }}</h3>
+              <div class="building">
+                <div *ngFor="let floor of getUniqueFloors(dormitory)" class="floor">
+                  <h4 class="text-primary">Tầng {{ floor }}</h4>
+            <div class="row g-3">
+              <div *ngFor="let room of getRoomsByFloor(dormitory.rooms, floor)" class="col-lg-2 col-md-4 col-sm-6">
+
+                <!-- Nút xem chi tiết hóa đơn -->
+                <div class="card p-3 room-card shadow-lg text-center" [ngClass]="{
+                    'bg-danger text-white': room.statusBill === 1,
                     'bg-warning text-dark': room.notAvailableSlots === room.totalSlots && room.statusBill !== 1,
-                    'bg-secondary text-white': room.status === 1 
-                  }"
-                       (click)="openBillForm(room.id)">
-                    
-                    <div class="card-body">
-                      <h3 class="card-title">{{ room.name }}</h3>
-                      <span class="badge bg-primary" *ngIf="room.gender === 0">Nam</span>
-                      <span class="badge bg-danger" *ngIf="room.gender === 1">Nữ</span>
-                      <p class="mt-2">
-                        <strong>{{ room.notAvailableSlots }} / {{ room.totalSlots }}</strong> chỗ đã đăng ký
-                      </p>
-                      <button class="btn btn-light mt-2">Xem chi tiết hóa đơn</button>
-                    </div>
+                    'bg-secondary text-white': room.status === 1,
+                    'bg-light': room.statusBill !== 1 && room.status !== 1
+                  }" (click)="openBillForm(room)">
+
+                  <div class="card-body">
+                    <h3 class="card-title">{{ room.name }}
+                      <i *ngIf="room.statusBill === 1" class="bi bi-exclamation-triangle-fill text-warning ms-2"
+                        title="Còn hóa đơn chưa thanh toán"></i>
+                    </h3>
+                    <span class="badge bg-primary" *ngIf="room.gender === 0">Nam</span>
+                    <span class="badge bg-danger" *ngIf="room.gender === 1">Nữ</span>
+                    <button class="btn btn-light mt-2">Xem chi tiết hóa đơn</button>
                   </div>
-    
                 </div>
-              </div> 
+
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
-    
+  </div>
+
   <!-- Modal hóa đơn điện nước -->
-<!-- Modal hóa đơn điện nước -->
-<div class="modal-overlay" *ngIf="selectedRoomBills">
+  <div class="modal-overlay" *ngIf="selectedRoomBills">
     <div class="modal1">
-      <h3>Hóa đơn điện nước - Phòng {{ selectedRoomBills.idRoom }}</h3>
-  
+      <h3 class="bill-container"><strong>Hóa đơn điện nước - Phòng {{ selectedRoomBills.name }}</strong></h3>
+
       <!-- Hóa đơn điện -->
-      <h4>Hóa đơn điện</h4>
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Kỳ hạn</th>
-            <th>Số cũ</th>
-            <th>Số mới</th>
-            <th>Giá</th>
-            <th>Tổng tiền</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let bill of electricBills">
-            <td>{{ getBillingPeriod(bill.DateOfRecord) }}</td>
-            <td>{{ bill.BeforeIndex }}</td>
-            <td>{{ bill.AfterIndex }}</td>
-            <td>{{ bill.Price | currency:'VND' }}</td>
-            <td>{{ bill.Total | currency:'VND' }}</td>
-            <td>
-                <button *ngIf="bill.Status === 1" (click)="payElectricBill(bill.IdElectricity)" class="btn btn-primary">Thanh toán</button>
-                <button *ngIf="bill.Status === 0" class="btn btn-success" disabled>Đã thanh toán</button>
-            </td>
-            <td>
-                <button *ngIf="bill.Status === 0" class="btn btn-success" disabled>Không thể xóa</button>
-                <button *ngIf="bill.Status === 1" class="btn btn-danger" (click)="deleteElectricBill(bill.IdElectricity)">Xóa</button>
+      <h4 class="bill-section"><strong>Hóa đơn điện</strong></h4>
+      <div style="max-height: 300px; overflow-y: auto;">
+        <table border="1">
+          <thead>
+            <tr>
+              <th>Kỳ hạn</th>
+              <th>Số cũ</th>
+              <th>Số mới</th>
+              <th>Giá</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="electricBills.length === 0">
+              <td colspan="7" class="text-center">Chưa có hóa đơn điện</td>
+            </tr>
+            <tr *ngFor="let bill of electricBills">
+              <td>{{ getBillingPeriod(bill.DateOfRecord) }}</td>
+              <td>{{ bill.BeforeIndex }}</td>
+              <td>{{ bill.AfterIndex }}</td>
+              <td>{{ bill.Price | currency:'VND' }}</td>
+              <td>{{ bill.Total | currency:'VND' }}</td>
+              <td>
+                <button *ngIf="bill.Status === 1" (click)="openStudentSelection(1, bill)" class="btn btn-primary">Thanh
+                  toán</button>
+                <span *ngIf="bill.Status === 0" class="text-success">Đã thanh toán bởi {{ bill.StudentCode }} - {{
+                  bill.StudentName }}</span>
               </td>
-          </tr>
-        </tbody>
-      </table>
-  
+              <td>
+                <button *ngIf="bill.Status === 1" class="btn btn-danger"
+                  (click)="deleteElectricBill(bill.Id)">Xóa</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <!-- Hóa đơn nước -->
-      <h4>Hóa đơn nước</h4>
-      <table border="1">
-        <thead> 
-          <tr>
-            <th>Kỳ hạn</th>
-            <th>Số cũ</th>
-            <th>Số mới</th>
-            <th>Giá (0-{{bill.IndexLimit }})</th>
-            <th>Giá(>{{bill.IndexLimit }})</th>
-            <th>Tổng tiền</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let bill of waterBills">
-            <td>{{ getBillingPeriod(bill.DateOfRecord) }}</td>
-            <td>{{ bill.BeforeIndex }}</td>
-            <td>{{ bill.AfterIndex }}</td>
-            <td>{{ bill.Price | currency:'VND' }}</td>
-            <td>{{ bill.PriceLimit | currency:'VND' }}</td>
-            <td>{{ bill.Total | currency:'VND' }}</td>
-            <td>
-                <button *ngIf="bill.Status === 1" (click)="payWaterBill(bill.IdWater)" class="btn btn-primary">Thanh toán</button>
-                <button *ngIf="bill.Status === 0" class="btn btn-success" disabled>Đã thanh toán</button>
-            </td>
-            <td>
-                <button *ngIf="bill.Status === 0" class="btn btn-success" disabled>Không thể xóa</button>
-                <button *ngIf="bill.Status === 1" class="btn btn-danger" (click)="deleteWaterBill(bill.IdWater)">Xóa</button>
+      <h4 class="bill-section"><strong>Hóa đơn nước</strong></h4>
+      <div style="max-height: 300px; overflow-y: auto;">
+        <table border="1">
+          <thead>
+            <tr>
+              <th>Kỳ hạn</th>
+              <th>Số cũ</th>
+              <th>Số mới</th>
+              <th>Giá (0-{{bill.IndexLimit }})</th>
+              <th>Giá(>{{bill.IndexLimit }})</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="waterBills.length === 0">
+              <td colspan="8" class="text-center">Chưa có hóa đơn nước</td>
+            </tr>
+            <tr *ngFor="let bill of waterBills">
+              <td>{{ getBillingPeriod(bill.DateOfRecord) }}</td>
+              <td>{{ bill.BeforeIndex }}</td>
+              <td>{{ bill.AfterIndex }}</td>
+              <td>{{ bill.Price | currency:'VND' }}</td>
+              <td>{{ bill.PriceLimit | currency:'VND' }}</td>
+              <td>{{ bill.Total | currency:'VND' }}</td>
+              <td>
+                <button *ngIf="bill.Status === 1" (click)="openStudentSelection(2, bill)" class="btn btn-primary">Thanh
+                  toán</button>
+                <span *ngIf="bill.Status === 0" class="text-success">
+                  Đã thanh toán bởi {{ bill.StudentCode }} - {{ bill.StudentName }}
+                </span>
               </td>
-          </tr>
-        </tbody>
-      </table>
-  
+              <td>
+                <button *ngIf="bill.Status === 1" class="btn btn-danger"
+                  (click)="deleteWaterBill(bill.Id)">Xóa</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <button (click)="closeBillForm()">Đóng</button>
     </div>
-</div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="isStudentSelectionVisible">
+    <div class="modal1">
+      <h4>Chọn sinh viên để thanh toán</h4>
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        (keyup)="filterStudents()"
+        placeholder="Nhập tên hoặc mã sinh viên..."
+      />
+  
+      <div class="table-container">
+        <table border="1">
+          <thead>
+            <tr>
+              <th>Mã SV</th>
+              <th>Tên SV</th>
+              <th>Số điện thoại</th>
+              <th>Giới tính</th>
+              <th>Sinh viên của phòng</th> <!-- Thêm cột này -->
+              <th>Chọn</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of filteredStudents"   [ngClass]="{ 'in-room': student.IsInRoom }"
+            >
+              <td>{{ student.AccountInfo.UserCode }}</td>
+              <td>{{ student.AccountInfo.UserName }}</td>
+              <td>{{ student.AccountInfo.NumberPhone }}</td>
+              <td>{{ student.StudentInfo.Gender === 0 ? 'Nam' : 'Nữ' }}</td>
+              <td>
+                <span *ngIf="student.IsInRoom" title="Sinh viên đang ở phòng">
+                  ✅
+                </span>
+                <span *ngIf="!student.IsInRoom" title="Sinh viên không thuộc phòng này" style="color: red;">
+                  ❌
+                </span>
+              </td>
+              <td>
+                <button (click)="selectStudent(student)">Chọn</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <button (click)="closeStudentSelection()">Đóng</button>
+    </div>
+  </div>
+  

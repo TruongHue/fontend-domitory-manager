@@ -5,6 +5,11 @@
     font-family: "Poppins", sans-serif;
     color: #333;
   }
+  .horizontal-nav button.active {
+    background-color: #0d6efd;
+    color: white;
+    font-weight: bold;
+  }
   
   /* Thanh sidebar ngang */
   .horizontal-nav {
