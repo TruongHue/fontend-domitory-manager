@@ -106,36 +106,36 @@ editorConfig: AngularEditorConfigs = {
   
       const reader = new FileReader();
       reader.onload = () => {
-        const base64 = reader.result as string;  // Tệp được mã hóa thành base64
+        const base64 = reader.result as string;  // Tệp đã được mã hóa thành Base64
   
-        // Tạo đường dẫn base64 cho file
+        // Tạo đường dẫn Base64 cho tệp
         const fileURL = base64;
   
-        // Lấy reference đến editor
+        // Cập nhật nội dung bài viết với Base64
+        this.newPost.Content += `<a href="${fileURL}" target="_blank" download="${fileName}">📎 ${fileName}</a>`;
+  
+        // Cập nhật nội dung cho Quill editor
         const editorElem = document.querySelector('.ql-editor');
         if (editorElem) {
+          const p = document.createElement('p');
           const link = document.createElement('a');
-          link.href = 'about:blank';  // Sai: Không phải là URL hợp lệ để tải tệp
-
-          link.href = fileURL;  // Đây là đường dẫn tệp hoặc base64
+          link.href = fileURL;
           link.target = '_blank';
           link.download = fileName;
           link.innerText = `📎 ${fileName}`;
-
-          const p = document.createElement('p');
           p.appendChild(link);
           editorElem.appendChild(p);
   
-          // Cập nhật lại nội dung vào Content
+          // Cập nhật lại nội dung
           this.newPost.Content = editorElem.innerHTML;
-          console.log(editorElem.innerHTML);
         }
       };
   
-      // Đọc file dưới dạng base64
+      // Đọc tệp dưới dạng Base64
       reader.readAsDataURL(file);
     }
   }
+  
   
   
 
