@@ -54,7 +54,7 @@ export class PostComponent implements OnInit {
   isLoading: boolean = false;
   newPost = {
   Title: '',
-  Content: '',
+  Content: ''
 };
 sanitizedContent: SafeHtml | null = null;
 
@@ -74,9 +74,7 @@ editorConfig: AngularEditorConfigs = {
     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
     ['link'],
     [{ 'align': [] }],
-    ['clean'],
-    ['image'],
-    ['fileUpload']  // Định nghĩa nút tải tệp trong toolbar
+    ['clean']
   ]
 };
 
@@ -90,7 +88,7 @@ editorConfig: AngularEditorConfigs = {
   openFileUploadDialog() {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'application/*';  // Chỉ chấp nhận các tệp ứng dụng
+input.accept = 'image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     input.onchange = () => this.handleFileUpload(input.files);
     input.click();
   }
@@ -100,45 +98,40 @@ editorConfig: AngularEditorConfigs = {
   }
 
   handleFileUpload(files: FileList | null) {
-    if (files && files.length > 0) {
-      const file = files[0];
-      const fileName = file.name;
+    if (!files || files.length === 0) return;
   
+    const totalFiles = files.length;
+    let loadedCount = 0;
+    const contentParts: string[] = [];
+  
+    Array.from(files).forEach(file => {
       const reader = new FileReader();
+  
       reader.onload = () => {
-        const base64 = reader.result as string;  // Tệp đã được mã hóa thành Base64
+        const base64 = reader.result as string;
   
-        // Tạo đường dẫn Base64 cho tệp
-        const fileURL = base64;
+        let content = '';
+        if (file.type === 'application/pdf') {
+          content = `<embed src="${base64}" type="application/pdf" width="100%" height="300px" />`;
+        } else if (file.type.startsWith('image/')) {
+          content = `<img src="${base64}" alt="${file.name}" style="max-width: 100%; height: auto;" />`;
+        } else {
+          content = `<a href="${base64}" download="${file.name}" target="_blank">📎 ${file.name}</a>`;
+        }
   
-        // Cập nhật nội dung bài viết với Base64
-        this.newPost.Content += `<a href="${fileURL}" target="_blank" download="${fileName}">📎 ${fileName}</a>`;
+        contentParts.push(content);
+        loadedCount++;
   
-        // Cập nhật nội dung cho Quill editor
-        const editorElem = document.querySelector('.ql-editor');
-        if (editorElem) {
-          const p = document.createElement('p');
-          const link = document.createElement('a');
-          link.href = fileURL;
-          link.target = '_blank';
-          link.download = fileName;
-          link.innerText = `📎 ${fileName}`;
-          p.appendChild(link);
-          editorElem.appendChild(p);
-  
-          // Cập nhật lại nội dung
-          this.newPost.Content = editorElem.innerHTML;
+        if (loadedCount === totalFiles) {
+          // Dùng ngModel để cập nhật editor
+          this.newPost.Content += contentParts.join('');
         }
       };
   
-      // Đọc tệp dưới dạng Base64
       reader.readAsDataURL(file);
-    }
+    });
   }
   
-  
-  
-
   loadPosts(): void {
     this.isLoading = true; // Bắt đầu loading
     this.postService.getAllPosts().subscribe(
