@@ -37,6 +37,7 @@ export class PersonalComponent implements OnInit {
     }
   }
 
+  
   editProfile() {
     alert('Chức năng chỉnh sửa đang phát triển...');
   }
