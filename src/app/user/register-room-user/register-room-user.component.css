@@ -27,6 +27,7 @@
   
   .tab-header {
     display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
     gap: 10px;
     border-bottom: 2px solid #ccc;
     padding-bottom: 5px;

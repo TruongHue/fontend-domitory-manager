@@ -26,7 +26,7 @@
     padding-bottom: 5px;
   }
   
-  .tab-header button {
+  .tab-header .room-modal button {
     background: none;
     border: none;
     padding: 10px 20px;
@@ -37,7 +37,7 @@
     transition: 0.3s;
   }
   
-  .tab-header button.active {
+  .tab-header .room-modal button.active {
     font-weight: bold;
     border-bottom: 2px solid #3498db;
   }
@@ -154,6 +154,19 @@
   overflow-y: auto; /* Thanh cuộn dọc */
   border: 1px solid #ccc; /* Viền cho rõ ràng */
 }
+
+.button_huy {
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  background-color: #28a745;
+  display: block;
+  margin: 20px auto; /* căn giữa theo chiều ngang */
+}
+
 
 .modal1 .table-container table {
   width: 100%; /* Giữ bảng full width */
@@ -294,12 +307,13 @@ h3.text-center.mt-4 {
   background: #0056b3;
 }
 
-/* Định dạng cho span hiển thị thông tin phòng và giường */
-.tab-header button span {
-  font-size: 0.9rem;               /* Kích thước font nhỏ hơn một chút */
-  color: #555;                     /* Màu chữ xám tối */
-  margin-left: 8px;                /* Khoảng cách giữa tên tòa nhà và thông tin phòng, giường */
-  font-weight: 500;                 /* Làm đậm chữ cho dễ đọc */
+.tab-header {
+  font-size: 16px; /* Hoặc lớn hơn, tùy ý */
+  display: flex;
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  gap: 10px;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 5px;
 }
 
 /* Nếu số phòng hoặc giường trống nhỏ, có thể sử dụng màu đỏ để nhấn mạnh */
@@ -312,6 +326,12 @@ h3.text-center.mt-4 {
   color: #d9534f;                  /* Màu đỏ đậm cho phần đầy phòng */
   font-weight: bold;                /* Đậm hơn để nhấn mạnh */
 }
+.tab-header button.active {
+  font-weight: bold;
+  background-color: #f0f0f0;
+  border-bottom: 2px solid #007bff;
+}
+
 
 /* Nếu phòng hoặc giường còn trống, thay đổi màu sắc cho dễ đọc */
 .tab-header button span.available {
@@ -319,3 +339,22 @@ h3.text-center.mt-4 {
   font-weight: bold;
 }
 
+.room-modal {
+  background-color: #fff;
+  padding: 30px;
+  width: 90vw;
+  max-width: 1200px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.room-detail-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2c3e50; /* Màu xanh đậm sang trọng */
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}

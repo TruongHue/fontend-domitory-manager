@@ -9,7 +9,7 @@
 /* Bên trái */
 .rules-section {
   flex: 1;
-  background: #ffffff;
+  background: #bdd4d7;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -110,4 +110,16 @@
     flex-direction: column;
   }
 
+}
+
+.news-title {
+  font-size: 1.8em;
+  color: #d84315;
+  text-align: center;
+  background: #fff3e0;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border-left: 6px solid #ff5722;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  font-weight: bold;
 }

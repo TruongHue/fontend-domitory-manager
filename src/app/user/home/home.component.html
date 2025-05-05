@@ -5,22 +5,50 @@
 <div class="dormitory-container">
   <!-- Cột trái: Quy định -->
   <div class="rules-section">
-    <h2>📜 Quy định Ký túc xá</h2>
-    <ul class="rules-list">
-      <li>🧼 Giữ vệ sinh sạch sẽ.</li>
-      <li>🔒 Bảo vệ an ninh, không gây rối.</li>
-      <li>🤝 Ứng xử lịch sự với mọi người.</li>
-    </ul>
-    <div class="hours">
-      <h4>🕐 Giờ giấc</h4>
-      <p>⏰ Mở cửa: 6:00 AM - 10:00 PM</p>
-      <p>🔕 Giới nghiêm: 11:00 PM</p>
+    <h2>📜 QUY ĐỊNH KÝ TÚC XÁ</h2>
+  
+    <div class="rule-group">
+      <h4>🧼 Giữ vệ sinh chung</h4>
+      <ul class="rules-list">
+        <li>👉 Giữ gìn sạch sẽ phòng ở và khu vực sinh hoạt.</li>
+        <li>👉 Không xả rác bừa bãi, đổ rác đúng nơi quy định.</li>
+      </ul>
     </div>
+  
+    <div class="rule-group">
+      <h4>🔒 Đảm bảo an ninh – Trật tự</h4>
+      <ul class="rules-list">
+        <li>👉 Không tụ tập gây ồn ào sau 10 giờ tối.</li>
+        <li>👉 Không để người lạ lưu trú qua đêm.</li>
+        <li>👉 Luôn khóa cửa phòng khi ra ngoài.</li>
+      </ul>
+    </div>
+  
+    <div class="rule-group">
+      <h4>🤝 Ứng xử văn minh – Lịch sự</h4>
+      <ul class="rules-list">
+        <li>👉 Tôn trọng bạn cùng phòng và các sinh viên khác.</li>
+        <li>👉 Hòa nhã, không to tiếng, xung đột.</li>
+        <li>👉 Giữ thái độ tích cực, hỗ trợ lẫn nhau.</li>
+      </ul>
+    </div>
+  
+    <div class="rule-group">
+      <h4>🕐 Giờ giấc sinh hoạt</h4>
+      <ul class="rules-list">
+        <li>⏰ Mở cửa: 6:00 AM – 10:00 PM</li>
+        <li>🔕 Giới nghiêm: 11:00 PM</li>
+        <li>👉 Sau giờ giới nghiêm, sinh viên không được ra vào Ký túc xá trừ trường hợp đặc biệt đã báo trước.</li>
+      </ul>
+    </div>
+  
+    <p class="note">📌 <strong>Lưu ý:</strong> Vi phạm quy định có thể bị xử lý theo nội quy nội trú của nhà trường.</p>
   </div>
+  
 
   <!-- Cột phải: Bảng tin Admin -->
   <div class="posts-section">
-    <h2>📢 Tin mới từ Ban quản lý</h2>
+    <h2 class="news-title">📢 [Thông báo mới] Tin nóng từ Ban quản lý Ký túc xá!</h2>
 
     <div *ngIf="adminPosts.length === 0">
       <p>Chưa có bài viết nào!</p>

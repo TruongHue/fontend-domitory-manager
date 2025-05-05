@@ -30,6 +30,7 @@ export class PriceManagerComponent implements OnInit {
     this.isLoading = true; // Bắt đầu loading
     this.roomBillService.getPriceWaterElectricities().subscribe({
       next: (data) => {
+        console.log(data);
         this.prices = data.sort((a: any, b: any) => new Date(b.ActionDate).getTime() - new Date(a.ActionDate).getTime());
         this.isLoading = false; // Bắt đầu loading
       },

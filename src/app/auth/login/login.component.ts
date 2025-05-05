@@ -16,10 +16,12 @@ export class LoginComponent {
   showPassword: boolean = false;
   idAccount: string ='';
   idStudent:number = 0;
+  isLoading: boolean = false;
 
   constructor(private authService: AuthService, private router: Router,private userService: UserService) {} // ✅ Đảm bảo router được inject vào constructor
 
   onLogin() {
+    this.isLoading = true; // Bắt đầu loading
     this.authService.login(this.userCode, this.password).subscribe({
       next: (response) => {
         console.log('Đăng nhập thành công', response);
@@ -44,11 +46,13 @@ export class LoginComponent {
         } else {
           this.router.navigate(['/login']); // Student
         }
+        this.isLoading = false; // Bắt đầu loading
       },
       error: (error: any) => {
         console.error('Đăng nhập thất bại', error);
         this.errorMessage = error.error?.message || 'Đăng nhập thất bại! Vui lòng thử lại.';
         this.invalidLogin = true;
+        this.isLoading = false; // Bắt đầu loading
       }
     });
   }

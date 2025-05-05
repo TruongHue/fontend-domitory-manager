@@ -109,8 +109,9 @@
               <th>Kỳ hạn</th>
               <th>Số cũ</th>
               <th>Số mới</th>
-              <th>Giá (0-{{bill.IndexLimit }})</th>
-              <th>Giá(>{{bill.IndexLimit }})</th>
+              <th>Giá m³ chuẩn</th>
+              <th>Số m³ vượt mức</th>
+              <th>Giá m³ vượt mức</th>
               <th>Tổng tiền</th>
               <th>Trạng thái</th>
               <th>Thao tác</th>
@@ -125,6 +126,7 @@
               <td>{{ bill.BeforeIndex }}</td>
               <td>{{ bill.AfterIndex }}</td>
               <td>{{ bill.Price | currency:'VND' }}</td>
+              <td>{{ bill.IndexLimit }}</td>
               <td>{{ bill.PriceLimit | currency:'VND' }}</td>
               <td>{{ bill.Total | currency:'VND' }}</td>
               <td>

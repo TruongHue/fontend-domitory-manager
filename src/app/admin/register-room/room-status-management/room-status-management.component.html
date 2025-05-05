@@ -4,178 +4,175 @@
 </div>
 
 <div class="tab-container">
-    <!-- Tabs chọn tòa nhà -->
-    <div class="tab-header">
-      <button *ngFor="let dormitory of dormitories; let i = index" 
-      (click)="selectedTab = i"
+  <!-- Tabs chọn tòa nhà -->
+  <div class="tab-header">
+    <button *ngFor="let dormitory of dormitories; let i = index" (click)="selectedTab = i"
       [class.active]="selectedTab === i">
-KTX {{ dormitory.name }}
-<span *ngIf="getRoomStats(dormitory).rooms !== '0/0'">
-  ({{ getRoomStats(dormitory).rooms }} phòng, 
-  {{ getRoomStats(dormitory).beds }} giường)
-</span>
-</button>
-    </div>
-  
-    <div class="container mt-4">
-      <div class="tab-content">
-        <div *ngFor="let dormitory of dormitories; let i = index" [hidden]="selectedTab !== i">
-          <h3 class="text-center mt-4">Khu {{ dormitory.name }}</h3>
-          <div class="building">
-            <div *ngFor="let floor of getUniqueFloors(dormitory)" class="floor">
-              <h4 class="text-primary">Tầng {{ floor }}</h4>
-              <div class="row g-3">
-                <div *ngFor="let room of getRoomsByFloor(dormitory.rooms, floor)" class="col-lg-2 col-md-4 col-sm-6">
-                  
-                  <!-- Nếu phòng đăng ký được thì cho phép click -->
-                  <div class="card p-3 room-card shadow-lg text-center"
-                       [ngClass]="{ 'bg-danger text-white': room.notAvailableSlots === room.totalSlots,
-                                     'bg-secondary text-white': room.status === 1 }"
-                       *ngIf="room.notAvailableSlots < room.totalSlots && room.status !== 1 && room.statusBuilding !== 1  "
-                       >
-                    
-                    <div class="card-body">
-                      <h3 class="card-title">{{ room.name }}</h3>
-                      <span class="badge bg-primary" *ngIf="room.gender === 0">Nam</span>
-                      <span class="badge bg-danger" *ngIf="room.gender === 1">Nữ</span>
-                      <p class="mt-2">
-                        <strong>{{ room.notAvailableSlots }} / {{ room.totalSlots }}</strong> chỗ đã đăng ký
-                      </p>
-                      <h3 class="card-title">{{ room.price }} VND</h3>
-                      <button class="btn btn-light mt-2"(click)="openRegisterForm(room)">Đăng ký ngay</button>
-                      <button class="btn btn-light mt-2" (click)="detailRoom(room)">Xem chi tiết</button>
-                    </div>
+      KTX {{ dormitory.name }}
+      <span *ngIf="getRoomStats(dormitory).rooms !== '0/0'">
+        <br>({{ getRoomStats(dormitory).rooms }} phòng,
+        <br>{{ getRoomStats(dormitory).beds }} giường)
+      </span>
+    </button>
+  </div>
+
+  <div class="container mt-4">
+    <div class="tab-content">
+      <div *ngFor="let dormitory of dormitories; let i = index" [hidden]="selectedTab !== i">
+        <h3 class="text-center mt-4">Khu {{ dormitory.name }}</h3>
+        <div class="building">
+          <div *ngFor="let floor of getUniqueFloors(dormitory)" class="floor">
+            <h4 class="text-primary">Tầng {{ floor }}</h4>
+            <div class="row g-3">
+              <div *ngFor="let room of getRoomsByFloor(dormitory.rooms, floor)" class="col-lg-2 col-md-4 col-sm-6">
+
+                <!-- Nếu phòng đăng ký được thì cho phép click -->
+                <div class="card p-3 room-card shadow-lg text-center" [ngClass]="{ 
+       'bg-danger text-white opacity-50': room.notAvailableSlots === room.totalSlots,
+       'bg-secondary text-white opacity-50': room.status === 1 
+     }" *ngIf="room.statusBuilding !== 1">
+
+                  <div class="card-body">
+                    <h3 class="card-title">{{ room.name }}</h3>
+
+                    <span class="badge bg-primary" *ngIf="room.gender === 0">Nam</span>
+                    <span class="badge bg-danger" *ngIf="room.gender === 1">Nữ</span>
+
+                    <p class="mt-2">
+                      <strong>{{ room.notAvailableSlots }} / {{ room.totalSlots }}</strong> chỗ đã đăng ký
+                    </p>
+
+                    <h3 class="card-title">{{ room.price }} VND</h3>
+
+                    <p class="text-warning" *ngIf="room.notAvailableSlots === room.totalSlots">Phòng đã đầy</p>
+                    <p class="text-dark" *ngIf="room.status === 1">Không hoạt động</p>
+
+                    <!-- Disable nút nếu phòng đầy hoặc phòng không hoạt động -->
+                    <button class="btn btn-light mt-2"
+                      [disabled]="room.notAvailableSlots === room.totalSlots || room.status === 1"
+                      (click)="openRegisterForm(room)">
+                      Đăng ký ngay
+                    </button>
+
+                    <!-- Luôn cho xem chi tiết -->
+                    <button class="btn btn-primary mt-2" (click)="detailRoom(room)">Xem chi tiết</button>
                   </div>
-    
-                  <!-- Nếu phòng không đăng ký được, hiển thị nhưng không có sự kiện click -->
-                  <div class="card p-3 room-card shadow-lg text-center opacity-50"
-                       [ngClass]="{ 'bg-danger text-white': room.notAvailableSlots === room.totalSlots,
-                                     'bg-secondary text-white': room.status === 1 }"
-                       *ngIf="room.notAvailableSlots === room.totalSlots || room.status === 1 || room.statusBuilding !== 0 ">
-                    
-                    <div class="card-body">
-                      <h3 class="card-title">{{ room.name }}</h3>
-                      <span class="badge bg-primary" *ngIf="room.gender === 0">Nam</span>
-                      <span class="badge bg-danger" *ngIf="room.gender === 1">Nữ</span>
-                      <p class="mt-2">
-                        <strong>{{ room.notAvailableSlots }} / {{ room.totalSlots }}</strong> chỗ đã đăng ký
-                      </p>
-                      <p class="text-warning" *ngIf="room.notAvailableSlots === room.totalSlots">Phòng đã đầy</p>
-                      <p class="text-dark" *ngIf="room.status === 1">Không hoạt động</p>
-                      <button class="btn btn-light mt-2" disabled>Khóa đăng ký</button>
-                    </div>
-                  </div>
-    
                 </div>
-              </div> 
+
+
+
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
-    
-    
-<!-- Form đăng ký hiển thị khi có phòng được chọn -->
-<div class="modal-overlay" *ngIf="selectedRoom">
-  <div class="modal1">
-    <h3>Đăng ký phòng {{ selectedRoom.name }}</h3>
+  </div>
 
-    <label for="search">Tìm kiếm sinh viên:</label>
-    <input type="text" [(ngModel)]="searchText" (keyup)="filterStudents()" placeholder="Nhập tên hoặc mã sinh viên...">
-    
-    <div class="table-container">
+
+
+  <!-- Form đăng ký hiển thị khi có phòng được chọn -->
+  <div class="modal-overlay" *ngIf="selectedRoom">
+    <div class="modal1">
+      <h3>Đăng ký phòng {{ selectedRoom.name }}</h3>
+
+      <label for="search">Tìm kiếm sinh viên:</label>
+      <input type="text" [(ngModel)]="searchText" (keyup)="filterStudents()"
+        placeholder="Nhập tên hoặc mã sinh viên...">
+
+      <div class="table-container">
+        <table border="1">
+          <thead>
+            <tr>
+              <th>Mã SV</th>
+              <th>Tên SV</th>
+              <th>Số điện thoại</th>
+              <th>Giới tính</th>
+              <th>Chọn</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of filteredStudents">
+              <td>{{ student.Account.UserCode }}</td>
+              <td>{{ student.Account.UserName }}</td>
+              <td>{{ student.Account.NumberPhone }}</td>
+              <td>{{ student.InfoStudent.Gender === 0 ? 'Nam' : 'Nữ' }}</td>
+              <td>
+                <button (click)="selectStudent(student)">Chọn</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+      <p>Sinh viên đã chọn: <strong>{{ selectedStudentText || 'Chưa chọn' }}</strong></p>
+
+      <label>Ngày bắt đầu:</label>
+      <input type="date" [(ngModel)]="registerForm.startDate" required [min]="today" (change)="calculateTotal()">
+      <p style="color: red;">Ngày bắt đầu phải nhỏ hơn ngày kết thúc!</p>
+
+      <label>Ngày kết thúc:</label>
+      <input type="date" [(ngModel)]="registerForm.endDate" required [min]="registerForm.startDate"
+        (change)="calculateTotal()">
+      <label>Giá phòng:</label>
+      <input type="number" [(ngModel)]="registerForm.price" disabled (change)="calculateTotal()">
+      <label>Tổng tiền:</label>
+      <input type="number" [(ngModel)]="registerForm.total" disabled>
+
+      <label>Trạng thái thanh toán:</label>
+      <select [(ngModel)]="registerForm.paymentStatus" required>
+        <option value="1">Chưa thanh toán</option>
+        <option value="0">Đã thanh toán</option>
+        <option value="2">Hủy</option>
+      </select>
+
+      <button (click)="closeRegisterForm()">Hủy</button>
+      <button (click)="submitRegister(registerForm)">Đăng ký</button>
+    </div>
+  </div>
+
+  <!-- Modal xem chi tiết phòng -->
+  <div class="modal-overlay" *ngIf="selectedRoomDetail">
+    <div class="room-modal">
+      <h3 class="room-detail-title">Chi tiết phòng: {{ selectedRoomDetail.name }}</h3>
+
       <table border="1">
         <thead>
           <tr>
             <th>Mã SV</th>
             <th>Tên SV</th>
             <th>Số điện thoại</th>
+            <th>Email</th>
             <th>Giới tính</th>
-            <th>Chọn</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let student of filteredStudents">
-            <td>{{ student.Account.UserCode }}</td>
-            <td>{{ student.Account.UserName }}</td>
-            <td>{{ student.Account.NumberPhone }}</td>
-            <td>{{ student.InfoStudent.Gender === 0 ? 'Nam' : 'Nữ' }}</td>
-            <td>
-              <button (click)="selectStudent(student)">Chọn</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    
-    
-    <p>Sinh viên đã chọn: <strong>{{ selectedStudentText || 'Chưa chọn' }}</strong></p>
-
-    <label>Ngày bắt đầu:</label>
-    <input type="date" [(ngModel)]="registerForm.startDate" required [min]="today" (change)="calculateTotal()">
-    <p style="color: red;">Ngày bắt đầu phải nhỏ hơn ngày kết thúc!</p>
-
-    <label>Ngày kết thúc:</label>
-    <input type="date" [(ngModel)]="registerForm.endDate" required [min]="registerForm.startDate" (change)="calculateTotal()">
-    <label>Giá phòng:</label>
-    <input type="number" [(ngModel)]="registerForm.price" disabled (change)="calculateTotal()">
-    <label>Tổng tiền:</label>
-    <input type="number" [(ngModel)]="registerForm.total" disabled>
-
-    <label>Trạng thái thanh toán:</label>
-    <select [(ngModel)]="registerForm.paymentStatus" required>
-      <option value="1">Chưa thanh toán</option>
-      <option value="0">Đã thanh toán</option>
-      <option value="2">Hủy</option>
-    </select>
-
-    <button (click)="closeRegisterForm()">Hủy</button>
-    <button (click)="submitRegister(registerForm)">Đăng ký</button>
-  </div>
-</div>
-
-<!-- Modal xem chi tiết phòng -->
-<div class="modal-overlay" *ngIf="selectedRoomDetail">
-  <div class="modal1">
-      <h3>Chi tiết phòng: {{ selectedRoomDetail.name }}</h3>
-    
-      <table border="1">
-          <thead>
-              <tr>
-                  <th>Mã SV</th>
-                  <th>Tên SV</th>
-                  <th>Số điện thoại</th>  
-                  <th>Email</th>
-                  <th>Giới tính</th>
-                  <th>Thao tác</th>
-              </tr>
-          </thead>
-          <tbody>
-              <ng-container *ngIf="selectedRoomDetail.students.length > 0; else noStudents">
-                <tr *ngFor="let student of selectedRoomDetail.students">
-                  <td>{{ student.AccountInfo.UserCode }}</td>
-                  <td>{{ student.AccountInfo.UserName }}</td>
-                  <td>{{ student.AccountInfo.NumberPhone }}</td>
-                  <td>{{ student.StudentInfo.Email }}</td>
-                  <td>{{ student.StudentInfo.Gender === 0 ? 'Nam' : 'Nữ' }}</td>
-                  <td>
-                  <button class="btn-block" (click) = "block(student)">🚫 Chặn</button>
-                  </td>
-                </tr>
-              </ng-container>
-          </tbody>
-          
-          <!-- Template hiển thị khi không có sinh viên -->
-          <ng-template #noStudents>
-            <tr>
-              <td colspan="5" style="text-align: center; font-weight: bold; color: red;">
-                Không có sinh viên nào trong phòng này.
+          <ng-container *ngIf="selectedRoomDetail.students.length > 0; else noStudents">
+            <tr *ngFor="let student of selectedRoomDetail.students">
+              <td>{{ student.AccountInfo.UserCode }}</td>
+              <td>{{ student.AccountInfo.UserName }}</td>
+              <td>{{ student.AccountInfo.NumberPhone }}</td>
+              <td>{{ student.StudentInfo.Email }}</td>
+              <td>{{ student.StudentInfo.Gender === 0 ? 'Nam' : 'Nữ' }}</td>
+              <td>
+                <button class="btn-block" (click)="block(student)">🚫 Chặn</button>
               </td>
             </tr>
-          </ng-template>
+          </ng-container>
+        </tbody>
+
+        <!-- Template hiển thị khi không có sinh viên -->
+        <ng-template #noStudents>
+          <tr>
+            <td colspan="5" style="text-align: center; font-weight: bold; color: red;">
+              Không có sinh viên nào trong phòng này.
+            </td>
+          </tr>
+        </ng-template>
       </table>
 
-      <button (click)="closeDetailRoom()">Đóng</button>
+      <button class="button_huy" (click)="closeDetailRoom()">Đóng</button>
+    </div>
   </div>
-</div>

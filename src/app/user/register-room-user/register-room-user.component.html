@@ -1,6 +1,8 @@
 <div *ngIf="isLoading" class="loading-overlay">
     <div class="spinner"></div>
   </div>
+<div *ngIf="!isLoading">
+
 <div class="tab-container">
     <!-- Tabs chọn tòa nhà -->
     <!-- Tab header hiển thị tổng số phòng trống và giường trống -->
@@ -10,8 +12,8 @@
             [class.active]="selectedTab === i">
       KTX {{ dormitory.name }}
       <span *ngIf="getRoomStats(dormitory).rooms !== '0/0'">
-        ({{ getRoomStats(dormitory).rooms }} phòng, 
-        {{ getRoomStats(dormitory).beds }} giường)
+        <br>({{ getRoomStats(dormitory).rooms }} phòng,
+        <br>{{ getRoomStats(dormitory).beds }} giường)
       </span>
     </button>
   </div>
@@ -89,4 +91,5 @@
         <button (click)="submitRegister(registerForm)">Đăng ký</button>
 
     </div>
+</div>
 </div>

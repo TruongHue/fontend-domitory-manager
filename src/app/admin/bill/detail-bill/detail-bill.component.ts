@@ -82,11 +82,9 @@ export class DetailBillComponent implements OnInit {
       this.getDormitoriesFromApi(),
     ]).subscribe({
       next: () => {
-        console.log('✅ Load xong tòa nhà + sinh viên');
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Lỗi khi load dữ liệu:', err);
         this.isLoading = false;
       }
     });
@@ -187,11 +185,9 @@ export class DetailBillComponent implements OnInit {
   getListElectricBill(idRoom: string) {
     this.electricBill.getElectricitiesBillByIdRoom(idRoom).subscribe({
       next: (data) => {
-        console.log('Danh sách hóa đơn điện:', data);
         this.electricBills = data; // Giả sử bạn có biến `electricBills` để lưu dữ liệu
       },
       error: (err) => {
-        console.error('Lỗi khi lấy danh sách hóa đơn điện:', err);
       }
     });
   }
@@ -199,11 +195,10 @@ export class DetailBillComponent implements OnInit {
   getListWaterBill(idRoom: string) {
     this.waterBill.getWaterBillByIdRoom(idRoom).subscribe({
       next: (data) => {
-        console.log('Danh sách hóa đơn nước:', data);
-        this.waterBills = data; // Giả sử bạn có biến `electricBills` để lưu dữ liệu
+        this.waterBills = data;
+        console.log(data);
       },
       error: (err) => {
-        console.error('Lỗi khi lấy danh sách hóa đơn nước:', err);
       }
     });
   }
@@ -212,18 +207,6 @@ export class DetailBillComponent implements OnInit {
 
   closeBillForm() {
     this.selectedRoomBills = null; // Đóng modal
-  }
-
-  getListRegisterRoom(idRoom: string) {
-    this.registerRoom.getActiveRegisterByIdRoom(idRoom).subscribe({
-      next: (data: any[]) => {
-        console.log(`Danh sách đăng ký active của phòng ${idRoom}:`, data);
-        // Bạn có thể xử lý dữ liệu tại đây, ví dụ: hiển thị trên UI
-      },
-      error: (err: any) => {
-        console.error(`Lỗi khi lấy danh sách đăng ký active của phòng ${idRoom}:`, err);
-      }
-    });
   }
 
   getUserCountInRoom(idRoom: string): Observable<number> {
@@ -251,7 +234,6 @@ export class DetailBillComponent implements OnInit {
       }),
       switchMap(() => this.loadRooms()),
       catchError(err => {
-        console.error('Lỗi khi lấy danh sách tòa nhà:', err);
         this.isLoading = false;
         return of([]); // Trả về danh sách rỗng để không ảnh hưởng luồng
       }),
@@ -271,8 +253,6 @@ export class DetailBillComponent implements OnInit {
   
 
   openStudentSelection(billType: number, bill: any) {
-    console.log(bill);
-    console.log(billType);
     this.fetchStudents(bill.IdRoom);
     this.billType = billType;
     this.isStudentSelectionVisible = true;
@@ -282,7 +262,6 @@ export class DetailBillComponent implements OnInit {
     this.registerRoom.fetchStudents(idRoom).subscribe(
       data => {
         this.studentsList = data;
-        console.log(data);
         this.filteredStudents = data;  // Đặt giá trị ban đầu cho filteredStudents
       },
       error => {
@@ -297,14 +276,10 @@ export class DetailBillComponent implements OnInit {
     const confirmSelection = confirm(`Bạn có chắc chắn chọn sinh viên ${student.AccountInfo.UserName} - ${student.AccountInfo.UserCode} thanh toán không ?`);
     if (confirmSelection) {
       if (this.billType === 1) {
-        console.log("Sinh viên được chọn:", student); // Kiểm tra dữ liệu
         this.payElectricBill(this.selectedBill.Id, this.updateBill);
-        console.log("Giá trị registerForm sau khi chọn:", this.registerForm);
       }
       if (this.billType === 2) {
-        console.log("Sinh viên được chọn:", student); // Kiểm tra dữ liệu
         this.payWaterBill(this.selectedBill.Id, this.updateBill);
-        console.log("Giá trị registerForm sau khi chọn:", this.registerForm);
       }
     }
   }
@@ -324,8 +299,6 @@ export class DetailBillComponent implements OnInit {
   }
 
   payElectricBill(billId: string, data: any) {
-    console.log(billId);
-    console.log(data);
     this.roomBillService.payElectricBill(billId, data).subscribe(() => {
       alert("Thanh toán hóa đơn điện thành công!");
       this.getListElectricBill(this.selectedRoomBills.idRoom);

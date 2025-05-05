@@ -43,6 +43,6 @@ export class PersonalComponent implements OnInit {
   }
 
   getImageUrl(imagePath: string): string {
-    return imagePath ? `http://localhost:5048/images/${imagePath}` : 'assets/default-avatar.png';
+    return imagePath ? `http://domitory-backend.onrender.com/images/${imagePath}` : 'assets/default-avatar.png';
   }
 }

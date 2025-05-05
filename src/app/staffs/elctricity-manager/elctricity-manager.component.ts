@@ -337,7 +337,6 @@ export class ElctricityManagerComponent implements OnInit {
       response => {
         alert('Thêm chỉ số điện thành công!');
         console.log('Response:', response);
-
         // Gọi lại API để cập nhật form ngay lập tức
         this.roomBillService.getlatestElectricity(roomBill.id).subscribe((bill) => {
           if (bill) {
@@ -365,7 +364,7 @@ export class ElctricityManagerComponent implements OnInit {
       AfterIndex: roomBill.nuocThangNay,
       DateOfRecord: new Date().toISOString()  // Ngày ghi điện
     };
-
+    console.log(requestPayload);
     this.roomBillService.addWaterBill(requestPayload).subscribe(
       response => {
         alert('Thêm chỉ số nước thành công!');

@@ -42,7 +42,7 @@ export class ListManagementComponent implements OnInit {
   selectedStatus: string = 'All';
   selectedPayment: string = 'All';
   currentPage = 1;
-  itemsPerPage = 5;
+  itemsPerPage = 20;
   totalPages: number = 1;
   isLoading: boolean = false;
 

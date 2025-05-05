@@ -72,13 +72,13 @@ export class RegisterRoomUserComponent implements OnInit {
 
   ngOnInit() {
     this.getIdStudent();
-    this.loadRooms();
+    
     this.loadRegistrationPeriods();
     this.getDormitoriesFromApi();
     this.getStudentsFromApi();
     this.loadRegistrationPeriods();
     this.calculateTotal();
-
+    this.loadRooms();
   }
   detailRoom(room:string){
 
@@ -110,7 +110,7 @@ export class RegisterRoomUserComponent implements OnInit {
           rooms: []
         }));
         this.dormitories = dormitories;
-        this.loadRooms();
+        //this.loadRooms();
       },
       error: (err: any) => {
         console.error('Lỗi khi lấy danh sách tòa nhà:', err);
@@ -118,20 +118,28 @@ export class RegisterRoomUserComponent implements OnInit {
     });
   }
   submitRegister(data:any) {
+    this.isLoading = true;
 
     if (!this.registerForm.idStudent) {
       alert('Vui lòng chọn sinh viên!');
+      this.isLoading = false;
       return;
     }
     if (!this.registerForm.startDate) {
       alert('Vui lòng chọn ngày bắt đầu!');
+      this.isLoading = false;
       return;
     }
     if (!this.registerForm.endDate) {
       alert('Vui lòng chọn ngày kết thúc!');
+      this.isLoading = false;
       return;
     }
-  
+    const isConfirmed = confirm('Bạn có chắc chắn muốn gửi đơn đăng ký không?');
+  if (!isConfirmed) {
+    this.isLoading = false;
+    return;
+  }  
     // Đảm bảo đã có kỳ đăng ký trước khi tiếp tục
     if (!this.idRegistrationPeriodsActive) {
       this.loadRegistrationPeriods(); // Tải lại kỳ đăng ký nếu chưa có
@@ -142,8 +150,10 @@ export class RegisterRoomUserComponent implements OnInit {
         }
         this.proceedRegister(data);
       }, 500); // Đợi 0.5 giây để lấy dữ liệu
+      this.isLoading = false;
     } else {
       this.proceedRegister(data);
+      this.isLoading = false;
     }
   }
   
