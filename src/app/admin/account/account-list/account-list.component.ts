@@ -18,37 +18,87 @@ export class AccountListComponent implements OnInit {
   isLoading: boolean = false;
   selectedAccount: any = null;
   selectedFile: File | null = null;
+  excelFile: File | null = null;
+  imageFiles: File[] = [];
+  isModalOpen = false; // Để điều khiển việc hiển thị modal
+  successMessage = '';
+  errorMessage = '';
 
   constructor(private accountService: AccountService, private toastr: ToastrService) {}
 
   ngOnInit() {
     this.loadAccounts();
   }
-  importFile(event: any) {
-    this.isLoading= true;
+ 
+  openImportModal() {
+    this.isModalOpen = true;
+  }
+
+  // Đóng modal
+  closeImportModal() {
+    this.isModalOpen = false;
+  }
+ 
+  onExcelFileChange(event: any) {
     const file = event.target.files[0];
     if (file) {
-      this.accountService.importExcel(file).subscribe({
-        next: (res) => {
-          const message = res.message || 'Import thành công!';
-          alert(`✅ Thành công!\n${message}\nTổng cộng: ${res.count} sinh viên.`);
-          this.loadAccounts();
-          event.target.value = null; // Reset input file
-          this.loadAccounts();
-          this.isLoading = false;
+      this.excelFile = file;
+    }
+  }
+
+  onImageFilesChange(event: any) {
+    this.imageFiles = Array.from(event.target.files); // Chuyển thành mảng
+  }
+
+  onImportSubmit() {
+    // Chỉ khi đã chọn đủ cả 2 file mới gửi
+    if (this.excelFile && this.imageFiles.length > 0) {
+      this.isLoading = true;
+      this.uploadFiles();
+    } else {
+      this.errorMessage = 'Vui lòng chọn cả file Excel và ảnh!';
+      this.successMessage = '';
+      this.isLoading = false;
+    }
+  }
+
+  uploadFiles() {
+    if (this.excelFile && this.imageFiles.length > 0) {
+      this.accountService.importExcel(this.excelFile, this.imageFiles).subscribe({
+        next: async (response) => {
+          const contentType = response.headers.get('Content-Type');
+      
+          if (contentType && contentType.includes('application/json')) {
+            // Convert blob to text, then parse JSON
+            const text = await response.body.text();
+            const json = JSON.parse(text);
+            this.successMessage = json.message;
+            this.errorMessage = '';
+            this.isLoading = false; // 👉 tắt loading ở đây
+          } else {
+            // Là file => tạo link tải
+            const blob = response.body;
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = 'DanhSachLoi.xlsx';
+            link.click();
+            alert
+            this.errorMessage = '';
+            this.isLoading = false; // 👉 tắt loading ở đây
+
+          }
         },
         error: (err) => {
-          const errorMessage = err?.error?.message || 'Import thất bại!';
-          alert(`❌ Lỗi\n${errorMessage}`);
-          this.isLoading = false;
+          this.errorMessage = 'Upload failed: ' + err.message;
+          this.successMessage = '';
+          this.isLoading = false; // 👉 tắt loading ở đây
         }
-        
-      });
-    } else {
-      this.toastr.warning('⚠️ Vui lòng chọn file Excel trước khi import.', 'Chưa chọn file');
+      });      
     }
   }
   
+
 
   loadAccounts() {
     this.isLoading = true; // Bắt đầu loading
@@ -83,11 +133,6 @@ export class AccountListComponent implements OnInit {
     return Math.ceil(this.filteredAccounts.length / this.itemsPerPage);
   }
   
-  
-
-  getImageUrl(imagePath: string): string {
-    return imagePath ? `http://localhost:5048/images/${imagePath}` : 'assets/default-avatar.png';
-  }
 
   blockAccount(accountId: string) {
     const requestBody = { Status: 2 }; // Truyền đúng định dạng yêu cầu
@@ -133,8 +178,6 @@ export class AccountListComponent implements OnInit {
         'SĐT phụ huynh': account.InfoStudent.ParentNumberPhone,
         'Địa chỉ': account.InfoStudent.Address,
         'Hình ảnh': account.InfoStudent?.Picture
-          ? this.getImageUrl(account.InfoStudent.Picture)
-          : 'Không có ảnh'
       }))
     );
     

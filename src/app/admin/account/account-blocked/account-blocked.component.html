@@ -26,8 +26,10 @@
         <td>{{ account.Account.NumberPhone }}</td>
         <td>{{ account.InfoStudent.Email }}</td>
         <td>
-          <img *ngIf="account.InfoStudent?.Picture" [src]="getImageUrl(account.InfoStudent.Picture)" alt="Avatar"
-            class="avatar" />
+          <img *ngIf="account.InfoStudent?.Picture"
+          [src]="account.InfoStudent.Picture"
+          alt="Student Picture"
+          class="avatar" />
         </td>
         <td>
           <button (click)="detail(account)">Chi tiết</button>
@@ -51,8 +53,9 @@
     <h2>📋 Chi tiết tài khoản sinh viên</h2>
 
     <div class="detail-info">
-      <img *ngIf="selectedAccount?.InfoStudent?.Picture" [src]="getImageUrl(selectedAccount.InfoStudent.Picture)"
-        alt="Avatar" class="avatar-large" />
+      <img *ngIf="selectedAccount?.InfoStudent?.Picture"
+      [src]="selectedAccount.InfoStudent.Picture"
+      alt="Avatar" class="avatar-large" />
 
       <div class="info-fields">
         <p><strong>👤 Tên đăng nhập:</strong> {{ selectedAccount?.Account.UserName }}</p>

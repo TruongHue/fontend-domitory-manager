@@ -21,10 +21,21 @@ export class AccountService {
     return this.http.post<any>(`${this.apiUrl}/add-account`, accountData, { headers: this.getAuthHeaders() });
   }
 
-  importExcel(file: File): Observable<any> {
+  importExcel(excelFile: File, imageFiles: File[]): Observable<any> {
     const formData = new FormData();
-    formData.append('file', file);
-    return this.http.post<any>(`${this.apiUrl}/import-excel`, formData, { headers: this.getAuthHeaders() });
+    formData.append('excelFile', excelFile); // Đính kèm file Excel vào formData
+
+    // Thêm các file ảnh vào formData
+    imageFiles.forEach((image, index) => {
+      formData.append('imageFiles', image, image.name); // Đính kèm mỗi file ảnh
+    });
+
+    // Gửi request POST với formData
+    return this.http.post<any>(`${this.apiUrl}/import-excel-with-images`, formData, {
+      headers: this.getAuthHeaders(),
+      responseType: 'blob' as 'json',
+      observe: 'response'
+    });
   }
 
   getAllStaffs(): Observable<any[]> {

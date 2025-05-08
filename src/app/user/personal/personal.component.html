@@ -5,8 +5,12 @@
     <div class="profile-card">
       <!-- Avatar và tên -->
       <div class="avatar-section-modern">
-        <img *ngIf="profile.InfoStudent?.Picture" [src]="getImageUrl(profile.InfoStudent.Picture)" alt="Avatar" class="avatar" />
-        <h2 class="user-name-modern">{{ profile.Account.UserName }}</h2>
+        <img *ngIf="profile.InfoStudent?.Picture" 
+        [src]="profile.InfoStudent.Picture" 
+        alt="Avatar" 
+        class="avatar" />
+   <h2 class="user-name-modern">{{ profile.Account.UserName }}</h2>
+   
       </div>
   
       <!-- Thông tin chi tiết -->

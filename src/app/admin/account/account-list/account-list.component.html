@@ -5,20 +5,64 @@
 
 <div class="container">
   <h2>Quản lý sinh viên hợp lệ</h2>
+  
+  <!-- Nút Export ra Excel -->
   <button (click)="exportToExcel()" class="export-btn">
     <i class="fa fa-download"></i> Xuất ra Excel
   </button>
-  <input
-  id="file-input"
-  type="file"
-  accept=".xlsx, .xls"
-  style="display: none"
-  (change)="importFile($event)"
-/>
 
-<button class="import-btn" onclick="document.getElementById('file-input').click();">
-  <i class="fa fa-upload"></i> Import
-</button>
+  <!-- Nút Import -->
+  <button class="import-btn" (click)="openImportModal()">
+    <i class="fa fa-upload"></i> Import
+  </button>
+  
+  <!-- Modal Import -->
+  <div id="import-modal" class="modal" [ngClass]="{'show': isModalOpen}">
+    <div class="modal-content">
+      <span class="close" (click)="closeImportModal()">&times;</span>
+      <h3>Import Sinh Viên</h3>
+  
+      <!-- Hiển thị thông báo thành công hoặc lỗi -->
+      <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  
+      <!-- Form import -->
+      <form (ngSubmit)="onImportSubmit()" #importForm="ngForm">
+  
+        <!-- Input file Excel -->
+        <div>
+          <label for="excelFile">Chọn file Excel:</label>
+          <input
+            id="file-input-excel"
+            type="file"
+            accept=".xlsx, .xls"
+            (change)="onExcelFileChange($event)"
+            required
+          />
+        </div>
+  
+        <!-- Input file ảnh -->
+        <div>
+          <label for="imageFiles">Chọn ảnh:</label>
+          <input
+            id="file-input-images"
+            type="file"
+            accept="image/*"
+            (change)="onImageFilesChange($event)"
+            multiple
+            required
+          />
+        </div>
+  
+        <!-- Nút Import khi cả file Excel và ảnh đã được chọn -->
+        <button type="submit" [disabled]="!excelFile || !imageFiles.length" class="import-btn">
+          <i class="fa fa-upload"></i> Import
+        </button>
+      </form>
+    </div>
+  </div>
+  
+
  
     <input type="text" [(ngModel)]="searchText" (input)="searchAccounts()" placeholder="🔍 Tìm kiếm theo tên hoặc mã..."
     class="search-input" />
@@ -36,14 +80,17 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let account of accounts">
+      <tr *ngFor="let account of pagedAccounts">
         <td>{{ account.Account.UserName }}</td>
         <td>{{ account.Account.UserCode }}</td>
         <td>{{ account.Account.NumberPhone }}</td>
         <td>{{ account.InfoStudent.Email }}</td>
         <td>
-          <img *ngIf="account.InfoStudent?.Picture" [src]="getImageUrl(account.InfoStudent.Picture)" alt="Avatar"
-            class="avatar" />
+          <img *ngIf="account.InfoStudent?.Picture"
+          [src]="account.InfoStudent.Picture"
+          alt="Student Picture"
+          class="avatar" />
+     
         </td>
         <td>
           <button (click)="detail(account)">Chi tiết</button>
@@ -66,9 +113,9 @@
     <h2>📋 Chi tiết tài khoản sinh viên</h2>
 
     <div class="detail-info">
-      <img *ngIf="selectedAccount?.InfoStudent?.Picture" [src]="getImageUrl(selectedAccount.InfoStudent.Picture)"
+        <img *ngIf="selectedAccount?.InfoStudent?.Picture"
+        [src]="selectedAccount.InfoStudent.Picture"
         alt="Avatar" class="avatar-large" />
-
       <div class="info-fields">
         <p><strong>👤 Tên đăng nhập:</strong> {{ selectedAccount?.Account.UserName }}</p>
         <p><strong>🆔 Mã sinh viên:</strong> {{ selectedAccount?.Account.UserCode }}</p>
