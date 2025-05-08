@@ -74,7 +74,8 @@
 
 <div class="modal-overlay" *ngIf="selectedRoom">
     <div class="modal1">
-        <h3>Đăng ký phòng {{ selectedRoom.name }}</h3> <label>Ngày bắt đầu:</label>
+      <h3 class="font-bold text-center mb-4 text-lg">Đăng ký phòng {{ selectedRoom.name }}</h3>
+      <label>Ngày bắt đầu:</label>
         <input type="date" [(ngModel)]="registerForm.startDate" required [min]="today" (change)="calculateTotal()">
         <p style="color: red;">Ngày bắt đầu phải nhỏ hơn ngày kết thúc!</p>
 
