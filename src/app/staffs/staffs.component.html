@@ -5,7 +5,7 @@
         <ul>
             <li routerLinkActive="active"><a routerLink="/staffs/electricity-managerment">📄 Ghi Điện - Nước</a></li>
 <li [ngClass]="{ 'has-unread': unrespondedRequestsCount > 0 }">
-                <a routerLink="/admin/helps" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <a routerLink="/staffs/helps" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                     🤝 Hỗ trợ
                     <span *ngIf="unrespondedRequestsCount > 0" class="notification-badge">
                         {{ unrespondedRequestsCount }}

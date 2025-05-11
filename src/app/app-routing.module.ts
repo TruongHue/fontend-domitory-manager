@@ -52,7 +52,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'electricity-managerment', pathMatch: 'full' },
       {path : 'electricity-managerment', component: ElctricityManagerComponent},
       {path :'water-managerment', component: WaterManagerComponent},
-      {path: 'help-managerment', component:HelpComponent},
+      {path: 'helps', component:HelpComponent},
     ]
   },
   // Route Admin: Bảo vệ bằng AuthGuard
