@@ -65,4 +65,13 @@ export class AccountService {
   putStatus(id: string, status: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/account-student/status/${id}`, status, { headers: this.getAuthHeaders() });
   }
+
+resetPassword(accountId: string): Observable<any> {
+  return this.http.post(`${this.apiUrl}/reset-password`, {
+    accountId: accountId
+  }, {
+    headers: this.getAuthHeaders()
+  });
+}
+  
 }

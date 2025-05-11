@@ -175,7 +175,7 @@ export class DetailBillComponent implements OnInit {
   hasUnpaidBill(dormitory: any): boolean {
     return dormitory.rooms?.some((room: any) => room.statusBill === 1);
   }
-  
+
   openBillForm(room: any) {
     console.log(room);
     this.selectedRoomBills = room; // Hiển thị modal
@@ -242,7 +242,7 @@ export class DetailBillComponent implements OnInit {
       })
     );
   }
-  
+
   filterStudents() {
     const text = this.searchText.toLowerCase();
     this.filteredStudents = this.studentsList.filter(student =>
@@ -250,7 +250,7 @@ export class DetailBillComponent implements OnInit {
       student.AccountInfo.UserName.toLowerCase().includes(text)
     );
   }
-  
+
 
   openStudentSelection(billType: number, bill: any) {
     this.fetchStudents(bill.IdRoom);
@@ -259,18 +259,22 @@ export class DetailBillComponent implements OnInit {
     this.selectedBill = bill;
   }
   fetchStudents(idRoom: string) {
+    this.isLoading = true;
     this.registerRoom.fetchStudents(idRoom).subscribe(
       data => {
         this.studentsList = data;
         this.filteredStudents = data;  // Đặt giá trị ban đầu cho filteredStudents
+        this.isLoading = false;
       },
       error => {
         console.error('Có lỗi khi gọi API:', error);
+        this.isLoading = false;
       }
     );
   }
 
   selectStudent(student: any) {
+    this.isLoading = true;
     this.updateBill.StudentCode = student.AccountInfo.UserCode;
     this.updateBill.StudentName = student.AccountInfo.UserName;
     const confirmSelection = confirm(`Bạn có chắc chắn chọn sinh viên ${student.AccountInfo.UserName} - ${student.AccountInfo.UserCode} thanh toán không ?`);
@@ -283,7 +287,7 @@ export class DetailBillComponent implements OnInit {
       }
     }
   }
-  
+
   validateDates() {
     const startDate = new Date(this.registerForm.startDate);
     const endDate = new Date(this.registerForm.endDate);
@@ -302,13 +306,15 @@ export class DetailBillComponent implements OnInit {
     this.roomBillService.payElectricBill(billId, data).subscribe(() => {
       alert("Thanh toán hóa đơn điện thành công!");
       this.getListElectricBill(this.selectedRoomBills.idRoom);
-      this.loadBills();  
+      this.loadBills();
 
       this.closeStudentSelection();
       this.ngOnInit();
+      this.isLoading = false;
 
     }, error => {
       alert("Có lỗi xảy ra khi thanh toán hóa đơn điện.");
+      this.isLoading = false;
     });
   }
 
@@ -319,32 +325,36 @@ export class DetailBillComponent implements OnInit {
       alert("Thanh toán hóa đơn nước thành công!");
       this.getListWaterBill(this.selectedRoomBills.idRoom);
       this.loadBills();
-      
+
       this.closeStudentSelection();
       this.ngOnInit();
+      this.isLoading = false;
+
 
     }, error => {
       alert("Có lỗi xảy ra khi thanh toán hóa đơn điện.");
+      this.isLoading = false;
+
     });
   }
   deleteElectricBill(billId: string) {
     if (confirm("Bạn có chắc chắn muốn xóa hóa đơn điện này?")) {
       this.roomBillService.deleteElectricBill(billId).subscribe(() => {
         alert("Xóa hóa đơn điện thành công!");
-  
+
         // Reload danh sách hóa đơn điện
         this.loadBills();
         // Tái tạo giao diện
         this.ngOnInit();
         // Cập nhật lại giao diện với cdRef
         this.cdRef.detectChanges();
-  
+
       }, error => {
         alert("Có lỗi xảy ra khi xóa hóa đơn điện.");
       });
     }
   }
-  
+
 
   deleteWaterBill(billId: string) {
     console.log(billId);
@@ -364,7 +374,7 @@ export class DetailBillComponent implements OnInit {
 
   getUnpaidBillCount(dormitory: any): number {
     if (!dormitory || !dormitory.rooms) return 0;
-  
+
     let count = 0;
     for (let room of dormitory.rooms) {
       if (room.statusBill === 1) {
@@ -374,23 +384,23 @@ export class DetailBillComponent implements OnInit {
     return count;
   }
   // Hàm lấy tầng từ mã phòng
-getFloorFromRoom(roomName: string): number {
-  // Giả sử tên phòng có dạng "P101", "P102",... thì lấy 2 ký tự sau "P"
-  return parseInt(roomName.substring(1, 2), 10); // Lấy chữ số thứ 2 trong tên phòng
-}
-getUniqueFloors(dormitory: any): number[] {
-  const floors: number[] = [];
-  
-  // Lấy tất cả các tầng từ danh sách phòng
-  dormitory.rooms.forEach((room: any) => {
-    const floor = this.getFloorFromRoom(room.name);  // Lấy tầng từ tên phòng
-    if (!floors.includes(floor)) {
-      floors.push(floor);
-    }
-  });
+  getFloorFromRoom(roomName: string): number {
+    // Giả sử tên phòng có dạng "P101", "P102",... thì lấy 2 ký tự sau "P"
+    return parseInt(roomName.substring(1, 2), 10); // Lấy chữ số thứ 2 trong tên phòng
+  }
+  getUniqueFloors(dormitory: any): number[] {
+    const floors: number[] = [];
 
-  return floors.sort((a, b) => a - b);  // Sắp xếp các tầng theo thứ tự
-}
+    // Lấy tất cả các tầng từ danh sách phòng
+    dormitory.rooms.forEach((room: any) => {
+      const floor = this.getFloorFromRoom(room.name);  // Lấy tầng từ tên phòng
+      if (!floors.includes(floor)) {
+        floors.push(floor);
+      }
+    });
+
+    return floors.sort((a, b) => a - b);  // Sắp xếp các tầng theo thứ tự
+  }
 
 
 }

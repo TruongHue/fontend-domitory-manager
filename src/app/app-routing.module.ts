@@ -10,7 +10,7 @@ import { ReportComponent } from './admin/report/report.component';
 import { StaffComponent } from './admin/staff/staff.component';
 import { ManagerRoomComponent } from './admin/room/manager-room/manager-room.component';
 import { RegisterRoomComponent } from './admin/register-room/register-room.component';
-import { authGuard } from './guards/auth.guard'; // Import AuthGuard
+import { authGuard, authGuardChild } from './guards/auth.guard'; // Import AuthGuard
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { UserComponent } from './user/user.component';
 import { HomeComponent } from './user/home/home.component';
@@ -49,6 +49,7 @@ const routes: Routes = [
     canActivate: [authGuard], // Áp dụng AuthGuard
     data: { role: 'Staff' },
     children: [
+      { path: '', redirectTo: 'electricity-managerment', pathMatch: 'full' },
       {path : 'electricity-managerment', component: ElctricityManagerComponent},
       {path :'water-managerment', component: WaterManagerComponent},
       {path: 'help-managerment', component:HelpComponent},
@@ -56,9 +57,11 @@ const routes: Routes = [
   },
   // Route Admin: Bảo vệ bằng AuthGuard
   {
-    path: 'admin',component: AdminComponent,
-    canActivate: [authGuard], // Áp dụng AuthGuard
-    data: { role: 'Admin' }, // Chỉ Admin mới vào được
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [authGuard],
+    canActivateChild: [authGuardChild],
+    data: { role: 'Admin' },
     children: [
       { path: 'staffs', component: StaffComponent },
       { path: 'bills', component: BillComponent },
@@ -67,14 +70,12 @@ const routes: Routes = [
       { path: 'reports', component: ReportComponent },
       { path: 'manager-room', component: ManagerRoomComponent },
       { path: 'register-room', component: RegisterRoomComponent },
-      { path: '', redirectTo: 'register-room', pathMatch: 'full' }, // ✅ sửa ở đây
-      {path: 'account', component: AccountComponent},
-      {path:'post', component: PostComponent}
+      { path: '', redirectTo: 'register-room', pathMatch: 'full' },
+      { path: 'account', component: AccountComponent },
+      { path: 'post', component: PostComponent }
     ]
-  },
-
-  // Trang lỗi không có quyền
-  { path: 'unauthorized', component: UnauthorizedComponent }
+  }
+  
 ];
 
 @NgModule({

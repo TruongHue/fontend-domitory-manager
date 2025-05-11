@@ -15,6 +15,7 @@
   
       <!-- Thông tin chi tiết -->
       <div class="info-section-modern">
+        <div class="info-item"><strong>Mã sinh viên:</strong> {{ profile.Account.UserCode }}</div>
         <div class="info-item"><strong>Giới tính:</strong> {{ profile.InfoStudent.Gender === 0 ? 'Nam' : 'Nữ' }}</div>
         <div class="info-item"><strong>Email:</strong> {{ profile.InfoStudent.Email }}</div>
         <div class="info-item"><strong>Số điện thoại:</strong> {{ profile.Account.NumberPhone }}</div>
@@ -25,8 +26,34 @@
     </div>
   
     <!-- Nút chỉnh sửa -->
-    <div class="edit-btn-modern-container">
-      <button class="edit-btn-modern alt">Đổi mật khẩu</button>
+
+  <div class="edit-btn-modern-container">
+    <button class="edit-btn-modern alt" (click)="openChangePasswordModal()">Đổi mật khẩu</button>
+  </div>
+   </div>
+ 
+  <!-- Modal đổi mật khẩu -->
+  <div class="modal-overlay" *ngIf="showChangePasswordModal">
+    <div class="modal1">
+      <h3 >Đổi mật khẩu</h3>
+  
+      <label>Mật khẩu hiện tại:</label>
+      <input type="password" [(ngModel)]="passwordForm.oldPassword" required>
+  
+      <label>Mật khẩu mới:</label>
+      <input type="password" [(ngModel)]="passwordForm.newPassword" required>
+  
+      <label>Xác nhận mật khẩu mới:</label>
+      <input type="password" [(ngModel)]="passwordForm.confirmPassword" required>
+  
+      <p *ngIf="passwordForm.newPassword !== passwordForm.confirmPassword && passwordForm.confirmPassword" style="color: red;">
+        Mật khẩu xác nhận không khớp!
+      </p>
+  
+      <div class="modal-actions">
+        <button (click)="closeChangePasswordModal()">Hủy</button>
+        <button (click)="submitChangePassword()" [disabled]="passwordForm.newPassword !== passwordForm.confirmPassword">Xác nhận</button>
+      </div>
     </div>
   </div>
   

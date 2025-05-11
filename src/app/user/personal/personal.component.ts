@@ -10,7 +10,12 @@ import { UserService } from '../../services/user/user.service';
 export class PersonalComponent implements OnInit {
   profile: any = [];
   isLoading: boolean = false;
-
+  showChangePasswordModal = false;
+  passwordForm = {
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  };
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
@@ -45,4 +50,38 @@ export class PersonalComponent implements OnInit {
   getImageUrl(imagePath: string): string {
     return imagePath ? `http://domitory-backend.onrender.com/images/${imagePath}` : 'assets/default-avatar.png';
   }
+
+  openChangePasswordModal() {
+    this.showChangePasswordModal = true;
+  }
+  
+  closeChangePasswordModal() {
+    this.showChangePasswordModal = false;
+    this.passwordForm = {
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    };
+  }
+  
+  submitChangePassword() {
+    this.isLoading = true;
+    if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
+      alert('Mật khẩu mới và xác nhận mật khẩu không khớp!');
+      this.isLoading = false;
+      return;
+    }
+  
+    this.userService.changePassword(this.passwordForm.oldPassword, this.passwordForm.newPassword).subscribe(
+      res => {
+        alert('✅ Đổi mật khẩu thành công!');
+        this.closeChangePasswordModal(); // hoặc ẩn modal đổi mật khẩu
+        this.isLoading = false;
+      },
+      err => {
+        alert(err.message || '❌ Lỗi đổi mật khẩu!');
+        this.isLoading = false;
+      }
+    );
+  }  
 }

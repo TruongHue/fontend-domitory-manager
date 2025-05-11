@@ -71,8 +71,7 @@ export class RegisterRoomUserComponent implements OnInit {
     private registrationService: RegistrationPeriodService) { }
 
   ngOnInit() {
-    this.getIdStudent();
-    
+    this.getIdStudent();  
     this.loadRegistrationPeriods();
     this.getDormitoriesFromApi();
     this.getStudentsFromApi();
@@ -117,7 +116,7 @@ export class RegisterRoomUserComponent implements OnInit {
       }
     });
   }
-  submitRegister(data:any) {
+  async submitRegister(data:any) {
     this.isLoading = true;
 
     if (!this.registerForm.idStudent) {
@@ -135,29 +134,29 @@ export class RegisterRoomUserComponent implements OnInit {
       this.isLoading = false;
       return;
     }
-    const isConfirmed = confirm('Bạn có chắc chắn muốn gửi đơn đăng ký không?');
-  if (!isConfirmed) {
-    this.isLoading = false;
-    return;
-  }  
     // Đảm bảo đã có kỳ đăng ký trước khi tiếp tục
     if (!this.idRegistrationPeriodsActive) {
-      this.loadRegistrationPeriods(); // Tải lại kỳ đăng ký nếu chưa có
-      setTimeout(() => {
-        if (!this.idRegistrationPeriodsActive) {
-          alert('Không có kỳ đăng ký!');
-          return;
-        }
-        this.proceedRegister(data);
-      }, 500); // Đợi 0.5 giây để lấy dữ liệu
-      this.isLoading = false;
-    } else {
-      this.proceedRegister(data);
-      this.isLoading = false;
+      await this.loadRegistrationPeriods();
+      if (!this.idRegistrationPeriodsActive) {
+        alert('Không có kỳ đăng ký!');
+        this.isLoading = false;
+        return;
+      }
     }
+    // ✅ Thêm xác nhận
+    const confirmRegister = window.confirm('Bạn có chắc chắn muốn đăng ký phòng này không?');
+    if (!confirmRegister) {
+      this.isLoading = false;
+      return;
+    }
+  
+    this.proceedRegister(data);
+    this.ngOnInit();
+    this.isLoading = false;
   }
   
   proceedRegister(data:any) {
+    this.isLoading = true;
     const startDate = new Date(data.startDate);
     const endDate = new Date(data.endDate);
   
@@ -185,10 +184,12 @@ export class RegisterRoomUserComponent implements OnInit {
         this.closeRegisterForm();
         window.location.reload();
         this.loadRooms();
+        this.isLoading = false;
       },
       error: (error) => {
         const errorMessage = error.error?.message;
         alert(errorMessage);
+        this.isLoading = false;
       }
     });
   }

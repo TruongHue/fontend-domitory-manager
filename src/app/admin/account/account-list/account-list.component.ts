@@ -46,6 +46,7 @@ export class AccountListComponent implements OnInit {
     }
   }
 
+  
   onImageFilesChange(event: any) {
     this.imageFiles = Array.from(event.target.files); // Chuyển thành mảng
   }
@@ -74,6 +75,7 @@ export class AccountListComponent implements OnInit {
             const json = JSON.parse(text);
             this.successMessage = json.message;
             this.errorMessage = '';
+            this.loadAccounts();
             this.isLoading = false; // 👉 tắt loading ở đây
           } else {
             // Là file => tạo link tải
@@ -85,6 +87,7 @@ export class AccountListComponent implements OnInit {
             link.click();
             alert
             this.errorMessage = '';
+            this.loadAccounts();
             this.isLoading = false; // 👉 tắt loading ở đây
 
           }
@@ -96,6 +99,7 @@ export class AccountListComponent implements OnInit {
         }
       });      
     }
+    
   }
   
 
@@ -187,4 +191,18 @@ export class AccountListComponent implements OnInit {
     // Xuất file Excel
     XLSX.writeFile(workbook, 'Danh_sach_sinh_vien.xlsx');
   }
+
+  resetPassword(accountId: string): void {
+    if (!confirm('Bạn có chắc muốn cấp lại mật khẩu cho tài khoản này?')) return;
+  
+    this.accountService.resetPassword(accountId).subscribe({
+      next: () => {
+        alert('✅ Cấp lại mật khẩu thành công!');
+      },
+      error: () => {
+        alert('❌ Cấp lại mật khẩu thất bại!');
+      }
+    });
+  }
+  
 }

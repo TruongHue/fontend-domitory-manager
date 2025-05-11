@@ -20,7 +20,9 @@ export class ReportServiceService {
   getAllRegisterRoom(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl, { headers: this.getAuthHeaders() });
   }
-
+  getAllRegistrationPeriod(): Observable<any[]> {
+    return this.http.get<any[]>("https://domitory-backend.onrender.com/api/RegisterRoom/count-by-registration-period", { headers: this.getAuthHeaders() });
+  }
   getAllRooms(): Observable<any[]> { 
     return this.http.get<any[]>(this.roomApiUrl, { headers: this.getAuthHeaders() }); // Gọi API lấy danh sách phòng
   }

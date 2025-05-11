@@ -2,6 +2,13 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { ReportServiceService } from '../../services/report/report-service.service';
 
+interface StudentStats {
+  TotalStudents?: number;
+  TotalRegisteredStudents?: number;
+  UnregisteredStudents?: number;
+}
+
+
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
@@ -16,8 +23,8 @@ export class ReportComponent implements OnInit {
   unregisteredStudents = 0;
   totalStudents: number = 0; // Có thể fetch từ API nếu cần
   errorMessage: string = ''; // Error message variable
-  index: any = [];
   isLoading: boolean = false;
+  index: StudentStats = {};
 
   registerPeriodChartData: ChartConfiguration<'bar'>['data'] = {
     labels: [], // Sử dụng mảng các kỳ (Kỳ 1, Kỳ 2, ...) làm nhãn
@@ -40,30 +47,30 @@ export class ReportComponent implements OnInit {
     scales: {
       y: {
         ticks: {
-          stepSize: 1, // Chỉ hiển thị số nguyên
+          stepSize: 1,
           callback: function(value) {
             return Number.isInteger(value) ? value : null;
           }
         },
-        beginAtZero: true // Đảm bảo trục Y bắt đầu từ 0
+        beginAtZero: true
       },
       x: {
         ticks: {
-          autoSkip: false, // Hiển thị tất cả các nhãn trên trục X
-          maxRotation: 90, // Xoay nhãn trục X nếu cần
-          minRotation: 45 // Giới hạn xoay nhãn ở 45 độ
+          autoSkip: false,
+          maxRotation: 90,  // Xoay nhãn trục X 90 độ
+          minRotation: 45   // Giới hạn tối thiểu xoay nhãn ở 45 độ
         }
       }
     },
     plugins: {
       legend: {
-        display: true, // Hiển thị chú thích
-        position: 'top' // Đặt chú thích ở trên cùng
+        display: true,
+        position: 'top'
       },
       tooltip: {
-        enabled: true, // Kích hoạt tooltip
-        mode: 'index', // Tooltip hiển thị theo chỉ số của các cột
-        intersect: false, // Tooltip hiển thị khi hover bất kỳ cột nào
+        enabled: true,
+        mode: 'index',
+        intersect: false,
         callbacks: {
           label: function(tooltipItem) {
             return `${tooltipItem.raw} sinh viên`; // Thêm đơn vị vào tooltip
@@ -73,11 +80,12 @@ export class ReportComponent implements OnInit {
     }
   };
   
+  
   constructor(private reportService: ReportServiceService, private cdRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {   
      this.loadRegistrationData();
-
+    this.loadChartByRegistrationPeriod();
     this.getTotalStudents();
     this.loadRoomData();
     if (this.unregisteredStudents < 0) this.unregisteredStudents = 0;
@@ -92,38 +100,49 @@ export class ReportComponent implements OnInit {
           console.warn('Không có dữ liệu đăng ký.');
           return;
         }
-
-        const countByPeriod: { [key: number]: number } = {};
+  
+        const countByPeriod: { [key: string]: { count: number, startDate: string, endDate: string } } = {};
         let registeredStudentSet = new Set<number>();
-
-        data.forEach((reg: { idRegistrationPeriod: any; idStudent: any; }) => {
+  
+        data.forEach((reg: { idRegistrationPeriod: any; idStudent: any; startDate: string; endDate: string; }) => {
           const period = reg.idRegistrationPeriod;
           const studentId = reg.idStudent;
-
+  
           if (period !== 0) { 
-            countByPeriod[period] = (countByPeriod[period] || 0) + 1;
+            if (!countByPeriod[period]) {
+              countByPeriod[period] = { count: 0, startDate: reg.startDate, endDate: reg.endDate };
+            }
+            countByPeriod[period].count += 1;
             registeredStudentSet.add(studentId);
           }
         });
-
-        // Update chart data
+  
+        // Update chart data with start and end dates
         this.registerPeriodChartData = {
-          labels: Object.keys(countByPeriod).map(key => `Kỳ ${key}`),
+          labels: Object.keys(countByPeriod).map(key => {
+            const period = countByPeriod[key];
+            return `Kỳ ${key}: ${period.startDate} - ${period.endDate}`;
+          }),
           datasets: [
             {
               label: 'Số lượng đăng ký theo kỳ',
-              data: Object.values(countByPeriod),
+              data: Object.values(countByPeriod).map(value => value.count),
               backgroundColor: 'rgba(54, 162, 235, 0.7)',
               borderRadius: 5
             }
           ]
         };
-
+  
         // Update student data
         this.registeredStudents = registeredStudentSet.size;
         this.unregisteredStudents = this.totalStudents - this.registeredStudents;
-
+  
         if (this.unregisteredStudents < 0) this.unregisteredStudents = 0;
+        this.index = {
+          TotalStudents: this.totalStudents,
+          TotalRegisteredStudents: this.registeredStudents,
+          UnregisteredStudents: this.unregisteredStudents
+        };
         this.cdRef.detectChanges();
       },
       error => {
@@ -132,6 +151,42 @@ export class ReportComponent implements OnInit {
       }
     );
   }
+  
+  loadChartByRegistrationPeriod(): void {
+    this.reportService.getAllRegistrationPeriod().subscribe(
+      (periodData: any[]) => {
+        console.log("Dữ liệu kỳ đăng ký:", periodData); // 👉 KIỂM TRA CHỖ NÀY
+        this.generateChartData(periodData);
+        this.cdRef.detectChanges();
+      },
+      error => {
+        console.error('Lỗi khi lấy dữ liệu biểu đồ:', error);
+      }
+    );
+  }
+  
+  generateChartData(periodData: any[]): void {
+    this.registerPeriodChartData = {
+      labels: periodData.map(p =>
+        `Kỳ: ${this.formatDate(p.StartDate)} - ${this.formatDate(p.EndDate)}`
+      ),
+      datasets: [
+        {
+          label: 'Số lượng đăng ký theo kỳ',
+          data: periodData.map(p => p.StudentCount),
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
+          borderRadius: 5
+        }
+      ]
+    };
+    this.cdRef.detectChanges();
+  }
+  formatDate(dateStr: string): string {
+    const date = new Date(dateStr);
+    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  }
+  
+  
 
   loadRoomData(): void {
     this.isLoading = true; // Bắt đầu loading

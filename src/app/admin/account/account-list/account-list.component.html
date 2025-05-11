@@ -18,9 +18,9 @@
   
   <!-- Modal Import -->
   <div id="import-modal" class="modal" [ngClass]="{'show': isModalOpen}">
-    <div class="modal-content">
+    <div class="fancy-modal">
       <span class="close" (click)="closeImportModal()">&times;</span>
-      <h3>Import Sinh Viên</h3>
+      <h2>Import Sinh Viên</h2>
   
       <!-- Hiển thị thông báo thành công hoặc lỗi -->
       <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
@@ -30,20 +30,20 @@
       <form (ngSubmit)="onImportSubmit()" #importForm="ngForm">
   
         <!-- Input file Excel -->
-        <div>
-          <label for="excelFile">Chọn file Excel:</label>
+        <div class="form-group">
+          <label for="excelFile" class="form-label">Chọn file Excel:</label>
           <input
             id="file-input-excel"
             type="file"
             accept=".xlsx, .xls"
             (change)="onExcelFileChange($event)"
             required
+            class="form-control"
           />
         </div>
-  
-        <!-- Input file ảnh -->
-        <div>
-          <label for="imageFiles">Chọn ảnh:</label>
+        
+        <div class="form-group">
+          <label for="imageFiles" class="form-label">Chọn ảnh:</label>
           <input
             id="file-input-images"
             type="file"
@@ -51,8 +51,10 @@
             (change)="onImageFilesChange($event)"
             multiple
             required
+            class="form-control"
           />
         </div>
+        
   
         <!-- Nút Import khi cả file Excel và ảnh đã được chọn -->
         <button type="submit" [disabled]="!excelFile || !imageFiles.length" class="import-btn">
@@ -95,7 +97,8 @@
         <td>
           <button (click)="detail(account)">Chi tiết</button>
           <button (click)="blockAccount(account.Account.AccountId)">🚫 Chặn</button>
-        </td>
+          <button (click)="resetPassword(account.Account.AccountId)">🔐 Cấp lại mật khẩu</button>
+        </td>        
       </tr>
     </tbody>
   </table>
@@ -115,7 +118,7 @@
     <div class="detail-info">
         <img *ngIf="selectedAccount?.InfoStudent?.Picture"
         [src]="selectedAccount.InfoStudent.Picture"
-        alt="Avatar" class="avatar-large" />
+        alt="Avatar" class="avatar-rectangle" />
       <div class="info-fields">
         <p><strong>👤 Tên đăng nhập:</strong> {{ selectedAccount?.Account.UserName }}</p>
         <p><strong>🆔 Mã sinh viên:</strong> {{ selectedAccount?.Account.UserCode }}</p>

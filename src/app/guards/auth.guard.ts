@@ -1,25 +1,28 @@
-import { CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, CanActivateChildFn, Router } from '@angular/router';
 
 export const authGuard: CanActivateFn = (route, state) => {
-  const router = new Router();
-  
-  // Lấy thông tin token hoặc role từ LocalStorage (hoặc từ AuthService)
-  const userRole = localStorage.getItem('role'); // Ví dụ: 'admin', 'staff', 'student'
+  return checkAuth(route, state);
+};
 
-  // Lấy role cần thiết từ route
+export const authGuardChild: CanActivateChildFn = (route, state) => {
+  return checkAuth(route, state);
+};
+
+function checkAuth(route: any, state: any): boolean {
+  const router = inject(Router); // ✅ Đây là cách đúng để lấy Router
+  const userRole = localStorage.getItem('role');
   const requiredRole = route.data?.['role'];
 
-  // Kiểm tra nếu người dùng chưa đăng nhập
   if (!userRole) {
     router.navigate(['/login']);
     return false;
   }
 
-  // Kiểm tra nếu người dùng không có quyền
   if (requiredRole && userRole !== requiredRole) {
-    router.navigate(['/unauthorized']); // Chuyển hướng đến trang không có quyền truy cập
+    router.navigate(['/unauthorized']);
     return false;
   }
 
   return true;
-};
+}

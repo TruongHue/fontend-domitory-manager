@@ -40,4 +40,21 @@ export class UserService {
       })
     );
   }
+  
+  changePassword(oldPassword: string, newPassword: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    const body = {
+      oldPassword: oldPassword,
+      newPassword: newPassword
+    };
+  
+    return this.http.post(`${this.apiUrl}/change-password`, body, { headers }).pipe(
+      tap(() => console.log('✅ Gửi yêu cầu đổi mật khẩu')),
+      catchError((error) => {
+        console.error('❌ Lỗi khi đổi mật khẩu:', error);
+        return throwError(() => new Error(error.error.message || 'Lỗi đổi mật khẩu!'));
+      })
+    );
+  }
+  
 }

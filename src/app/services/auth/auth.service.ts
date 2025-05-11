@@ -15,6 +15,7 @@ export class AuthService {
     return this.http.post<{ token: string; idAccount: string; role: string }>(
       `${this.apiUrl}/login`, 
       { userCode, password }
+
     );
   }
 
@@ -31,8 +32,7 @@ export class AuthService {
   
 
   logout() {
-    localStorage.removeItem('token'); // Xóa token JWT
-    localStorage.removeItem('role');  // Xóa role nếu có
+      localStorage.clear(); // Xóa toàn bộ dữ liệu trong LocalStorage    
     this.router.navigate(['/login']); // Chuyển hướng về trang login
   }
 

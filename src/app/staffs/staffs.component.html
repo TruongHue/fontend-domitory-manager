@@ -3,9 +3,15 @@
     <nav class="sidebar">
         <h2>Staff Dashboard</h2>
         <ul>
-            <li routerLinkActive="active"><a routerLink="/staffs/electricity-managerment"><i class="fas fa-users"></i> 📌 Quản lý hóa đơn</a></li>
-            <li routerLinkActive="active"><a routerLink="/staffs/help-managerment"><i class="fas fa-users"></i> 📌 Hỗ trợ</a></li>
-        </ul>
+            <li routerLinkActive="active"><a routerLink="/staffs/electricity-managerment">📄 Ghi Điện - Nước</a></li>
+<li [ngClass]="{ 'has-unread': unrespondedRequestsCount > 0 }">
+                <a routerLink="/admin/helps" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    🤝 Hỗ trợ
+                    <span *ngIf="unrespondedRequestsCount > 0" class="notification-badge">
+                        {{ unrespondedRequestsCount }}
+                    </span>
+                </a>
+            </li>        </ul>
         <div class="logout">
             <button class="logout-btn" (click)="logout()">
                 <i class="fas fa-sign-out-alt"></i> Đăng xuất

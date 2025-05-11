@@ -40,20 +40,10 @@ export class ElctricityManagerComponent implements OnInit {
   selectedTab = 0; // Mặc định chọn tab đầu tiên
   id = null;
   selectedRoom: any = null;
-  registerForm = {
-    idStudent: 0,
-    idRoom: 0,
-    startDate: '',
-    endDate: '',
-    total: 0,
-    paymentStatus: 0
-  };
+
   bill: any = {}; // Hoặc khai báo kiểu dữ liệu chính xác
 
-  studentsList: any[] = [];
-  filteredStudents: any[] = [];
   searchText: string = '';
-  selectedStudentText: string = '';
   today: string = new Date().toISOString().split('T')[0]; // Lấy ngày hôm nay (YYYY-MM-DD)
   dateError: boolean = false;
   electricBills: any[] = [];
@@ -78,7 +68,6 @@ export class ElctricityManagerComponent implements OnInit {
     
       forkJoin([
         this.getDormitoriesFromApi(),
-        this.getStudentsFromApi()
       ]).subscribe({
         next: () => {
           this.isLoading = false;
@@ -91,20 +80,7 @@ export class ElctricityManagerComponent implements OnInit {
       });
     }
     
-  getStudentsFromApi(): Observable<void> {
-    return this.userService.getUsers().pipe(
-      tap((data: any[]) => {
-        this.studentsList = data.filter(student => student.Account.Roles === 0);
-        this.filteredStudents = [...this.studentsList];
-      }),
-      map(() => {}),
-      catchError(err => {
-        console.error('Lỗi khi lấy danh sách sinh viên:', err);
-        return of(); // để không làm fail forkJoin
-      })
-    );
-  }
-  
+
   getDormitoriesFromApi(): Observable<void> {
     return this.buildingService.getBuildings().pipe(
       tap((buildings: any[]) => {
@@ -122,8 +98,8 @@ export class ElctricityManagerComponent implements OnInit {
     );
   }
   
-  
   loadRooms(): Observable<void> {
+    // Reset danh sách phòng của tất cả các ký túc xá (dormitories)
     this.dormitories.forEach(d => d.rooms = []);
   
     return this.roomService.getRooms().pipe(
@@ -131,6 +107,7 @@ export class ElctricityManagerComponent implements OnInit {
         const allRoomTasks: Observable<void>[] = [];
   
         rooms.forEach(room => {
+          // Tìm ký túc xá dựa trên tên tòa nhà (Building Name)
           const dormitory = this.dormitories.find(d => d.name === room.Building.NameBuilding);
           if (dormitory) {
             const roomData: Room = {
@@ -143,35 +120,17 @@ export class ElctricityManagerComponent implements OnInit {
               statusBill: 0
             };
   
+            // Thêm phòng vào danh sách phòng của ký túc xá
             dormitory.rooms.push(roomData);
   
-            const combinedTask$ = forkJoin([
-              this.getUserCountInRoom(room.IdRoom).pipe(
-                catchError(err => {
-                  console.error(`Lỗi user phòng ${room.IdRoom}:`, err);
-                  return of(0);
-                })
-              ),
-              this.roomBillService.checkHasUnpaidBill(room.IdRoom).pipe(
-                catchError(err => {
-                  console.error(`Lỗi bill phòng ${room.IdRoom}:`, err);
-                  return of({ hasUnpaidBill: false });
-                })
-              )
-            ]).pipe(
-              tap(([count, bill]) => {
-                roomData.notAvailableSlots = count;
-                roomData.statusBill = bill.hasUnpaidBill ? 1 : 0;
-                this.cdr.detectChanges();
-              }),
-              map(() => {}) // Observable<void>
-            );
+            // Không cần gọi thêm các service khác như checkHasUnpaidBill nữa
+            // Chỉ cần thông tin về phòng, không cần xử lý thêm
   
-            allRoomTasks.push(combinedTask$);
+            allRoomTasks.push(of(undefined)); // Giả lập một Observable<void> với giá trị undefined
           }
         });
   
-        // Sắp xếp phòng
+        // Sắp xếp phòng theo số thứ tự trong tên phòng
         this.dormitories.forEach(dormitory => {
           dormitory.rooms.sort((a, b) => {
             const numA = parseInt(a.name.replace(/\D/g, ''), 10);
@@ -180,6 +139,7 @@ export class ElctricityManagerComponent implements OnInit {
           });
         });
   
+        // Trả về Observable<void> khi tất cả công việc hoàn thành
         return forkJoin(allRoomTasks).pipe(map(() => {}));
       })
     );
@@ -265,11 +225,7 @@ export class ElctricityManagerComponent implements OnInit {
     });
   }
 
-  getUserCountInRoom(idRoom: string): Observable<number> {
-    return this.registerRoom.getActiveRegisterByIdRoom(idRoom).pipe(
-      map((data: any[]) => data.length)
-    )
-  }
+
 
 
 
@@ -282,27 +238,6 @@ export class ElctricityManagerComponent implements OnInit {
 
 
    
-  filterStudents() {
-    const text = this.searchText.toLowerCase();
-    this.filteredStudents = this.studentsList.filter(student =>
-      student.Account.UserCode.toLowerCase().includes(text) ||
-      student.Account.UserName.toLowerCase().includes(text)
-    );
-  }
-
-  selectStudent(student: any) {
-    console.log("Sinh viên được chọn:", student); // Kiểm tra dữ liệu
-
-    this.registerForm.idStudent = student.InfoStudent.idStudent;
-    this.selectedStudentText = `${student.Account.UserCode} - ${student.Account.UserName}`;
-
-    console.log("Giá trị registerForm sau khi chọn:", this.registerForm);
-  }
-  validateDates() {
-    const startDate = new Date(this.registerForm.startDate);
-    const endDate = new Date(this.registerForm.endDate);
-    this.dateError = startDate >= endDate;
-  }
 
   getBillingPeriod(dateString: string): string {
     const date = new Date(dateString);

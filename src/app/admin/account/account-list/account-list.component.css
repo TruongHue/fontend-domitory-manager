@@ -67,13 +67,16 @@ td button:nth-child(2) {
   background: #dc3545;
   color: white;
 }
+td button:nth-child(3) {
+  background: #01a506;
+  color: white;
+}
 
 td button:hover {
   opacity: 0.9;
 }
 
 
-/* Phân trang */
 .avatar-large {
   width: 100px;
   height: 100px;
@@ -90,13 +93,13 @@ td button:hover {
   gap: 15px;
 }
 
-.avatar-large {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
+.avatar-rectangle {
+  width: 100%;
+  height: 240px;
   object-fit: cover;
-  border: 4px solid #007bff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 3px solid #007bff;
+  margin-bottom: 10px;
+  border-radius: 0;          /* loại bỏ bo tròn */
 }
 
 .info-fields {
@@ -199,5 +202,34 @@ td button:hover {
 .close:focus {
   color: black;
   text-decoration: none;
+  cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: #333;
+}
+
+.form-control {
+  display: block;
+  padding: 8px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 400px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.form-control:hover {
+  border-color: #666;
+  background-color: #f0f0f0;
   cursor: pointer;
 }

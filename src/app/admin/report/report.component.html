@@ -11,7 +11,7 @@
       <h3 class="highlight">{{ totalRooms }}</h3>
     </div>
     <div class="card available">
-      <p>Phòng trống</p>
+      <p>Phòng không sử dụng</p>
       <h3 class="highlight">{{ availableRooms }}</h3>
     </div>
     <div class="card occupied">
@@ -40,10 +40,9 @@
   <div class="chart-container">
     <h3>Thống kê số lượng đăng ký theo kỳ</h3>
     <canvas baseChart 
-    [data]="registerPeriodChartData"
-    [options]="barChartOptions"
-    chartType="bar">
-  </canvas>
-  
+      [data]="registerPeriodChartData"
+      [options]="barChartOptions"
+      chartType="bar">
+    </canvas>
   </div>
 </div>
