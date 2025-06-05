@@ -44,6 +44,8 @@ export class RoomStatusManagementComponent implements OnInit {
     paymentStatus: 0,
     price:0
   };
+  isSummerSemester :any;
+  value : number = 0;
   dormitory: any;
   studentsList: any[] = [];
   filteredStudents: any[] = [];
@@ -64,14 +66,32 @@ export class RoomStatusManagementComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
     private registrationService: RegistrationPeriodService) { }
 
-  ngOnInit() {   
-    this.loadRegistrationPeriods();
-    this.getDormitoriesFromApi();
-    this.getStudentsFromApi();
-    this.calculateTotal();
-    this.loadRooms();
-  }
+ngOnInit() {
+  this.loadInitialData();
+}
 
+loadInitialData() {
+  this.isLoading = true;
+  this.registrationService.getRegistrationPeriodsActive().subscribe({
+    next: (period: any) => {
+      this.registrationPeriods = period;
+      console.log(period);
+      this.idRegistrationPeriodsActive = period.Id;
+      this.isYearly = period.SemesterStatus;
+      this.getDormitoriesFromApi(); // gọi sau khi có period
+      this.getStudentsFromApi();
+      this.isLoading = false;
+      this.value = 1;
+    },
+    error: (err: any) => {
+      console.error('Lỗi khi lấy kỳ đăng ký:', err);
+      this.value = 0;
+      this.isLoading = false;
+    }
+  });
+}
+
+ 
   detailRoom(data: any) {
     console.log(data.id);
     this.registerRoom.getAllRegisterRoombyIdRoomActive(data.id).subscribe(
@@ -135,114 +155,81 @@ block(student:any) {
   }
   
   
-  async submitRegister(data: any) {
-    this.isLoading = true;
-  
-    if (!this.registerForm.idStudent) {
-      alert('Vui lòng chọn sinh viên!');
-      this.isLoading = false;
-      return;
-    }
-    if (!this.registerForm.startDate) {
-      alert('Vui lòng chọn ngày bắt đầu!');
-      this.isLoading = false;
-      return;
-    }
-    if (!this.registerForm.endDate) {
-      alert('Vui lòng chọn ngày kết thúc!');
-      this.isLoading = false;
-      return;
-    }
-  
-    if (!this.idRegistrationPeriodsActive) {
-      await this.loadRegistrationPeriods();
-      if (!this.idRegistrationPeriodsActive) {
-        alert('Không có kỳ đăng ký!');
-        this.isLoading = false;
-        return;
-      }
-    }
-  
-    // ✅ Thêm xác nhận
-    const confirmRegister = window.confirm('Bạn có chắc chắn muốn đăng ký phòng này không?');
-    if (!confirmRegister) {
-      this.isLoading = false;
-      return;
-    }
-  
-    this.proceedRegister(data);
-    this.ngOnInit();
+ async submitRegister(data: any) {
+  this.isLoading = true;
+
+  if (!this.registerForm.idStudent || !this.registerForm.startDate || !this.registerForm.endDate) {
+    alert('Vui lòng điền đầy đủ thông tin!');
     this.isLoading = false;
+    return;
   }
-  
-  
-  
-  proceedRegister(data:any) {
-    const startDate = new Date(data.startDate);
-    const endDate = new Date(data.endDate);
-  
-    if (startDate >= endDate) {
-      alert('Ngày bắt đầu phải nhỏ hơn ngày kết thúc!');
-      return;
+
+  const confirmRegister = window.confirm('Bạn có chắc chắn muốn đăng ký phòng này không?');
+  if (!confirmRegister) {
+    this.isLoading = false;
+    return;
+  }
+
+  const startDate = new Date(data.startDate);
+  const endDate = new Date(data.endDate);
+
+  if (startDate >= endDate) {
+    alert('Ngày bắt đầu phải nhỏ hơn ngày kết thúc!');
+    this.isLoading = false;
+    return;
+  }
+
+  const requestData = {
+    idUser: data.idStudent,
+    idRoom: this.selectedRoom.id,
+    idRegistrationPeriod: this.idRegistrationPeriodsActive,
+    startDate: startDate.toISOString(),
+    endDate: endDate.toISOString(),
+    total: data.total,
+    paymentStatus: Number(this.registerForm.paymentStatus),
+    status: 0
+  };
+
+  this.registerRoom.createRegister(requestData).subscribe({
+    next: () => {
+      alert('Đăng ký thành công!');
+      this.closeRegisterForm();
+      this.ngOnInit();
+      this.isLoading = false;
+    },
+    error: (error) => {
+      alert(error.error?.message || 'Lỗi khi đăng ký!');
+      this.isLoading = false;
     }
+  });
+}
+
   
-    const requestData = {
-      idUser: data.idStudent,
-      idRoom: this.selectedRoom.id,
-      idRegistrationPeriod: this.idRegistrationPeriodsActive,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-      total: data.total,
-      paymentStatus: Number(this.registerForm.paymentStatus),
-      status: 0
-    };
   
-    console.log('Dữ liệu gửi lên API:', requestData);
-  
-    this.registerRoom.createRegister(requestData).subscribe({
-      next: (res) => {
-        alert('Đăng ký thành công!');
-        this.closeRegisterForm();
-        this.loadRooms();
+ 
+  loadRegistrationPeriods(): void {
+    this.registrationService.getRegistrationPeriodsActive().subscribe({
+      next: (data) => {
+        if (data) {
+          this.registrationPeriods = data;
+          this.idRegistrationPeriodsActive = data.Id;
+          this.value = 1;
+          console.log(this.idRegistrationPeriodsActive);
+        } 
       },
-      error: (error) => {
-        const errorMessage = error.error?.message;
-        alert(errorMessage);
+      error: (err: any) => {
+        console.error('Lỗi khi lấy kỳ đăng ký:', err);
+        this.value = 0;
       }
     });
   }
   
-  loadRegistrationPeriods(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.registrationService.getRegistrationPeriodsActive().subscribe({
-        next: (data) => {
-          if (data) {
-            this.registrationPeriods = data;
-            this.idRegistrationPeriodsActive = data.Id;
-            resolve();
-          } else {
-            this.idRegistrationPeriodsActive = '';
-            resolve(); // vẫn resolve để kết thúc
-          }
-        },
-        error: (err) => {
-          console.error('Lỗi khi lấy kỳ đăng ký:', err);
-          reject(err);
-        }
-      });
-    });
-  }
   
   loadRooms() {
     this.isLoading = true; // Bắt đầu loading
     // Gọi API lấy kỳ đăng ký đang hoạt động
-    this.registrationService.getRegistrationPeriodsActive().subscribe({
-      next: (period: any) => {
-        // Xác định loại giá dựa trên SemesterStatus
-        this.isYearly = period.SemesterStatus;
-        console.log(this.isYearly);
-        this.idRegistrationPeriodsActive = period.id;
-        // Gọi API lấy danh sách phòng
+    
+  
         this.roomService.getRooms().subscribe({
           next: (rooms: any[]) => {
             rooms.forEach(room => {
@@ -288,27 +275,23 @@ block(student:any) {
             this.isLoading = false; // Kết thúc loading
           }
         });
-      },
-      error: (err: any) => {
-        console.error('Lỗi khi lấy kỳ đăng ký:', err);
-      }
-    });
+     
   }
   
 
 
-  openRegisterForm(room: any) {
-    this.selectedRoom = room;
-    // Gán giá phòng dựa theo loại hình đăng ký
-    this.registerForm.price = room.price;
-    // Reset các thông tin đăng ký
-    this.registerForm.startDate = '';
-    this.registerForm.endDate = '';
-    this.registerForm.total = 0;
-    this.registerForm.paymentStatus = 0; // Mặc định chưa thanh toán
-  }
-  
+ openRegisterForm(room: any) {
+  this.selectedRoom = room;
+  this.registerForm.price = room.price;
+  // Lấy 10 ký tự đầu tiên của chuỗi ngày để tương thích với input[type="date"]
+  this.registerForm.startDate = this.registrationPeriods.StartDate.substring(0, 10);
+  this.registerForm.endDate = this.registrationPeriods.EndDate.substring(0, 10);
 
+  this.registerForm.total = 0;
+  this.registerForm.paymentStatus = 0;
+  this.isSummerSemester = this.registrationPeriods.SemesterStatus ===0;
+
+}
   closeRegisterForm() {
     this.selectedRoom = null;
   }

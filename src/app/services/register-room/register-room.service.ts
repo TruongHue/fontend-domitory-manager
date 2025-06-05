@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Token } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegisterRoomService {
   private apiUrl = 'https://domitory-backend.onrender.com/api/RegisterRoom';
-
+  private tokenbackup = '';
   constructor(private http: HttpClient) {}
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
+    console.log(token);
     return token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : new HttpHeaders();
   }
 
@@ -44,7 +46,7 @@ export class RegisterRoomService {
   }
 
   updatePaymentStatus(idRegister: string, data: any): Observable<any> {
-    console.log('Updating payment status for:', idRegister, 'with data:', data);
+    console.log('Updating payment status for:', idRegister, 'with data:', data,'token',Token);
     return this.http.put(`${this.apiUrl}/update-payment-status/${idRegister}`, data, { headers: this.getAuthHeaders() });
   }
 

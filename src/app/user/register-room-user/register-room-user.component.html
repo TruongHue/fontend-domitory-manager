@@ -1,7 +1,7 @@
 <div *ngIf="isLoading" class="loading-overlay">
     <div class="spinner"></div>
   </div>
-<div *ngIf="!isLoading">
+<div *ngIf="value == 1" class="container">
 
 <div class="tab-container">
     <!-- Tabs chọn tòa nhà -->
@@ -75,13 +75,32 @@
 <div class="modal-overlay" *ngIf="selectedRoom">
     <div class="modal1">
       <h3 class="font-bold text-center mb-4 text-lg">Đăng ký phòng {{ selectedRoom.name }}</h3>
-      <label>Ngày bắt đầu:</label>
-        <input type="date" [(ngModel)]="registerForm.startDate" required [min]="today" (change)="calculateTotal()">
-        <p style="color: red;">Ngày bắt đầu phải nhỏ hơn ngày kết thúc!</p>
+      <!-- Ngày bắt đầu -->
+<label>Ngày bắt đầu:</label>
+<input type="date"
+       [(ngModel)]="registerForm.startDate"
+       [required]="true"
+       [min]="isSummerSemester ? registrationPeriods.StartDate.substring(0, 10) : null"
+       [max]="isSummerSemester ? registrationPeriods.EndDate.substring(0, 10) : null"
+       [readonly]="!isSummerSemester"
+       (change)="calculateTotal()">
 
-        <label>Ngày kết thúc:</label>
-        <input type="date" [(ngModel)]="registerForm.endDate" required [min]="registerForm.startDate"
-            (change)="calculateTotal()">
+<!-- Thông báo lỗi nếu chọn sai thứ tự -->
+<p *ngIf="isSummerSemester && registerForm.startDate > registerForm.endDate"
+   style="color: red;">
+  Ngày bắt đầu phải nhỏ hơn ngày kết thúc!
+</p>
+
+<!-- Ngày kết thúc -->
+<label>Ngày kết thúc:</label>
+<input type="date"
+       [(ngModel)]="registerForm.endDate"
+       [required]="true"
+       [min]="registerForm.startDate"
+       [max]="isSummerSemester ? registrationPeriods.EndDate.substring(0, 10) : null"
+       [readonly]="!isSummerSemester"
+       (change)="calculateTotal()">
+
         <label>Giá phòng:</label>
         <input type="number" [(ngModel)]="registerForm.price" disabled (change)="calculateTotal()">
         <label>Tổng tiền:</label>
@@ -91,4 +110,7 @@
 
     </div>
 </div>
+</div>
+<div *ngIf="value ==0" class="alert alert-warning text-center">
+    <strong>Chưa tới thời hạn đăng ký!</strong>
 </div>

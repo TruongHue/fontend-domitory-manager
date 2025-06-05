@@ -3,8 +3,8 @@
 </div>
 <div *ngIf="registers && registers.length > 0; else noRegister" class="container">
 
-<div class="container">
-    <h2>Lịch sử đăng ký</h2>  
+  <div class="container">
+    <h2>Lịch sử đăng ký</h2>
     <div *ngIf="registers.length > 0">
       <table>
         <thead>
@@ -17,6 +17,7 @@
             <th>Tổng tiền</th>
             <th>Thanh toán</th>
             <th>Trạng thái</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>
@@ -32,10 +33,10 @@
               'text-danger': register.PaymentStatus === 1 || register.PaymentStatus === 2
             }">
               {{ register.PaymentStatus === 0 ? 'Đã thanh toán' :
-                 register.PaymentStatus === 1 ? 'Chưa thanh toán' :
-                 register.PaymentStatus === 2 ? 'Hủy' : 'Không xác định' }}
+              register.PaymentStatus === 1 ? 'Chưa thanh toán' :
+              register.PaymentStatus === 2 ? 'Hủy' : 'Không xác định' }}
             </td>
-            
+
             <td [ngClass]="{
               'text-success': register.Status === 0,
               'text-secondary': register.Status === 1,
@@ -43,17 +44,23 @@
               'text-warning': register.Status === 3
             }">
               {{ register.Status === 0 ? 'Hoạt động' :
-                 register.Status === 1 ? 'Ngưng hoạt động' :
-                 register.Status === 2 ? 'Blocked' :
-                 register.Status === 3 ? 'Đợi thanh toán' : 'Hết hạn' }}
+              register.Status === 1 ? 'Ngưng hoạt động' :
+              register.Status === 2 ? 'Hủy' :
+              register.Status === 3 ? 'Đợi thanh toán' : 'Hết hạn' }}
             </td>
-            
-        
+            <td>
+              <button *ngIf="register.PaymentStatus === 1" (click) = "cancelRegisterRoom(register.IdRegister)"
+                class="btn btn-danger btn-sm">
+                Hủy đăng ký
+              </button>
+            </td>
+
+
           </tr>
         </tbody>
       </table>
     </div>
-</div>
+  </div>
 </div>
 <ng-template #noRegister>
   <div class="alert alert-warning text-center">

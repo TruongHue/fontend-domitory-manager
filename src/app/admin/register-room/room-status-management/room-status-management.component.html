@@ -1,8 +1,7 @@
-<!-- Loading Spinner -->
+<div *ngIf="value == 1" class="container">
 <div *ngIf="isLoading" class="loading-overlay">
-  <div class="spinner"></div>
-</div>
-
+    <div class="spinner"></div>
+  </div>
 <div class="tab-container">
   <!-- Tabs chọn tòa nhà -->
   <div class="tab-header">
@@ -108,13 +107,29 @@
 
       <p>Sinh viên đã chọn: <strong>{{ selectedStudentText || 'Chưa chọn' }}</strong></p>
 
-      <label>Ngày bắt đầu:</label>
-      <input type="date" [(ngModel)]="registerForm.startDate" required [min]="today" (change)="calculateTotal()">
-      <p style="color: red;">Ngày bắt đầu phải nhỏ hơn ngày kết thúc!</p>
+    <label>Ngày bắt đầu:</label>
+<input type="date"
+       [(ngModel)]="registerForm.startDate"
+       [required]="true"
+       [min]="registrationPeriods.StartDate.substring(0, 10)"
+       [max]="registrationPeriods.EndDate.substring(0, 10)"
+       [disabled]="!isSummerSemester"
+       (change)="calculateTotal()">
 
-      <label>Ngày kết thúc:</label>
-      <input type="date" [(ngModel)]="registerForm.endDate" required [min]="registerForm.startDate"
-        (change)="calculateTotal()">
+<p *ngIf="isSummerSemester && registerForm.startDate > registerForm.endDate"
+   style="color: red;">
+  Ngày bắt đầu phải nhỏ hơn ngày kết thúc!
+</p>
+
+<label>Ngày kết thúc:</label>
+<input type="date"
+       [(ngModel)]="registerForm.endDate"
+       [required]="true"
+       [min]="registerForm.startDate"
+       [max]="registrationPeriods.EndDate.substring(0, 10)"
+       [disabled]="!isSummerSemester"
+       (change)="calculateTotal()">
+
       <label>Giá phòng:</label>
       <input type="number" [(ngModel)]="registerForm.price" disabled (change)="calculateTotal()">
       <label>Tổng tiền:</label>
@@ -176,3 +191,8 @@
       <button class="button_huy" (click)="closeDetailRoom()">Đóng</button>
     </div>
   </div>
+  </div>
+</div>
+<div *ngIf="value ==0" class="alert alert-warning text-center">
+    <strong>Chưa tới thời hạn đăng ký!</strong>
+</div>

@@ -13,6 +13,16 @@
   left: 0;
   z-index: 1000;
 }
+.header-banner {
+  text-align: center;
+  background-color: #fff; /* hoặc màu bạn muốn */
+  padding: 10px 0;
+}
+
+.header-banner img {
+  max-width: 300px; /* tuỳ chỉnh theo ý bạn */
+  height: auto;
+}
 
 /* ----- Logo ----- */
 .logo img {

@@ -17,7 +17,8 @@ export class HistoryRegisterComponent implements OnInit {
   constructor(
     private registerRoom: RegisterRoomService,
     private userService: UserService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private registerService: RegisterRoomService,
   ) {}
 
   ngOnInit(): void {
@@ -53,4 +54,25 @@ export class HistoryRegisterComponent implements OnInit {
       }
     );
   }
+
+  cancelRegisterRoom(idRegister: string) {
+
+    if (!confirm("Bạn có chắc chắn muốn hủy đăng ký phòng ?")) {
+        return;
+    }
+    const updateData = { statusPayment: 2 }; 
+    console.log("Gửi dữ liệu:", { idRegister, updateData});
+    this.registerService.updatePaymentStatus(idRegister,updateData).subscribe({
+        next: (res) => {
+            console.log("Phản hồi từ API:", res); 
+            this.ngOnInit();
+            alert("Hủy đăng ký thành công!");
+        },
+        error: (err) => {
+            console.error("Lỗi cập nhật:", err);
+            alert("Hủy đăng ký thất bại!");
+        }
+    });
+}
+
 }

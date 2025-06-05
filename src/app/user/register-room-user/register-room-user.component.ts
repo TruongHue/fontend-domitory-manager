@@ -48,6 +48,7 @@ export class RegisterRoomUserComponent implements OnInit {
     paymentStatus: 0,
     price:0
   };
+  isSummerSemester:any;
   isLoading: boolean = false;
 
   startDateOfPeriod: string = '';
@@ -61,6 +62,7 @@ export class RegisterRoomUserComponent implements OnInit {
   dateError: boolean = false;
   idRegistrationPeriodsActive: string ='';
   registrationPeriods: any =[];
+  value : number = 0;
   isYearly: any;
   idAccount: string= '';
   constructor(private roomService: RoomService,
@@ -71,11 +73,10 @@ export class RegisterRoomUserComponent implements OnInit {
     private registrationService: RegistrationPeriodService) { }
 
   ngOnInit() {
-    this.getIdStudent();  
     this.loadRegistrationPeriods();
+    this.getIdStudent();  
     this.getDormitoriesFromApi();
     this.getStudentsFromApi();
-    this.loadRegistrationPeriods();
     this.calculateTotal();
     this.loadRooms();
   }
@@ -134,15 +135,6 @@ export class RegisterRoomUserComponent implements OnInit {
       this.isLoading = false;
       return;
     }
-    // Đảm bảo đã có kỳ đăng ký trước khi tiếp tục
-    if (!this.idRegistrationPeriodsActive) {
-      await this.loadRegistrationPeriods();
-      if (!this.idRegistrationPeriodsActive) {
-        alert('Không có kỳ đăng ký!');
-        this.isLoading = false;
-        return;
-      }
-    }
     // ✅ Thêm xác nhận
     const confirmRegister = window.confirm('Bạn có chắc chắn muốn đăng ký phòng này không?');
     if (!confirmRegister) {
@@ -151,6 +143,7 @@ export class RegisterRoomUserComponent implements OnInit {
     }
   
     this.proceedRegister(data);
+    this.closeRegisterForm();
     this.ngOnInit();
     this.isLoading = false;
   }
@@ -200,12 +193,13 @@ export class RegisterRoomUserComponent implements OnInit {
         if (data) {
           this.registrationPeriods = data;
           this.idRegistrationPeriodsActive = data.Id;
-
+          this.value = 1;
           console.log(this.idRegistrationPeriodsActive);
         } 
       },
       error: (err: any) => {
         console.error('Lỗi khi lấy kỳ đăng ký:', err);
+        this.value = 0;
       }
     });
   }
@@ -282,19 +276,24 @@ export class RegisterRoomUserComponent implements OnInit {
 
   openRegisterForm(room: any) {
     this.selectedRoom = room;
-  
+  this.isSummerSemester = this.registrationPeriods.SemesterStatus === 0;
     // Gán giá phòng
     this.registerForm.price = room.price;
-  
+      this.registerForm.startDate = this.registrationPeriods.StartDate.substring(0, 10);
+      this.registerForm.endDate = this.registrationPeriods.EndDate.substring(0, 10);  
     // Nếu là kỳ đăng ký theo năm thì gán ngày và tổng tiền
     if (this.isYearly === 1) {
-      this.registerForm.startDate = this.startDateOfPeriod;
-      this.registerForm.endDate = this.endDateOfPeriod;
       this.registerForm.total = room.price;
+
     } else {
-      this.registerForm.startDate = '';
-      this.registerForm.endDate = '';
-      this.registerForm.total = 0;
+const start = new Date(this.registerForm.startDate);
+const end = new Date(this.registerForm.endDate);
+if (start <= end) {
+  const diffDays = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  this.registerForm.total = this.registerForm.price * diffDays;
+} else {
+  this.registerForm.total = 0;
+}
     }
   
     this.registerForm.paymentStatus = 0;
